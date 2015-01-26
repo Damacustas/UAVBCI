@@ -39,38 +39,38 @@ namespace UAV
         {
             if (e.IsButtonEvent)
             {
-                if (e.Button == 0 && e.IsPressed)
+                if (e.Button == 0 && e.IsPressed) // Front button
                 {
                     client.Hover();
                 }
-                else if (e.Button == 1 && e.IsPressed)
+                else if (e.Button == 1 && e.IsPressed) // Pad-2 button
                 {
                     client.Emergency();
                 }
-                else if(e.Button == 2 && e.IsPressed)
+                else if(e.Button == 2 && e.IsPressed) // Pad-3 button
                 {
                     client.Takeoff();
                 }
-                else if(e.Button == 3 && e.IsPressed)
+                else if(e.Button == 3 && e.IsPressed) // Pad-4 button
                 {
                     client.Land();
                 }
             }
             else
             {
-                if (e.Axis == 0)
+                if (e.Axis == 0) // X-axis
                 {
                     client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, roll: 0.05f * e.Value);
                 }
-                else if (e.Axis == 1)
+                else if (e.Axis == 1) // Y-Axis
                 {
                     client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, pitch: 0.05f * e.Value);
                 }
-                else if(e.Axis == 2)
+                else if(e.Axis == 2) // Left-throttle
                 {
                     client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, gaz: 0.25f * e.Value);
                 }
-                else if(e.Axis == 3)
+                else if(e.Axis == 3) // Z-Axis
                 {
                     client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, yaw: 0.05f * e.Value);
                 }
