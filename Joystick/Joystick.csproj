@@ -42,12 +42,6 @@
     <Compile Include="Joystick.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UAV\UAV.csproj">
-      <Project>{74d64aff-250b-4ea3-943b-8e38aaff3cfb}</Project>
-      <Name>UAV</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

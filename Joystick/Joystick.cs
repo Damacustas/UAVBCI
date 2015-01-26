@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace UAV.Joystick
 {
@@ -9,16 +11,19 @@ namespace UAV.Joystick
         public Dictionary<byte, bool> ButtonStates { get; private set; }
         public Dictionary<byte, short> AxisValues { get; private set; }
 
-        public event JoystickAxisChanged AxisChanged;
-        public event JoystickButtonChanged ButtonChanged;
+        public event JoystickInputDelegate InputReceived;
 
         private FileStream inputStream;
+        private bool running = false;
+
+        private ConcurrentQueue<JoystickEventArgs> changes = new ConcurrentQueue<JoystickEventArgs>();
 
         public void Initialize(string deviceFile)
         {
             if (inputStream == null)
             {
                 inputStream = new FileStream(deviceFile, FileMode.Open);
+                new Thread(InputThread).Start();
             }
             else
             {
@@ -26,30 +31,97 @@ namespace UAV.Joystick
             }
         }
 
-        public void ReadInput()
+        public void ProcessChanges()
+        {
+            JoystickEventArgs e = null;
+            while (!changes.IsEmpty)
+            {
+                if(changes.TryDequeue(out e))
+                {
+                    InputReceived(this, e);
+                }
+            }
+        }
+
+        public void Deinitialize()
+        {
+            running = false;
+            inputStream.Close();
+            inputStream = null;
+        }
+
+        private void InputThread()
         {
             byte[] buff = new byte[8];
-            while (inputStream.Length > 0)
+            while (running)
             {
                 inputStream.Read(buff, 0, 8);
-
+                JoystickEventArgs joystickEvent = DecodeJoystickEvent(buff);
+                if(joystickEvent != null)
+                {
+                    changes.Enqueue(joystickEvent);
+                }
             }
+        }
+
+        private JoystickEventArgs DecodeJoystickEvent(byte[] buff)
+        {
+            if(checkBit(buff[6], (byte)MODE.CONFIGURATION))
+            {
+                if(checkBit(buff[6], (byte)TYPE.AXIS))
+                {
+                    return new JoystickEventArgs() { Axis = buff[7], IsButtonEvent = false, Value = 0 };
+                }
+                else if(checkBit(buff[6], (byte)TYPE.BUTTON))
+                {
+                    return new JoystickEventArgs() { Button = buff[7], IsButtonEvent = true, IsPressed = false };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                if (checkBit(buff[6], (byte)TYPE.AXIS))
+                {
+                    short value = BitConverter.ToInt16(buff, 4);
+                    return new JoystickEventArgs() { Axis = buff[7], IsButtonEvent = false, Value = value };
+                }
+                else if (checkBit(buff[6], (byte)TYPE.BUTTON))
+                {
+                    bool value = buff[4] == (byte)STATE.PRESSED;
+                    return new JoystickEventArgs() { Button = buff[7], IsButtonEvent = true, IsPressed = value };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        enum STATE : byte { PRESSED = 0x01, RELEASED = 0x00 }
+        enum TYPE : byte { AXIS = 0x02, BUTTON = 0x01 }
+        enum MODE : byte { CONFIGURATION = 0x80, VALUE = 0x00 }
+
+        bool checkBit(byte value, byte flag)
+        {
+            byte c = (byte)(value & flag);
+            return c == (byte)flag;
         }
     }
 
-    public delegate void JoystickAxisChanged(object sender, JoystickAxisEventArgs e);
-    public delegate void JoystickButtonChanged(object sender, JoystickButtonEventArgs e);
+    public delegate void JoystickInputDelegate(object sender, JoystickEventArgs e);
 
-    public class JoystickAxisEventArgs : EventArgs
+    public class JoystickEventArgs : EventArgs
     {
-        public float Strength { get; private set; }
-        public int Axis { get; private set; }
-    }
+        public bool IsButtonEvent { get; internal set; }
 
-    public class JoystickButtonEventArgs : EventArgs
-    {
-        public bool IsPressed { get; private set; }
-        public int Button { get; private set; }
+        public float Value { get; internal set; }
+        public int Axis { get; internal set; }
+
+        public bool IsPressed { get; internal set; }
+        public int Button { get; internal set; }
     }
     
     class Program
