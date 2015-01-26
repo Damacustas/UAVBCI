@@ -9,7 +9,7 @@ namespace UAV.Joystick
     public class Joystick
     {
         public Dictionary<byte, bool> ButtonStates { get; private set; }
-        public Dictionary<byte, short> AxisValues { get; private set; }
+        public Dictionary<byte, float> AxisValues { get; private set; }
 
         public event JoystickInputDelegate InputReceived;
 
@@ -32,7 +32,19 @@ namespace UAV.Joystick
             {
                 if(changes.TryDequeue(out e))
                 {
-                    InputReceived(this, e);
+                    if(e.IsButtonEvent)
+                    {
+                        ButtonStates[e.Button] = e.IsPressed;
+                    }
+                    else
+                    {
+                        AxisValues[e.Axis] = e.Value;
+                    }
+
+                    if (InputReceived != null)
+                    {
+                        InputReceived(this, e);
+                    }
                 }
             }
         }
@@ -76,7 +88,7 @@ namespace UAV.Joystick
             {
                 if (checkBit(buff[6], (byte)TYPE.AXIS))
                 {
-                    short value = BitConverter.ToInt16(buff, 4);
+                    float value = (float)BitConverter.ToInt16(buff, 4) / (float)uint.MaxValue;
                     return new JoystickEventArgs() { Axis = buff[7], IsButtonEvent = false, Value = value };
                 }
                 else if (checkBit(buff[6], (byte)TYPE.BUTTON))
@@ -109,10 +121,10 @@ namespace UAV.Joystick
         public bool IsButtonEvent { get; internal set; }
 
         public float Value { get; internal set; }
-        public int Axis { get; internal set; }
+        public byte Axis { get; internal set; }
 
         public bool IsPressed { get; internal set; }
-        public int Button { get; internal set; }
+        public byte Button { get; internal set; }
     }
     
     class Program
