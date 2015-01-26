@@ -20,6 +20,7 @@ namespace UAV
             js.InputReceived += Js_InputReceived;
 
             Thread.Sleep(500); // 500ms should be enough to open the file and read config.
+			js.ProcessEvents();
 
             if(js.AxisValues[2] != 0)
             {
@@ -27,7 +28,13 @@ namespace UAV
                 return;
             }
 
+			Console.Write("Activating drone...");
             client.Start();
+			Console.WriteLine(" activated!");
+
+			client.Takeoff();
+			client.Land();
+			return;
 
             while (true)
             {
