@@ -17,20 +17,16 @@ namespace UAV
 
             while (true)
             {
-                js.ProcessChanges();
+				js.ProcessChanges();
             }
         }
 
         private static void Js_InputReceived(object sender, JoystickEventArgs e)
         {
-            if(e.IsButtonEvent)
-            {
-                Console.WriteLine("Button{0}: {1}", e.Button, e.IsPressed);
-            }
-            else
-            {
-                Console.WriteLine("Axis{0}: {1}", e.Axis, e.Value);
-            }
+			if (!e.IsButtonEvent && e.Axis == 1)
+			{
+				Console.WriteLine("Axis {0}: {1}", 1, e.Value);
+			}
         }
     }
 }

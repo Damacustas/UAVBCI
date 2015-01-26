@@ -8,8 +8,8 @@ namespace UAV.Joystick
 {
     public class Joystick
     {
-        public Dictionary<byte, bool> ButtonStates { get; private set; }
-        public Dictionary<byte, float> AxisValues { get; private set; }
+		public Dictionary<byte, bool> ButtonStates { get; private set; } = new Dictionary<byte, bool>();
+		public Dictionary<byte, float> AxisValues { get; private set; } = new Dictionary<byte, float>();
 
         public event JoystickInputDelegate InputReceived;
 
@@ -34,11 +34,25 @@ namespace UAV.Joystick
                 {
                     if(e.IsButtonEvent)
                     {
-                        ButtonStates[e.Button] = e.IsPressed;
+						if (ButtonStates.ContainsKey(e.Button))
+						{
+							ButtonStates[e.Button] = e.IsPressed;
+						}
+						else
+						{
+							ButtonStates.Add(e.Button, e.IsPressed);
+						}
                     }
                     else
                     {
-                        AxisValues[e.Axis] = e.Value;
+						if (AxisValues.ContainsKey(e.Axis))
+						{
+							AxisValues[e.Axis] = e.Value;
+						}
+						else
+						{
+							AxisValues.Add(e.Axis, e.Value);
+						}
                     }
 
                     if (InputReceived != null)
@@ -88,7 +102,9 @@ namespace UAV.Joystick
             {
                 if (checkBit(buff[6], (byte)TYPE.AXIS))
                 {
-                    float value = (float)BitConverter.ToInt16(buff, 4) / (float)uint.MaxValue;
+					short rawValue = BitConverter.ToInt16(buff, 4);
+					float value = ((float)rawValue) / (float)ushort.MaxValue;
+					value *= 2;
                     return new JoystickEventArgs() { Axis = buff[7], IsButtonEvent = false, Value = value };
                 }
                 else if (checkBit(buff[6], (byte)TYPE.BUTTON))

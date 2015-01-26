@@ -47,12 +47,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Joystick\Joystick.csproj">
-      <Project>{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}</Project>
-      <Name>Joystick</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -61,4 +55,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Joystick\Joystick.csproj">
+      <Project>{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}</Project>
+      <Name>Joystick</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
