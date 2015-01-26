@@ -13,28 +13,22 @@ namespace UAV.Joystick
 
         public event JoystickInputDelegate InputReceived;
 
-        private FileStream inputStream;
         private bool running = false;
+		private string deviceFile = null;
 
         private ConcurrentQueue<JoystickEventArgs> changes = new ConcurrentQueue<JoystickEventArgs>();
 
         public void Initialize(string deviceFile)
-        {
-            if (inputStream == null)
-            {
-                inputStream = new FileStream(deviceFile, FileMode.Open);
-                new Thread(InputThread).Start();
-            }
-            else
-            {
-                throw new InvalidOperationException("Can only initialize joystick once!");
-            }
-        }
+		{
+			this.deviceFile = deviceFile;
+			running = true;
+			new Thread(InputThread).Start();
+		}
 
         public void ProcessChanges()
         {
             JoystickEventArgs e = null;
-            while (!changes.IsEmpty)
+			while (!changes.IsEmpty)
             {
                 if(changes.TryDequeue(out e))
                 {
@@ -43,25 +37,22 @@ namespace UAV.Joystick
             }
         }
 
-        public void Deinitialize()
-        {
-            running = false;
-            inputStream.Close();
-            inputStream = null;
-        }
-
         private void InputThread()
         {
-            byte[] buff = new byte[8];
-            while (running)
-            {
-                inputStream.Read(buff, 0, 8);
-                JoystickEventArgs joystickEvent = DecodeJoystickEvent(buff);
-                if(joystickEvent != null)
-                {
-                    changes.Enqueue(joystickEvent);
-                }
-            }
+			using(FileStream inputStream = new FileStream(deviceFile, FileMode.Open))
+			{
+	            byte[] buff = new byte[8];
+	            while (running)
+	            {
+	                inputStream.Read(buff, 0, 8);
+	                JoystickEventArgs joystickEvent = DecodeJoystickEvent(buff);
+	                if(joystickEvent != null)
+	                {
+	                    changes.Enqueue(joystickEvent);
+						//InputReceived(this, joystickEvent);
+	                }
+				}
+			}
         }
 
         private JoystickEventArgs DecodeJoystickEvent(byte[] buff)
