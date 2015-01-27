@@ -6,40 +6,57 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UAV.Joystick;
+using System.Windows.Forms;
 
 namespace UAV
 {
     class Program
     {
-        static DroneClient client = new DroneClient();
+        internal static DroneClient client = new DroneClient();
+
+		static int cmds = 0;
 
         static void Main(string[] args)
         {
-            var js = new Joystick.Joystick();
-            js.Initialize("/dev/input/js0");
-            js.InputReceived += Js_InputReceived;
+			new Thread(() =>
+			{
+				var js = new Joystick.Joystick();
+				js.Initialize("/dev/input/js0");
+				js.InputReceived += Js_InputReceived;
 
-            Thread.Sleep(500); // 500ms should be enough to open the file and read config.
-			js.ProcessEvents();
+				Console.WriteLine("Activating drone...");
+				client.Start();
+				Console.WriteLine("Drone activated!");
 
-            if(js.AxisValues[2] != 0)
-            {
-                Console.WriteLine("gaz control != 0, not starting!");
-                return;
-            }
+				Thread.Sleep(1000);
 
-			Console.Write("Activating drone...");
-            client.Start();
-			Console.WriteLine(" activated!");
+				var dt = DateTime.Now;
+				var dt2 = DateTime.Now;
+				while (true)
+				{
+					js.ProcessEvents();
 
-			client.Takeoff();
-			client.Land();
-			return;
+					if (DateTime.Now - dt2 > new TimeSpan(0, 0, 0, 0, 100))
+					{
+						client.Progress(AR.Drone.Client.Command.FlightMode.Progressive,
+							roll: js.AxisValues[0],			// X-axis
+							pitch: js.AxisValues[1],		    // Y-axis
+							yaw: js.AxisValues[3] * 0.25f,	// Z-axis
+							gaz: js.AxisValues[2] * -1.0f);	// Throttle, inverted.
+						dt2 = DateTime.Now;
+						cmds++;
+					}
 
-            while (true)
-            {
-				js.ProcessEvents();
-            }
+					if (DateTime.Now - dt > new TimeSpan(0, 0, 1))
+					{
+						Console.WriteLine("Send {0} commands in the last second.", cmds);
+						cmds = 0;
+						dt = DateTime.Now;
+					}
+				}
+			}).Start();
+
+			Application.Run(new VideoForm());
         }
 
         private static void Js_InputReceived(object sender, JoystickEventArgs e)
@@ -49,37 +66,22 @@ namespace UAV
                 if (e.Button == 0 && e.IsPressed) // Front button
                 {
                     client.Hover();
+					cmds++;
                 }
                 else if (e.Button == 1 && e.IsPressed) // Pad-2 button
                 {
-                    client.Emergency();
+					client.Emergency();
+					cmds++;
                 }
                 else if(e.Button == 2 && e.IsPressed) // Pad-3 button
                 {
-                    client.Takeoff();
+					client.Takeoff();
+					cmds++;
                 }
-                else if(e.Button == 3 && e.IsPressed) // Pad-4 button
+                else if(e.Button == 4 && e.IsPressed) // Pad-5 button
                 {
-                    client.Land();
-                }
-            }
-            else
-            {
-                if (e.Axis == 0) // X-axis
-                {
-                    client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, roll: 0.05f * e.Value);
-                }
-                else if (e.Axis == 1) // Y-Axis
-                {
-                    client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, pitch: 0.05f * e.Value);
-                }
-                else if(e.Axis == 2) // Left-throttle
-                {
-                    client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, gaz: 0.25f * e.Value);
-                }
-                else if(e.Axis == 3) // Z-Axis
-                {
-                    client.Progress(AR.Drone.Client.Command.FlightMode.Progressive, yaw: 0.05f * e.Value);
+					client.Land();
+					cmds++;
                 }
             }
         }

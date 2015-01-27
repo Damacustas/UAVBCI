@@ -42,6 +42,7 @@
       <HintPath>..\AR.Drone\AR.Drone.Client\bin\Debug\AR.Drone.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
