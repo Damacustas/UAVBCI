@@ -6,84 +6,31 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UAV.Joystick;
-using System.Windows.Forms;
+using AR.Drone.Data.Navigation;
 
 namespace UAV
 {
     class Program
     {
-        internal static DroneClient client = new DroneClient();
-
-		static int cmds = 0;
 
         static void Main(string[] args)
         {
-			new Thread(() =>
-			{
-				var js = new Joystick.Joystick();
-				js.Initialize("/dev/input/js0");
-				js.InputReceived += Js_InputReceived;
+			DroneClient drone = new DroneClient();
 
-				Console.WriteLine("Activating drone...");
-				client.Start();
-				Console.WriteLine("Drone activated!");
+			drone.NavigationDataAcquired += HandleNavigationDataAcquired;
 
-				Thread.Sleep(1000);
-
-				var dt = DateTime.Now;
-				var dt2 = DateTime.Now;
-				while (true)
-				{
-					js.ProcessEvents();
-
-					if (DateTime.Now - dt2 > new TimeSpan(0, 0, 0, 0, 100))
-					{
-						client.Progress(AR.Drone.Client.Command.FlightMode.Progressive,
-							roll: js.AxisValues[0],			// X-axis
-							pitch: js.AxisValues[1],		    // Y-axis
-							yaw: js.AxisValues[3] * 0.25f,	// Z-axis
-							gaz: js.AxisValues[2] * -1.0f);	// Throttle, inverted.
-						dt2 = DateTime.Now;
-						cmds++;
-					}
-
-					if (DateTime.Now - dt > new TimeSpan(0, 0, 1))
-					{
-						Console.WriteLine("Send {0} commands in the last second.", cmds);
-						cmds = 0;
-						dt = DateTime.Now;
-					}
-				}
-			}).Start();
-
-			Application.Run(new VideoForm());
+			SimpleFlightController controller = new SimpleFlightController();
+			controller.Client = drone;
+			drone.Start();
+			drone.FlatTrim();
+			controller.Start();
         }
 
-        private static void Js_InputReceived(object sender, JoystickEventArgs e)
+        static void HandleNavigationDataAcquired (NavigationData data)
         {
-            if (e.IsButtonEvent)
-            {
-                if (e.Button == 0 && e.IsPressed) // Front button
-                {
-                    client.Hover();
-					cmds++;
-                }
-                else if (e.Button == 1 && e.IsPressed) // Pad-2 button
-                {
-					client.Emergency();
-					cmds++;
-                }
-                else if(e.Button == 2 && e.IsPressed) // Pad-3 button
-                {
-					client.Takeoff();
-					cmds++;
-                }
-                else if(e.Button == 4 && e.IsPressed) // Pad-5 button
-                {
-					client.Land();
-					cmds++;
-                }
-            }
+			if (data.Velocity.X > 0.4)
+				Console.WriteLine("Slow down!");
         }
+
     }
 }

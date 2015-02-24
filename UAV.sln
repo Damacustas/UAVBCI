@@ -7,12 +7,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV", "UAV\UAV.csproj", "{7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Joystick", "Joystick\UAV.Joystick.csproj", "{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.GUI", "UAV.GUI\UAV.GUI.csproj", "{36FE5A84-5C8D-4728-ADA8-B8755375E093}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36FE5A84-5C8D-4728-ADA8-B8755375E093}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36FE5A84-5C8D-4728-ADA8-B8755375E093}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36FE5A84-5C8D-4728-ADA8-B8755375E093}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36FE5A84-5C8D-4728-ADA8-B8755375E093}.Release|Any CPU.Build.0 = Release|Any CPU
 		{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
