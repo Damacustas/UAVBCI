@@ -1,109 +1,153 @@
-﻿using System;
-using System.Windows.Forms;
-using AR.Drone.Client;
+﻿using AR.Drone.Client;
 using AR.Drone.Video;
+using System;
+using System.Windows.Forms;
 using AR.Drone.Data;
-using System.Threading;
 using System.Drawing;
-using System.Diagnostics;
+using UAV.Joystick;
 
 namespace UAV.GUI
 {
-	public class MainForm : Form
-	{
-		private PictureBox videoBox;
-		private System.Windows.Forms.Timer videoTimer;
-		private uint frameNumber;
-		private Bitmap frameBitmap;
-		private VideoFrame frame;
-		private DroneClient drone;
-		private VideoPacketDecoderWorker videoDecoder;
+    public partial class MainForm : Form
+    {
+        // Video related members.
+        private uint frameNumber;
+        private Bitmap frameBitmap;
+        private VideoPacketDecoderWorker videoDecoder;
+        private VideoFrame frame;
 
-		public MainForm ()
-		{
-			InitializeComponent();
+        // The drone.
+        private DroneClient drone;
 
-			videoDecoder = new VideoPacketDecoderWorker(PixelFormat.BGR24, true, OnFrameDecoded);
-			videoDecoder.UnhandledException += HandleUnhandledException;
-			videoDecoder.Start();
+        // Controll related members.
+        private JoystickDevice joystick;
+        private HeightMaintainer heightMaintainer;
+        private VelocityMaintainer velocityMaintainer;
+        private CompositeFlightController controller;
 
-			drone = new DroneClient();
-			drone.VideoPacketAcquired += OnVideoPacketAcquired;
-			drone.Start();
-			drone.FlatTrim();
+        public MainForm()
+        {
+            InitializeComponent();
 
-			Thread.Sleep(1000);
+            // innitialize video packet decoder.
+            videoDecoder = new VideoPacketDecoderWorker(PixelFormat.BGR24, true, OnFrameDecoded);
+            videoDecoder.UnhandledException += VideoDecoder_UnhandledException;
+            videoDecoder.Start();
 
-			SimpleFlightController controller = new SimpleFlightController();
-			controller.Client = drone;
-			controller.Start();
+            // Initalize drone.
+            drone = new DroneClient();
+            drone.VideoPacketAcquired += OnVideoPacketAqcuired;
+            drone.Start();
+            drone.FlatTrim();
 
-			videoTimer.Enabled = true;
-		}
+            /*
+            JoystickFlightController controller = new JoystickFlightController();
+            controller.Client = drone;
+            controller.Start();
+            */
 
-		void HandleUnhandledException (object arg1, Exception arg2)
-		{
-			Console.WriteLine(arg2);
-		}
+            // Initialize joystick.
+            joystick = new JoystickDevice();
+            joystick.InputReceived += Joystick_InputReceived;
+            joystick.Initialize("/dev/input/js0");
 
-		private void OnVideoPacketAcquired(VideoPacket packet)
-		{
-			if (videoDecoder.IsAlive)
-			{
-				videoDecoder.EnqueuePacket(packet);
-			}
-		}
+            // Initialize height maintainer.
+            heightMaintainer = new HeightMaintainer();
+            heightMaintainer.TargetHeight = 100;
 
-		private void OnFrameDecoded(VideoFrame frame)
-		{
-			this.frame = frame;
-		}
+            // Initialize velocity maintainer.
+            velocityMaintainer = new VelocityMaintainer();
+            velocityMaintainer.TargetVelocity.X = 0.0f;
+            velocityMaintainer.TargetVelocity.Y = 0.0f;
+            velocityMaintainer.TargetVelocity.Z = 0.0f;
 
-		private void InitializeComponent()
-		{
-			this.Text = "UAV Control";
-			this.KeyUp += MainForm_KeyUp;
-			this.Size = new Size(800, 600);
-			this.WindowState = FormWindowState.Maximized;
+            // Initialize flight controller.
+            controller = new CompositeFlightController();
+            controller.Drone = drone;
+            controller.FlightBehaviors.Add(velocityMaintainer);
+            controller.FlightBehaviors.Add(heightMaintainer);
+            controller.ControlCycleStarting += () => joystick.ProcessEvents();
 
-			videoBox = new PictureBox();
-			((System.ComponentModel.ISupportInitialize)(this.videoBox)).BeginInit();
-			videoBox.BackColor = System.Drawing.SystemColors.ControlDark;
-			videoBox.SizeMode = PictureBoxSizeMode.Zoom;
-			videoBox.Dock = DockStyle.Fill;
-			((System.ComponentModel.ISupportInitialize)(this.videoBox)).EndInit();
+            controller.Start();
 
-			videoTimer = new System.Windows.Forms.Timer();
-			videoTimer.Interval = 20;
-			videoTimer.Tick += VideoTimer_Tick;
+            videoTimer.Enabled = true;
+        }
 
-			this.Controls.Add(videoBox);
-		}
+        private void Joystick_InputReceived(object sender, JoystickEventArgs e)
+        {
+            if (e.Button == 0 && e.IsPressed) // Front button
+            {
+                drone.Hover();
+            }
+            else if (e.Button == 1 && e.IsPressed) // Pad-2 button
+            {
+                drone.Emergency();
+            }
+            else if (e.Button == 2 && e.IsPressed) // Pad-3 button
+            {
+                drone.Takeoff();
+            }
+            else if (e.Button == 4 && e.IsPressed) // Pad-5 button
+            {
+                drone.Land();
+            }
+            else if(e.Button == 9 && e.IsPressed) // Throttle-10 button
+            {
+                heightMaintainer.TargetHeight += 25; // cm
+            }
+            else if(e.Button == 10 && e.IsPressed) // Throttle-11 button
+            {
+                heightMaintainer.TargetHeight -= 25; // cm
+            }
+        }
 
-		void VideoTimer_Tick (object sender, EventArgs e)
-		{
-			if (frame == null || frameNumber == frame.Number)
-				return;
-			frameNumber = frame.Number;
+        private void OnFrameDecoded(VideoFrame frame)
+        {
+            this.frame = frame;
+        }
 
-			if (frameBitmap == null)
-				frameBitmap = VideoHelper.CreateBitmap(ref frame);
-			else
-				VideoHelper.UpdateBitmap(ref frameBitmap, ref frame);
+        private void VideoDecoder_UnhandledException(object arg1, Exception arg2)
+        {
+            Console.WriteLine(arg2);
+        }
 
-			videoBox.Image = frameBitmap;
-		}
+        private void OnVideoPacketAqcuired(VideoPacket packet)
+        {
+            // If the video decoder is alive, enqueue the packet to be decoded.
+            if (videoDecoder.IsAlive)
+            {
+                videoDecoder.EnqueuePacket(packet);
+            }
+        }
 
-		void MainForm_KeyUp (object sender, KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.Escape)
-			{
-				drone.Land();
-				drone.Stop();
+        private void VideoTimer_Tick(object sender, EventArgs e)
+        {
+            // If there is no (new) frame, ignore.
+            if (frame == null || frameNumber == frame.Number)
+                return;
 
-				Application.Exit();
-			}
-		}
-	}
+            frameNumber = frame.Number;
+
+            // If we already have a bitmap, update it, else, create new one.
+            if (frameBitmap == null)
+                frameBitmap = VideoHelper.CreateBitmap(ref frame);
+            else
+                VideoHelper.UpdateBitmap(ref frameBitmap, ref frame);
+
+            // Set image.
+            videoPictureBox.Image = frameBitmap;
+        }
+
+        private void MainForm2_KeyUp(object sender, KeyEventArgs e)
+        {
+            // If escape is pressed, quit the application.
+            if (e.KeyCode == Keys.Escape)
+            {
+                drone.Land();
+                drone.Stop();
+
+                Application.Exit();
+            }
+        }
+    }
 }
-

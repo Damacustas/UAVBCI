@@ -45,9 +45,15 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompositeFlightController.cs" />
+    <Compile Include="HeightMaintainer.cs" />
+    <Compile Include="IFlightBehavior.cs" />
+    <Compile Include="MovementCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleFlightController.cs" />
+    <Compile Include="JoystickFlightController.cs" />
+    <Compile Include="Velocity.cs" />
+    <Compile Include="VelocityMaintainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

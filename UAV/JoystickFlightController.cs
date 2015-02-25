@@ -5,7 +5,7 @@ using AR.Drone.Client;
 
 namespace UAV
 {
-	public class SimpleFlightController
+	public class JoystickFlightController
 	{
 		private int cmds;
 		private Thread thread;
@@ -14,16 +14,13 @@ namespace UAV
 		public void Start()
 		{
 			cmds = 0;
-			thread = new Thread(() =>
-			{
-				Run();
-			});
+            thread = new Thread(Run);
 			thread.Start();
 		}
 
 		private void Run()
 		{
-			var js = new Joystick.Joystick();
+			var js = new Joystick.JoystickDevice();
 			js.Initialize("/dev/input/js0");
 			js.InputReceived += Js_InputReceived;
 

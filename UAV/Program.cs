@@ -19,7 +19,7 @@ namespace UAV
 
 			drone.NavigationDataAcquired += HandleNavigationDataAcquired;
 
-			SimpleFlightController controller = new SimpleFlightController();
+			JoystickFlightController controller = new JoystickFlightController();
 			controller.Client = drone;
 			drone.Start();
 			drone.FlatTrim();

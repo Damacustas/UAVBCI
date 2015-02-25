@@ -2,3 +2,4 @@
 *.user
 UAV.sln.ide/
 *.userprefs
+.vs/

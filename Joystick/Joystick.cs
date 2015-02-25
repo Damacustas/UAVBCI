@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace UAV.Joystick
 {
-    public class Joystick
+    public class JoystickDevice
     {
 		public Dictionary<byte, bool> ButtonStates { get; private set; } = new Dictionary<byte, bool>();
 		public Dictionary<byte, float> AxisValues { get; private set; } = new Dictionary<byte, float>();
