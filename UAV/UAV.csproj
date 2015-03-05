@@ -54,6 +54,7 @@
     <Compile Include="JoystickFlightController.cs" />
     <Compile Include="Velocity.cs" />
     <Compile Include="VelocityMaintainer.cs" />
+    <Compile Include="JoystickBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

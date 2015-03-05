@@ -22,30 +22,66 @@ namespace UAV
 
         public MovementCommand ComputeBehavior(DroneClient drone)
         {
-            return new MovementCommand()
-            {
-                Yaw = ComputeCorrection(drone.NavigationData.Yaw, TargetVelocity.X, drone.NavigationData.Velocity.X),
-                Roll = ComputeCorrection(drone.NavigationData.Roll, TargetVelocity.Y, drone.NavigationData.Velocity.Y),
-                Pitch = ComputeCorrection(drone.NavigationData.Pitch, TargetVelocity.Z, drone.NavigationData.Velocity.Z)
-            };
-        }
+			Console.WriteLine("Velocity forward: {0} Velocity sideways: {1}",
+			drone.NavigationData.Velocity.X,
+			drone.NavigationData.Velocity.Y);
 
-        private float ComputeCorrection(float value, float targetVelocity, float currentVelocity)
+			// Forward/Backward
+			Console.Write("Pitch: ");
+			var pitch = ComputeCorrection(drone.NavigationData.Pitch, TargetVelocity.Forward, drone.NavigationData.Velocity.Y, 0.025f);
+
+			// Left/Right
+			Console.Write("Roll: ");
+			var roll = 0;
+			Console.WriteLine("0");
+			//var roll = ComputeCorrection(drone.NavigationData.Roll, TargetVelocity.Left, drone.NavigationData.Velocity.X, 0.1f);
+
+			// Turn left/turn right
+			Console.Write("Yaw: ");
+			var yaw = 0;
+			Console.WriteLine("0");
+			//var yaw = ComputeCorrection(drone.NavigationData.Yaw, TargetVelocity.TurnLeft, drone.NavigationData.Velocity.Z, 0.01f);
+            
+
+			return new MovementCommand()
+			{
+				Pitch = pitch,
+				Roll = roll,
+				Yaw = yaw
+			};
+		}
+
+		private float ComputeCorrection(float value, float targetVelocity, float currentVelocity, float correctionValue)
         {
+			float ret;
+			string action = "";
+
             if(currentVelocity > targetVelocity + MaxDeviance)
             {
                 // Too fast, correct value down.
-                return value - 0.1f;
+				ret = value - correctionValue;
+				action = "decr";
             }
             else if(currentVelocity < targetVelocity - MaxDeviance)
             {
                 // Too slow, correct value up.
-                return value + 0.1f;
+				ret = value + correctionValue;
+				action = "incr";
             }
             else
             {
-                return value;
+                ret = value;
+				action = "keep";
             }
+
+			Console.WriteLine("{2}: {0} -> {1}", value, ret, action);
+
+			if (ret > 1.0f)
+				return 1.0f;
+			else if (ret < -1.0f)
+				return -1.0f;
+			else
+				return ret;
         }
     }
 }

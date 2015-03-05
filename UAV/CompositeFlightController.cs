@@ -31,7 +31,10 @@ namespace UAV
         }
 
         private void ControllerMainLoop()
-        {
+		{
+			float lastPitch, lastRoll, lastYaw, lastGaz;
+			lastPitch = lastRoll = lastYaw = lastGaz = 0;
+
             while (true)
             {
                 if(ControlCycleStarting != null)
@@ -51,13 +54,31 @@ namespace UAV
                     gaz += result.Gaz;
                 }
 
-                Drone.Progress(
-                    FlightMode.Progressive,
-                    roll: roll,
-                    pitch: pitch,
-                    yaw: yaw,
-                    gaz: gaz);
+				//Console.WriteLine("cmd: pitch={0}, roll={1}, yaw={2}, gaz={3}", pitch, roll, yaw, gaz);
 
+				/*
+				if (roll == lastRoll ||
+					gaz == lastGaz ||
+					yaw == lastYaw ||
+					pitch == lastPitch)
+				{
+					// Do nothing.
+				}
+				else
+				{
+				*/
+					Drone.Progress(
+						FlightMode.Progressive,
+						roll: roll,
+						pitch: pitch,
+						yaw: yaw,
+						gaz: gaz);
+
+					roll = lastRoll;
+					gaz = lastGaz;
+					yaw = lastYaw;
+					pitch = lastPitch;
+				//}
                 Thread.Sleep(50);
             }
         }

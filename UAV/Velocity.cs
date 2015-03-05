@@ -10,13 +10,13 @@ namespace UAV
     {
         public Velocity()
         {
-            X = Y = Z = 0.0f;
+            Forward = Left = TurnLeft = 0.0f;
         }
 
-        public float X { get; set; }
+        public float Forward { get; set; }
 
-        public float Y { get; set; }
+        public float Left { get; set; }
 
-        public float Z { get; set; }
+        public float TurnLeft { get; set; }
     }
 }
