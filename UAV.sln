@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Joystick", "Joystick\UA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.GUI", "UAV.GUI\UAV.GUI.csproj", "{36FE5A84-5C8D-4728-ADA8-B8755375E093}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Prediction", "UAV.Prediction\UAV.Prediction.csproj", "{8513D936-7124-40B8-AF04-D7C1361525CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{74D64AFF-250B-4EA3-943B-8E38AAFF3CFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74D64AFF-250B-4EA3-943B-8E38AAFF3CFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74D64AFF-250B-4EA3-943B-8E38AAFF3CFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8513D936-7124-40B8-AF04-D7C1361525CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8513D936-7124-40B8-AF04-D7C1361525CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8513D936-7124-40B8-AF04-D7C1361525CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8513D936-7124-40B8-AF04-D7C1361525CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
