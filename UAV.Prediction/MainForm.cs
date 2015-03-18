@@ -1,67 +1,72 @@
-using System;
-using System.Windows.Forms;
-using System.Drawing;
-
-using OxyPlot.WindowsForms;
+﻿using OxyPlot;
 using OxyPlot.Series;
-using OxyPlot;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace UAV.Prediction
 {
-	public class MainForm : Form
-	{
-		private PlotView view;
+    public partial class MainForm : Form
+    {
+        List<double> X = new List<double>();
+        List<double> Y = new List<double>();
+        Random r = new Random(42);
 
-		//private double[] X = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-		//private double[] Y = new double[] { 0.2, 1.8, 4.3, 5.7, 8.3, 9.7, 12.4, 13.6, 16.3 };
-		private double[] X = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0,
-			1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0
-		};
-		private double[] Y = new double[] {0.1, 0.3, 0.5, 0.8, 1.3, 2.0, 2.5, 3.0, 4.0, 5.0,
-			6,   7,   8, 9.5,  11, 12.5,  11,  19,  17, 22
-		};
+        private const double maxDeviance = 1.0;
+
+        public MainForm()
+        {
+            InitializeComponent();
 
 
-		private Func<double, double> GenerateFunction()
-		{
-			var coeff = Fitters.FitQuadratic(X, Y);
-			return (x) =>
-			{
-				return coeff.At(0, 0) + coeff.At(1, 0) * x + coeff.At(2, 0) * x * x;
-			};
-		}
+            double startX = -1;
+            double endX = 3;
 
-		public MainForm()
-		{
-			this.InitalizeComponent();
+            for(double x = startX; x < endX; x+= 0.1)
+            {
+                double rv = (r.NextDouble() * 2 - 1) * maxDeviance;
 
-			var scatter = new ScatterSeries();
-			for (int i = 0; i < X.Length; i++)
-			{
-				scatter.Points.Add(new ScatterPoint(X[i], Y[i]));
-			}
+                X.Add(x);
+                Y.Add(Math.Pow(x, 3) - 2 * Math.Pow(x, 2) + 1 + rv);
+            }
 
-			var model = new PlotModel();
-			model.Title = "Plot";
-			model.Series.Add(new FunctionSeries(GenerateFunction(), 0, 2, 0.1, "f"));
-			model.Series.Add(scatter);
-			view.Model = model;
 
-		}
+            // Create plots and add to plotview.
+            var scatter = new ScatterSeries();
+            for (int i = 0; i < X.Count; i++)
+            {
+                scatter.Points.Add(new ScatterPoint(X[i], Y[i]));
+            }
 
-		private void InitalizeComponent()
-		{
-			this.SuspendLayout();
-			view = new PlotView();
-			view.Dock = DockStyle.Fill;
-			view.PanCursor = Cursors.Hand;
+            var model = new PlotModel();
+            model.Title = "Plot";
+            model.LegendPosition = LegendPosition.TopLeft;
+            
+            model.Series.Add(new FunctionSeries(CreateNewPlot(1), startX, endX, 0.05, "f1"));
+            model.Series.Add(new FunctionSeries(CreateNewPlot(2), startX, endX, 0.05, "f2"));
+            model.Series.Add(new FunctionSeries(CreateNewPlot(3), startX, endX, 0.05, "f3"));
+            
 
-			this.Text = "Plotview";
-			this.Size = new Size(640, 360);
-			this.Controls.Add(view);
+            for (int i = 0, j = 1; i < X.Count - 9; i += 10, j++)
+            {
+                model.Series.Add(new FunctionSeries(CreateFitSubset(i, i + 9), X[i], X[i + 9], 0.05, "partial " + j));
+            }
 
-			this.ResumeLayout(false);
-		}
-	}
+            model.Series.Add(scatter);
+            plotView.Model = model;
+        }
 
+        private Func<double, double> CreateNewPlot(int power)
+        {
+            return Fitters.GeneratePolynomialFit(X, Y, power);
+        }
+
+        private Func<double, double> CreateFitSubset(int startIdx, int endIdx)
+        {
+            var dataX = X.GetRange(startIdx, endIdx - startIdx);
+            var dataY = Y.GetRange(startIdx, endIdx - startIdx);
+
+            return Fitters.GeneratePolynomialFit(dataX, dataY, 2);
+        }
+    }
 }
