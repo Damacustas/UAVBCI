@@ -19,7 +19,7 @@ public class Screen extends JPanel {
 
 	private JFrame frame;
 	private Dimension dim = null;
-
+	//comments zijn een beetje overrated
 	public Screen() {
 		frame = new JFrame();
 		frame.setTitle("UAV BCI Software");
