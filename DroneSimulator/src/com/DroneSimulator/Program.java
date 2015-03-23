@@ -32,6 +32,11 @@ public class Program
 	 */
 	private static Dictionary<String, String> parseArguments(String[] raw)
 	{
+		if (raw.length == 0)
+		{
+			return new Hashtable<String, String>();
+		}
+		
 		// Only support paired arguments.
 		if(raw.length % 2 == 1)
 		{
