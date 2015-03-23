@@ -10,6 +10,12 @@ public class SimulationRun
 		this.startX = startY = targetWidth = targetHeight = 0;
 	}
 	
+	public SimulationRun(double startX, double startY)
+	{
+		this.startX = startX;
+		this.startY = startY;
+	}
+	
 	public double getStartX()
 	{
 		return startX;
