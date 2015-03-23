@@ -45,13 +45,13 @@ public class Screen extends JPanel {
 		BufferedImage img = null;
 		if (cue.equalsIgnoreCase("house")) {
 			try {
-				img = ImageIO.read(new File("house.png"));
+				img = ImageIO.read(new File("Images/house.png"));
 			} catch (IOException ex) {
 				
 			}
 		} else if (cue.equalsIgnoreCase("music"))
 			try {
-				img = ImageIO.read(new File("music.jpg"));
+				img = ImageIO.read(new File("Images/music.jpg"));
 			} catch (IOException ex) {
 
 			}
