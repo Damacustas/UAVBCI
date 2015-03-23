@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 public class Program {
 	/**
@@ -22,6 +25,12 @@ public class Program {
 		if (arguments == null) {
 			return;
 		}
+		
+		if(arguments.hasOption("help"))
+		{
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("DroneSimulator", options);
+		}
 
 		// Create some objects, set some values.
 
@@ -32,13 +41,14 @@ public class Program {
 	{
 		try
 		{
-			Options options = new Options();
+			options = new Options();
 			options.addOption("duration", true, "The duration of a trial in seconds.");
-			options.addOption("deviance-x", true, "The maximum deviance from the x-axis.");
-			options.addOption("deviance-y", true, "The maximum deviance from the y-axis.");
-			options.addOption("initial-width", true, "The initial width of the target.");
-			options.addOption("initial-height", true, "The initial height of the target.");
+			options.addOption("devianceX", true, "The maximum deviance from the x-axis.");
+			options.addOption("devianceXy", true, "The maximum deviance from the y-axis.");
+			options.addOption("initialWidth", true, "The initial width of the target.");
+			options.addOption("initialHeight", true, "The initial height of the target.");
 			options.addOption("velocity", true, "The velocity of the simulated drone.");
+			options.addOption("help", false, "Shows this help");
 			
 			return new GnuParser().parse(options, args);
 		}
@@ -48,4 +58,6 @@ public class Program {
 			return null;
 		}
 	}
+	
+	private static Options options;
 }
