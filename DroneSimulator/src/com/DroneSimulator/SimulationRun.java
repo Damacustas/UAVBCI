@@ -9,6 +9,7 @@ public class SimulationRun
 	{
 		this.startX = startY = targetWidth = targetHeight = 0;
 	}
+	//test
 	
 	public SimulationRun(double startX, double startY)
 	{
