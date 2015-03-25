@@ -35,6 +35,7 @@ public class Program {
 		// Create some objects, set some values.
 
 		// Create and show window.
+		new Simulation();
 	}
 
 	private static CommandLine parseArguments(String[] args)

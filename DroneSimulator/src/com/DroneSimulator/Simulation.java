@@ -1,5 +1,7 @@
 package com.DroneSimulator;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.Random;
 
 public class Simulation
@@ -14,13 +16,35 @@ public class Simulation
 	// These represent the initial dimensions of the target.
 	private double initialTargetHeight, initialTargetWidth;
 	
+	// These represent the percentages of targets hit by the user, depending on the dimension.
+	private double xHits, yHits, totalTrials;
+	
 	// Used to generate the random start positions.
 	private Random random;
+	
+	// Represents the screen.
+	private Screen screen;
+	
+	// Used to find the screensize.
+	private Dimension dim = null;
 	
 	public Simulation()
 	{
 		random = new Random();
-		velocity = duration = devianceX = devianceY = 0;
+		velocity = duration = devianceX = devianceY = xHits = yHits = totalTrials = 0;
+		initialTargetHeight = initialTargetWidth = 100;
+		dim = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		// Create the first simulation run object.
+		SimulationRun run = new SimulationRun();
+		double angle = random.nextDouble()*360;
+		run.setStartX(dim.width/2 + 200*Math.cos(angle));
+		run.setStartY(dim.height/2 + 200*Math.sin(angle));
+		run.setTargetWidth(initialTargetWidth);
+		run.setTargetHeight(initialTargetHeight);
+		
+		// Create the screen, drawing the first simulation run.
+		this.screen = new Screen(run);
 	}
 	
 	public SimulationRun generateNext(SimulationRun last)
@@ -39,32 +63,60 @@ public class Simulation
 		}
 		
 		// TODO: Calculate new width/height here.
+		
+		// Pseudocode because there are no necessary variables/classes for controlling the cursor implemented yet
+//			
+//			totalTrials++
+// 			if lastXHit
+//			xHits++;
+//			
+//			double hitPercentageX = xHits / totalTrials;
+//			if hitPercentageX > grensVoorPerformance + waardeOmChanceTeVerkleinen
+//			{
+//				newWidth = last.getTargetWidth() - someValue; (or last.getTargetWidth() / someValue)
+//			}
+//		else
+//			if hitPercentageX < grensVoorPerformance - waardeOmChanceTeVerkleinen		
+//				newWidth = last.getTargetWidth() + someValue; (or....)
+//			
+//		Same for calculating the new height
+//			
+//			
+//			
+//			
+//			
+//			
+//			
+//			
+//			SOMEWHERE IN A METHOD CALL totalTrials++
+		
+		
 		double newWidth, newHeight;
 		newWidth = lastWidth;
 		newHeight = lastHeight;
 		
 		// Create the new simulation run object.
 		SimulationRun run = new SimulationRun();
-		run.setStartX(computeNewStart(devianceX));
-		run.setStartY(computeNewStart(devianceY));
+		double angle = random.nextDouble();
+		run.setStartX(360*Math.cos(angle));
+		run.setStartY(360*Math.sin(angle));
 		run.setTargetWidth(newWidth);
 		run.setTargetHeight(newHeight);
 		
+		screen.repaint();
 		return run;
 	}
 
 	/**
 	 * Generates a new position within the range [-deviance, deviance]
-	 * @param deviance The maximum deviance in either direction from the 0-axis.
+	 * @param deviance The maximum deviance in either direction from the middle of the screen.
 	 * @return A position in the range [-deviance, deviance]
 	 */
 	private double computeNewStart(double deviance)
 	{
-		double min = -deviance;
-		double max = deviance;
 		
-		double start = min + (max - min) * random.nextDouble();
-		
+		double start = 360 * random.nextDouble();
+		Math.cos(start);
 		return start;
 	}
 
