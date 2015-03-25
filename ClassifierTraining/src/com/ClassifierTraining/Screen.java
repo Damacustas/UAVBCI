@@ -73,21 +73,5 @@ public class Screen extends JPanel {
 
 	}
 
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
-		
-
-		// int height = 100;
-		// int width = 100;
-		// double angle = (int) Math.ceil(Math.random()*360);
-		// g.setColor(Color.RED);
-		// g.fillRect(dim.width/2 - width/2, dim.height/2 - height/2, width,
-		// height);
-		// g.setColor(Color.BLACK);
-		// g.fillOval((int) Math.floor(dim.width/2 + 200*Math.cos(angle)), (int)
-		// Math.floor(dim.height/2 + 200*Math.sin(angle)), 10, 10);
-		//
-	}
 
 }
