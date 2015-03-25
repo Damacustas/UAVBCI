@@ -17,6 +17,9 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class Screen extends JPanel {
 
+	private static final int CROSS_SIZE = 50;
+	private static final int CUE_ICON_HEIGHT = 100;
+	private static final int CUE_ICON_WIDTH = 100;
 	private JFrame frame;
 	private Dimension dim = null;
 	//comments zijn een beetje overrated
@@ -35,10 +38,10 @@ public class Screen extends JPanel {
 	public void drawFixationCross(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(3));
-		g2.drawLine(dim.width / 2 - 20, dim.height / 2, dim.width / 2 + 20,
+		g2.drawLine(dim.width / 2 - CROSS_SIZE / 2, dim.height / 2, dim.width / 2 + CROSS_SIZE / 2,
 				dim.height / 2);
-		g2.drawLine(dim.width / 2, dim.height / 2 - 20, dim.width / 2,
-				dim.height / 2 + 20);
+		g2.drawLine(dim.width / 2, dim.height / 2 - CROSS_SIZE / 2, dim.width / 2,
+				dim.height / 2 + CROSS_SIZE / 2);
 	}
 
 	public void drawCueImage(Graphics g, String cue) {
@@ -56,8 +59,10 @@ public class Screen extends JPanel {
 
 			}
 
-		g.drawImage(img, dim.width / 2 - 50, dim.height / 2 - 500, 100, 100,
+		g.drawImage(img, dim.width / 2 - CUE_ICON_WIDTH / 2, 0, CUE_ICON_WIDTH, CUE_ICON_HEIGHT,
 				Color.white, null);
+		System.out.println(img.getHeight());
+		System.out.println(dim.width);
 
 	}
 
