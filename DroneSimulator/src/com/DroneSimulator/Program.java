@@ -1,18 +1,9 @@
 package com.DroneSimulator;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Dictionary;
-import java.util.Hashtable;
-
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 
 public class Program {
 	/**
@@ -87,8 +78,8 @@ public class Program {
 		sim.setInitialTargetHeight(initialHeight);
 		sim.setInitialTargetWidth(initialWidth);
 
-		// Create and show window.
-		new Simulation();
+
+		Screen scrn = new Screen(sim);
 	}
 
 	private static CommandLine parseArguments(String[] args)

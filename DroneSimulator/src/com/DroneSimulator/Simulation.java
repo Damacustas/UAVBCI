@@ -22,11 +22,10 @@ public class Simulation
 	// Used to generate the random start positions.
 	private Random random;
 	
-	// Represents the screen.
-	private Screen screen;
-	
 	// Used to find the screensize.
 	private Dimension dim = null;
+	
+	private SimulationRun last = null;
 	
 	public Simulation()
 	{
@@ -34,20 +33,20 @@ public class Simulation
 		velocity = duration = devianceX = devianceY = xHits = yHits = totalTrials = 0;
 		initialTargetHeight = initialTargetWidth = 100;
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
-		
-		// Create the first simulation run object.
-		SimulationRun run = new SimulationRun();
-		double angle = random.nextDouble()*360;
-		run.setStartX(dim.width/2 + 200*Math.cos(angle));
-		run.setStartY(dim.height/2 + 200*Math.sin(angle));
-		run.setTargetWidth(initialTargetWidth);
-		run.setTargetHeight(initialTargetHeight);
-		
-		// Create the screen, drawing the first simulation run.
-		this.screen = new Screen(run);
 	}
 	
-	public SimulationRun generateNext(SimulationRun last)
+	private void generateInitial()
+	{		
+		// Create the first simulation run object.
+		last = new SimulationRun();
+		double angle = random.nextDouble()*360;
+		last.setStartX(dim.width/2 + 200*Math.cos(angle));
+		last.setStartY(dim.height/2 + 200*Math.sin(angle));
+		last.setTargetWidth(initialTargetWidth);
+		last.setTargetHeight(initialTargetHeight);
+	}
+	
+	public SimulationRun generateNext()
 	{
 		double lastWidth, lastHeight;
 		
@@ -98,12 +97,10 @@ public class Simulation
 		// Create the new simulation run object.
 		SimulationRun run = new SimulationRun();
 		double angle = random.nextDouble();
-		run.setStartX(360*Math.cos(angle));
-		run.setStartY(360*Math.sin(angle));
+		run.setStartX(computeNewStart(devianceX));
+		run.setStartY(computeNewStart(devianceY));
 		run.setTargetWidth(newWidth);
 		run.setTargetHeight(newHeight);
-		
-		screen.repaint();
 		return run;
 	}
 
@@ -114,9 +111,11 @@ public class Simulation
 	 */
 	private double computeNewStart(double deviance)
 	{
+		double min = -deviance;
+		double max = deviance;
 		
-		double start = 360 * random.nextDouble();
-		Math.cos(start);
+		double start = min + (max - min) * random.nextDouble();
+		
 		return start;
 	}
 
