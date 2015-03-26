@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,7 +32,6 @@ public class Screen extends JPanel {
 		this.cue = cue;
 	}
 
-	// comments zijn een beetje overrated
 	public Screen() {
 		frame = new JFrame();
 		frame.setTitle("UAV BCI Software");
@@ -51,14 +49,11 @@ public class Screen extends JPanel {
 
 		if (state == TRIAL_START) {
 			drawFixationCross(g);
-			//playBeep();
+			// playBeep();
 		} else if (state == TRIAL_CUE) {
 			drawFixationCross(g);
 			drawCueImage(g, cue);
 		}
-
-		// drawCueImage(g, "music");
-
 	}
 
 	private void drawFixationCross(Graphics g) {
@@ -74,17 +69,12 @@ public class Screen extends JPanel {
 		BufferedImage img = null;
 		String filename = "Images/" + cue + ".png";
 		try {
-			
+
 			img = ImageIO.read(new File(filename));
 		} catch (IOException ex) {
-			System.err.println("Something went wrong loading the image (" + filename +")");
+			System.err.println("Something went wrong loading the image ("
+					+ filename + ")");
 		}
-		// } else if (cue.equalsIgnoreCase("music"))
-		// try {
-		// img = ImageIO.read(new File("Images/music.png"));
-		// } catch (IOException ex) {
-		//
-		// }
 
 		g.drawImage(img, dim.width / 2 - CUE_ICON_WIDTH / 2, 0, CUE_ICON_WIDTH,
 				CUE_ICON_HEIGHT, Color.white, null);
@@ -93,11 +83,12 @@ public class Screen extends JPanel {
 
 	public void setState(int state) {
 		this.state = state;
+		//should probably post a bufferevent or sometihng
 		repaint();
 	}
 
 	private void playBeep() {
-		// TODO Auto-generated method stub
+		// TODO Find better beep
 		Toolkit.getDefaultToolkit().beep();
 	}
 
