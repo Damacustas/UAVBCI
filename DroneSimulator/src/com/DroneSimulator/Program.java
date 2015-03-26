@@ -31,8 +31,61 @@ public class Program {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("DroneSimulator", options);
 		}
+		
+		double duration, devianceX, devianceY, initialWidth, initialHeight;
+		
+		if(arguments.hasOption("duration"))
+		{
+			duration = Double.parseDouble(arguments.getOptionValue("duration"));
+		}
+		else
+		{
+			duration = 10.0;
+		}
+		
+		if(arguments.hasOption("devianceX"))
+		{
+			devianceX = Double.parseDouble(arguments.getOptionValue("devianceX"));
+		}
+		else
+		{
+			devianceX = 50; // px.
+		}
+		
+		if(arguments.hasOption("devianceY"))
+		{
+			devianceY = Double.parseDouble(arguments.getOptionValue("devianceY"));
+		}
+		else
+		{
+			devianceY = 50; // px.
+		}
+		
+		if(arguments.hasOption("initialWidth"))
+		{
+			initialWidth = Double.parseDouble(arguments.getOptionValue("initialWidth"));
+		}
+		else
+		{
+			initialWidth = 50; // px.
+		}
+		
+		if(arguments.hasOption("initialHeight"))
+		{
+			initialHeight = Double.parseDouble(arguments.getOptionValue("initialHeight"));
+		}
+		else
+		{
+			initialHeight = 50; //px.
+		}
 
 		// Create some objects, set some values.
+		Simulation sim = new Simulation();
+		sim.setDevianceX(devianceX);
+		sim.setDevianceY(devianceY);
+		sim.setDuration(duration);
+		sim.setInitialTargetHeight(initialHeight);
+		sim.setInitialTargetWidth(initialWidth);
 
 		// Create and show window.
 		new Simulation();
@@ -48,7 +101,6 @@ public class Program {
 			options.addOption("devianceXy", true, "The maximum deviance from the y-axis.");
 			options.addOption("initialWidth", true, "The initial width of the target.");
 			options.addOption("initialHeight", true, "The initial height of the target.");
-			options.addOption("velocity", true, "The velocity of the simulated drone.");
 			options.addOption("help", false, "Shows this help");
 			
 			return new GnuParser().parse(options, args);
