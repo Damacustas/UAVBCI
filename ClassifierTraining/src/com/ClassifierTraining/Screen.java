@@ -20,9 +20,20 @@ public class Screen extends JPanel {
 	private static final int CROSS_SIZE = 50;
 	private static final int CUE_ICON_HEIGHT = 100;
 	private static final int CUE_ICON_WIDTH = 100;
+	public static final int TRIAL_EMPTY = 0;
+	public static final int TRIAL_START = 1;
+	public static final int TRIAL_CUE = 2;
+
 	private JFrame frame;
 	private Dimension dim = null;
-	//comments zijn een beetje overrated
+	private int state = 0;
+	private String cue;
+
+	public void setCue(String cue) {
+		this.cue = cue;
+	}
+
+	// comments zijn een beetje overrated
 	public Screen() {
 		frame = new JFrame();
 		frame.setTitle("UAV BCI Software");
@@ -35,43 +46,59 @@ public class Screen extends JPanel {
 
 	}
 
-	public void drawFixationCross(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setStroke(new BasicStroke(3));
-		g2.drawLine(dim.width / 2 - CROSS_SIZE / 2, dim.height / 2, dim.width / 2 + CROSS_SIZE / 2,
-				dim.height / 2);
-		g2.drawLine(dim.width / 2, dim.height / 2 - CROSS_SIZE / 2, dim.width / 2,
-				dim.height / 2 + CROSS_SIZE / 2);
-	}
-
-	public void drawCueImage(Graphics g, String cue) {
-		BufferedImage img = null;
-		if (cue.equalsIgnoreCase("house")) {
-			try {
-				img = ImageIO.read(new File("Images/house.png"));
-			} catch (IOException ex) {
-				
-			}
-		} else if (cue.equalsIgnoreCase("music"))
-			try {
-				img = ImageIO.read(new File("Images/music.jpg"));
-			} catch (IOException ex) {
-
-			}
-
-		g.drawImage(img, dim.width / 2 - CUE_ICON_WIDTH / 2, 0, CUE_ICON_WIDTH, CUE_ICON_HEIGHT,
-				Color.white, null);
-		System.out.println(img.getHeight());
-		System.out.println(dim.width);
-
-	}
-
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		drawFixationCross(g);
-		drawCueImage(g, "music");
+
+		if (state == TRIAL_START) {
+			drawFixationCross(g);
+			//playBeep();
+		} else if (state == TRIAL_CUE) {
+			drawFixationCross(g);
+			drawCueImage(g, cue);
+		}
+
+		// drawCueImage(g, "music");
 
 	}
 
+	private void drawFixationCross(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(3));
+		g2.drawLine(dim.width / 2 - CROSS_SIZE / 2, dim.height / 2, dim.width
+				/ 2 + CROSS_SIZE / 2, dim.height / 2);
+		g2.drawLine(dim.width / 2, dim.height / 2 - CROSS_SIZE / 2,
+				dim.width / 2, dim.height / 2 + CROSS_SIZE / 2);
+	}
+
+	private void drawCueImage(Graphics g, String cue) {
+		BufferedImage img = null;
+		String filename = "Images/" + cue + ".png";
+		try {
+			
+			img = ImageIO.read(new File(filename));
+		} catch (IOException ex) {
+			System.err.println("Something went wrong loading the image (" + filename +")");
+		}
+		// } else if (cue.equalsIgnoreCase("music"))
+		// try {
+		// img = ImageIO.read(new File("Images/music.png"));
+		// } catch (IOException ex) {
+		//
+		// }
+
+		g.drawImage(img, dim.width / 2 - CUE_ICON_WIDTH / 2, 0, CUE_ICON_WIDTH,
+				CUE_ICON_HEIGHT, Color.white, null);
+
+	}
+
+	public void setState(int state) {
+		this.state = state;
+		repaint();
+	}
+
+	private void playBeep() {
+		// TODO Auto-generated method stub
+		Toolkit.getDefaultToolkit().beep();
+	}
 
 }
