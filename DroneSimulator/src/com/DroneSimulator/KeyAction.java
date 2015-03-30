@@ -20,12 +20,16 @@ public class KeyAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(action.equalsIgnoreCase("Enter")){
-			screen.enterKey();
-		} else if(action.equalsIgnoreCase("Escape")){
-			screen.escapeKey();
+		switch(action){
+		case "Enter": screen.enterKey(); break;
+		case "Escape": screen.escapeKey(); break;
+		case "Up": screen.upKey(); break;
+		case "Down": screen.downKey(); break;
+		case "Right": screen.rightKey(); break;
+		case "Left": screen.leftKey(); break;
 		}
 		
+	
 	}
 
 }
