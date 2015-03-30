@@ -1,18 +1,22 @@
 package com.DroneSimulator;
 
-public class SimulationRun
+/**
+ * The parameters of a trial.
+ * @author Lars Bokkers
+ *
+ */
+public class TrialParameters
 {
 	private double startX, startY;
 	private double targetWidth, targetHeight;
 	
-	public SimulationRun()
+	public TrialParameters()
 	{
 		this.startX = startY = targetWidth = targetHeight = 0;
 		
 	}
-	//test
 	
-	public SimulationRun(double startX, double startY)
+	public TrialParameters(double startX, double startY)
 	{
 		this.startX = startX;
 		this.startY = startY;

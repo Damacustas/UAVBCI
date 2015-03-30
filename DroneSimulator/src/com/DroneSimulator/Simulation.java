@@ -25,7 +25,7 @@ public class Simulation
 	// Used to find the screensize.
 	private Dimension dim = null;
 	
-	private SimulationRun last = null;
+	private TrialParameters last = null;
 	
 	public Simulation()
 	{
@@ -38,7 +38,7 @@ public class Simulation
 	private void generateInitial()
 	{		
 		// Create the first simulation run object.
-		last = new SimulationRun();
+		last = new TrialParameters();
 		double angle = random.nextDouble()*360;
 		last.setStartX(dim.width/2 + 200*Math.cos(angle));
 		last.setStartY(dim.height/2 + 200*Math.sin(angle));
@@ -46,7 +46,7 @@ public class Simulation
 		last.setTargetHeight(initialTargetHeight);
 	}
 	
-	public SimulationRun generateNext()
+	public TrialParameters generateNext()
 	{
 		double lastWidth, lastHeight;
 		
@@ -95,7 +95,7 @@ public class Simulation
 		newHeight = lastHeight;
 		
 		// Create the new simulation run object.
-		SimulationRun run = new SimulationRun();
+		TrialParameters run = new TrialParameters();
 		double angle = random.nextDouble() * 360;
 		run.setStartX(dim.width/2 + 200*Math.cos(angle));
 		run.setStartY(dim.height/2 + 200*Math.sin(angle));
@@ -104,6 +104,17 @@ public class Simulation
 		return run;
 	}
 
+	/**
+	 * Adds the provided SimulationRun to the saved records.
+	 * @param run The run to save.
+	 * @return
+	 */
+	public void reportSimulationResults(TrialResults run)
+	{
+		// TODO: implement.
+	}
+	
+	
 	/**
 	 * Generates a new position within the range [-deviance, deviance]
 	 * @param deviance The maximum deviance in either direction from the middle of the screen.

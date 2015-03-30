@@ -15,7 +15,7 @@ public class Screen extends JPanel{
 	
 	private JFrame frame;
 	private Dimension dim = null;
-	private SimulationRun simRun = null;
+	private TrialParameters trial = null;
 	private Simulation simulation = null;
 	private JProgressBar progressBar = null;
 	
@@ -24,7 +24,7 @@ public class Screen extends JPanel{
 	public Screen(Simulation sim)
 	{
 		this.simulation = sim;
-		this.simRun = this.simulation.generateNext();
+		this.trial = this.simulation.generateNext();
 		
 		frame = new JFrame();
 		frame.setTitle("UAV BCI Software");
@@ -38,8 +38,8 @@ public class Screen extends JPanel{
 		this.progressBar = new JProgressBar();
 		
 		
-		cursorX = (int) simRun.getStartX();
-        cursorY = (int) simRun.getStartY();
+		cursorX = (int) trial.getStartX();
+        cursorY = (int) trial.getStartY();
 		
 		//Initialise Maps for Keybindings.
 		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
@@ -66,26 +66,37 @@ public class Screen extends JPanel{
     {
         super.paint(g);
         if(isHit()){
-        	simRun = this.simulation.generateNext(); //Reset simulation
-        	cursorX = (int) simRun.getStartX();	// Adjust Coordinates
-        	cursorY = (int) simRun.getStartY(); //
+        	submitResult();
+        	
+        	trial = this.simulation.generateNext(); //Reset simulation
+        	cursorX = (int) trial.getStartX();	// Adjust Coordinates
+        	cursorY = (int) trial.getStartY(); //
         }
-		int height = (int) simRun.getTargetHeight();
-        int width = (int) simRun.getTargetWidth();
+		int height = (int) trial.getTargetHeight();
+        int width = (int) trial.getTargetWidth();
         
         g.setColor(Color.RED);
 		g.fillRect(dim.width/2 - width/2, dim.height/2 - height/2, width, height);
 		g.setColor(Color.BLACK);
 		g.fillOval(cursorX, cursorY, 10, 10);
     }
+	
+	private void submitResult()
+	{
+		TrialResults results = new TrialResults();
+		results.setHit(isHit());
+		results.setTimeRequired(1337); // TODO: change
+		results.setSimulationDetails(trial);
+		simulation.reportSimulationResults(results);
+	}
 
 	/**
 	 * Handles enter key presses
 	 */
 	public void enterKey(){
-		this.simRun = this.simulation.generateNext(); //Reset simulation
-		cursorX = (int) simRun.getStartX();	// Adjust Coordinates
-    	cursorY = (int) simRun.getStartY(); //
+		this.trial = this.simulation.generateNext(); //Reset simulation
+		cursorX = (int) trial.getStartX();	// Adjust Coordinates
+    	cursorY = (int) trial.getStartY(); //
 		this.repaint();
 	}
 	
@@ -137,10 +148,10 @@ public class Screen extends JPanel{
 	 * @return true if hit, otherwise false.
 	 */
 	public boolean isHit(){
-		return 	   (cursorY) <= (dim.getHeight()/2 + simRun.getTargetHeight()/2)  
-				&& (cursorY) >= (dim.getHeight()/2 - simRun.getTargetHeight()/2)
-				&& (cursorX) <= (dim.getWidth()/2 + simRun.getTargetWidth()/2)
-				&& (cursorX) >= (dim.getWidth()/2 - simRun.getTargetWidth()/2);
+		return 	   (cursorY) <= (dim.getHeight()/2 + trial.getTargetHeight()/2)  
+				&& (cursorY) >= (dim.getHeight()/2 - trial.getTargetHeight()/2)
+				&& (cursorX) <= (dim.getWidth()/2 + trial.getTargetWidth()/2)
+				&& (cursorX) >= (dim.getWidth()/2 - trial.getTargetWidth()/2);
 	}
 }
 
