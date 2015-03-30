@@ -66,9 +66,9 @@ public class Screen extends JPanel{
     {
         super.paint(g);
         if(isHit()){
-        	simRun = this.simulation.generateNext();
-        	cursorX = (int) simRun.getStartX();
-        	cursorY = (int) simRun.getStartY();
+        	simRun = this.simulation.generateNext(); //Reset simulation
+        	cursorX = (int) simRun.getStartX();	// Adjust Coordinates
+        	cursorY = (int) simRun.getStartY(); //
         }
 		int height = (int) simRun.getTargetHeight();
         int width = (int) simRun.getTargetWidth();
@@ -83,9 +83,9 @@ public class Screen extends JPanel{
 	 * Handles enter key presses
 	 */
 	public void enterKey(){
-		this.simRun = this.simulation.generateNext();
-		cursorX = (int) simRun.getStartX();
-    	cursorY = (int) simRun.getStartY();
+		this.simRun = this.simulation.generateNext(); //Reset simulation
+		cursorX = (int) simRun.getStartX();	// Adjust Coordinates
+    	cursorY = (int) simRun.getStartY(); //
 		this.repaint();
 	}
 	
