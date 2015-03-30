@@ -1,3 +1,4 @@
+
 package com.DroneSimulator;
 
 import java.awt.Color;
@@ -5,12 +6,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+
 import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
-public class Screen extends JPanel implements KeyListener{
+public class Screen extends JPanel{
 	
 	private JFrame frame;
 	private Dimension dim = null;
@@ -31,7 +32,17 @@ public class Screen extends JPanel implements KeyListener{
 		frame.setVisible(true);	
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		
-		this.addKeyListener(this);
+		
+		//Initialise Maps for Keybindings.
+		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap am = this.getActionMap();
+		
+		//Keybindings
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "Enter");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "Escape");
+		am.put("Escape", new KeyAction("Escape", this));
+		am.put("Enter", new KeyAction("Enter", this));
+		
 	}
 	
 	@Override
@@ -49,24 +60,22 @@ public class Screen extends JPanel implements KeyListener{
 		g.fillOval(startX, startY, 10, 10);
     }
 
-	@Override
-	public void keyReleased(KeyEvent arg0) {}
-
-	@Override
-	public void keyPressed(KeyEvent arg0)
-	{
-		if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
-		{
-			this.simRun = this.simulation.generateNext();
-			this.repaint();
-		}
-		else if(arg0.getKeyCode() == KeyEvent.VK_ESCAPE)
-		{
-			this.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-		}
+	/**
+	 * Handles enter key presses
+	 */
+	public void enterKey(){
+		this.simRun = this.simulation.generateNext();
+		this.repaint();
 	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {}
+	
+	/**
+	 * Handles escape key presses
+	 */
+	public void escapeKey(){
+		this.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+	}
+	
 }
+	
+
 

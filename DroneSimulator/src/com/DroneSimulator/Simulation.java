@@ -96,9 +96,9 @@ public class Simulation
 		
 		// Create the new simulation run object.
 		SimulationRun run = new SimulationRun();
-		double angle = random.nextDouble();
-		run.setStartX(computeNewStart(devianceX));
-		run.setStartY(computeNewStart(devianceY));
+		double angle = random.nextDouble() * 360;
+		run.setStartX(dim.width/2 + 200*Math.cos(angle));
+		run.setStartY(dim.height/2 + 200*Math.sin(angle));
 		run.setTargetWidth(newWidth);
 		run.setTargetHeight(newHeight);
 		return run;
