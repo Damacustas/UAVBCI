@@ -16,8 +16,8 @@ public class Simulation
 	// These represent the initial dimensions of the target.
 	private double initialTargetHeight, initialTargetWidth;
 	
-	// These represent the percentages of targets hit by the user, depending on the dimension.
-	private double xHits, yHits, totalTrials;
+	//// These represent the percentages of targets hit by the user, depending on the dimension.
+	//private double xHits, yHits, totalTrials;
 	
 	// Used to generate the random start positions.
 	private Random random;
@@ -30,11 +30,13 @@ public class Simulation
 	public Simulation()
 	{
 		random = new Random();
-		velocity = duration = devianceX = devianceY = xHits = yHits = totalTrials = 0;
+		velocity = duration = devianceX = devianceY = 0;
+		//xHits = yHits = totalTrials = 0;
 		initialTargetHeight = initialTargetWidth = 100;
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 	}
 	
+	/**
 	private void generateInitial()
 	{		
 		// Create the first simulation run object.
@@ -45,6 +47,7 @@ public class Simulation
 		last.setTargetWidth(initialTargetWidth);
 		last.setTargetHeight(initialTargetHeight);
 	}
+	*/
 	
 	public TrialParameters generateNext()
 	{
@@ -112,25 +115,9 @@ public class Simulation
 	public void reportSimulationResults(TrialResults run)
 	{
 		// TODO: implement.
-	}
-	
-	
-	/**
-	 * Generates a new position within the range [-deviance, deviance]
-	 * @param deviance The maximum deviance in either direction from the middle of the screen.
-	 * @return A position in the range [-deviance, deviance]
-	 */
-	private double computeNewStart(double deviance)
-	{
-		double min = -deviance;
-		double max = deviance;
-		
-		double start = min + (max - min) * random.nextDouble();
-		
-		return start;
-	}
-
-	
+		// My idea was to save all the data to a json file.
+		// Alternatively, we can save it to a csv (comma seperated value) file.
+	}	
 	
 	public double getDevianceY()
 	{

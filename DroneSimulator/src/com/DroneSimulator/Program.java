@@ -80,6 +80,7 @@ public class Program {
 
 
 		Screen scrn = new Screen(sim);
+		scrn.setVisible(true);
 	}
 
 	private static CommandLine parseArguments(String[] args)

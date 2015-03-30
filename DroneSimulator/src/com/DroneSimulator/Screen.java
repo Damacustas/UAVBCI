@@ -11,21 +11,42 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+/**
+ * Represents the visual aspect of the simulation.
+ * @author Lars Bokkers, Joost Coenen, Jouke Geerts, Robert Jansen
+ *
+ */
 public class Screen extends JPanel{
 	
+	// The frame that contains the display.
 	private JFrame frame;
-	private Dimension dim = null;
-	private TrialParameters trial = null;
-	private Simulation simulation = null;
 	private JProgressBar progressBar = null;
 	
+	// The dimensions of the whole desktop.
+	private Dimension dim = null;
+	
+	// The parameters for the current trial.
+	private TrialParameters currentTrial = null;
+	
+	// The Simulation which the screen is running.
+	private Simulation simulation = null;
+	
+	// The location of the cursor.
 	private int cursorX, cursorY;
 	
+	/**
+	 * Initializes the screen with the given simulation.
+	 * @param sim The simulation to run in the screen.
+	 */
 	public Screen(Simulation sim)
 	{
+		// Initialize fields
 		this.simulation = sim;
-		this.trial = this.simulation.generateNext();
+		this.currentTrial = this.simulation.generateNext();
+		cursorX = (int) currentTrial.getStartX();
+        cursorY = (int) currentTrial.getStartY();
 		
+		// Initialize display frame.
 		frame = new JFrame();
 		frame.setTitle("UAV BCI Software");
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -35,11 +56,8 @@ public class Screen extends JPanel{
 		frame.setVisible(true);	
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		
+		// Initialize progress bar.
 		this.progressBar = new JProgressBar();
-		
-		
-		cursorX = (int) trial.getStartX();
-        cursorY = (int) trial.getStartY();
 		
 		//Initialise Maps for Keybindings.
 		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
@@ -68,12 +86,12 @@ public class Screen extends JPanel{
         if(isHit()){
         	submitResult();
         	
-        	trial = this.simulation.generateNext(); //Reset simulation
-        	cursorX = (int) trial.getStartX();	// Adjust Coordinates
-        	cursorY = (int) trial.getStartY(); //
+        	currentTrial = this.simulation.generateNext(); //Reset simulation
+        	cursorX = (int) currentTrial.getStartX();	// Adjust Coordinates
+        	cursorY = (int) currentTrial.getStartY(); //
         }
-		int height = (int) trial.getTargetHeight();
-        int width = (int) trial.getTargetWidth();
+		int height = (int) currentTrial.getTargetHeight();
+        int width = (int) currentTrial.getTargetWidth();
         
         g.setColor(Color.RED);
 		g.fillRect(dim.width/2 - width/2, dim.height/2 - height/2, width, height);
@@ -81,12 +99,15 @@ public class Screen extends JPanel{
 		g.fillOval(cursorX, cursorY, 10, 10);
     }
 	
+	/**
+	 * Submits the simulation results to the Simulation.
+	 */
 	private void submitResult()
 	{
 		TrialResults results = new TrialResults();
 		results.setHit(isHit());
 		results.setTimeRequired(1337); // TODO: change
-		results.setSimulationDetails(trial);
+		results.setSimulationDetails(currentTrial);
 		simulation.reportSimulationResults(results);
 	}
 
@@ -94,9 +115,9 @@ public class Screen extends JPanel{
 	 * Handles enter key presses
 	 */
 	public void enterKey(){
-		this.trial = this.simulation.generateNext(); //Reset simulation
-		cursorX = (int) trial.getStartX();	// Adjust Coordinates
-    	cursorY = (int) trial.getStartY(); //
+		this.currentTrial = this.simulation.generateNext(); //Reset simulation
+		cursorX = (int) currentTrial.getStartX();	// Adjust Coordinates
+    	cursorY = (int) currentTrial.getStartY(); //
 		this.repaint();
 	}
 	
@@ -148,10 +169,10 @@ public class Screen extends JPanel{
 	 * @return true if hit, otherwise false.
 	 */
 	public boolean isHit(){
-		return 	   (cursorY) <= (dim.getHeight()/2 + trial.getTargetHeight()/2)  
-				&& (cursorY) >= (dim.getHeight()/2 - trial.getTargetHeight()/2)
-				&& (cursorX) <= (dim.getWidth()/2 + trial.getTargetWidth()/2)
-				&& (cursorX) >= (dim.getWidth()/2 - trial.getTargetWidth()/2);
+		return 	   (cursorY) <= (dim.getHeight()/2 + currentTrial.getTargetHeight()/2)  
+				&& (cursorY) >= (dim.getHeight()/2 - currentTrial.getTargetHeight()/2)
+				&& (cursorX) <= (dim.getWidth()/2 + currentTrial.getTargetWidth()/2)
+				&& (cursorX) >= (dim.getWidth()/2 - currentTrial.getTargetWidth()/2);
 	}
 }
 
