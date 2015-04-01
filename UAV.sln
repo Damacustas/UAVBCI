@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.GUI", "UAV.GUI\UAV.GUI.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Prediction", "UAV.Prediction\UAV.Prediction.csproj", "{8513D936-7124-40B8-AF04-D7C1361525CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Simulation", "UAV.Simulation\UAV.Simulation.csproj", "{AAC16C2B-4F59-462C-8926-0F5783E60032}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{8513D936-7124-40B8-AF04-D7C1361525CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8513D936-7124-40B8-AF04-D7C1361525CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8513D936-7124-40B8-AF04-D7C1361525CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAC16C2B-4F59-462C-8926-0F5783E60032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAC16C2B-4F59-462C-8926-0F5783E60032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAC16C2B-4F59-462C-8926-0F5783E60032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAC16C2B-4F59-462C-8926-0F5783E60032}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
