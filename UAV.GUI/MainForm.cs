@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using AR.Drone.Data;
 using System.Drawing;
 using UAV.Joystick;
+using UAV;
 
 namespace UAV.GUI
 {

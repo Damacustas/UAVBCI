@@ -32,17 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AR.Drone.Client">
-      <HintPath>..\AR.Drone\AR.Drone.Client\bin\Debug\AR.Drone.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="AR.Drone.Data">
-      <HintPath>..\AR.Drone\AR.Drone.Client\bin\Debug\AR.Drone.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="AR.Drone.Infrastructure">
-      <HintPath>..\AR.Drone\AR.Drone.Client\bin\Debug\AR.Drone.Infrastructure.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="AR.Drone.Client">
+      <HintPath>..\Assemblies\AR.Drone.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="AR.Drone.Data">
+      <HintPath>..\Assemblies\AR.Drone.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="AR.Drone.Infrastructure">
+      <HintPath>..\Assemblies\AR.Drone.Infrastructure.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompositeFlightController.cs" />

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 VisualStudioVersion = 14.0.22310.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV", "UAV\UAV.csproj", "{74D64AFF-250B-4EA3-943B-8E38AAFF3CFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Control", "UAV.Control\UAV.Control.csproj", "{74D64AFF-250B-4EA3-943B-8E38AAFF3CFB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Joystick", "UAV.Joystick\UAV.Joystick.csproj", "{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Prediction", "UAV.Prediction\UAV.Prediction.csproj", "{8513D936-7124-40B8-AF04-D7C1361525CE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Simulation", "UAV.Simulation\UAV.Simulation.csproj", "{AAC16C2B-4F59-462C-8926-0F5783E60032}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAV.Controllers", "UAV.Controllers\UAV.Controllers.csproj", "{C810BC90-7669-430C-A330-C6DB89BCD371}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{AAC16C2B-4F59-462C-8926-0F5783E60032}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAC16C2B-4F59-462C-8926-0F5783E60032}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAC16C2B-4F59-462C-8926-0F5783E60032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C810BC90-7669-430C-A330-C6DB89BCD371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C810BC90-7669-430C-A330-C6DB89BCD371}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C810BC90-7669-430C-A330-C6DB89BCD371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C810BC90-7669-430C-A330-C6DB89BCD371}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
