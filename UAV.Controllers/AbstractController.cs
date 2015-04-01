@@ -35,11 +35,11 @@ namespace UAV.Controllers
 			State = ControllerState.Control;
 		}
 
-		protected void SendFlightCommand(float pitch, float roll, float yaw, float gaz)
+		protected void SendFlightCommand(float roll, float gaz)
 		{
 			if (State == ControllerState.Control)
 			{
-				Drone.Progress (AR.Drone.Client.Command.FlightMode.Progressive, roll, pitch, yaw, gaz);
+				Drone.Progress (AR.Drone.Client.Command.FlightMode.Progressive, roll, 0.0f, 0.0f, gaz);
 			}
 		}
 

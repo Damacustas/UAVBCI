@@ -30,6 +30,12 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AbstractController.cs" />
+    <Compile Include="ICommandProvider.cs" />
+    <Compile Include="CommandEventArgs.cs" />
+    <Compile Include="PasstroughController.cs" />
+    <Compile Include="CombinationController.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="BCIProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AR.Drone.Client">
@@ -41,6 +47,7 @@
     <Reference Include="AR.Drone.Infrastructure">
       <HintPath>..\Assemblies\AR.Drone.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UAV.Prediction\UAV.Prediction.csproj">
