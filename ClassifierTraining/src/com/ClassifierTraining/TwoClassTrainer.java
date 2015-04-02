@@ -60,7 +60,7 @@ public class TwoClassTrainer implements Trainer {
 		}
 	}
 
-	private void startCountdown(int length) {
+	public void startCountdown(int length) {
 		int timeleft = length;
 		screen.showCountdown();
 		while (timeleft >=0)
