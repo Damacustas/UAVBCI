@@ -40,9 +40,20 @@ namespace UAV.Simulation
 		/// </summary>
 		/// <returns><c>true</c> if the given location is at the current target; otherwise, <c>false</c>.</returns>
 		/// <param name="l">L.</param>
-		public bool IsPointAtTarget(Vector2D location)
+		public bool AtTarget
 		{
-			return CurrentTarget.Distance(location) < MaxTargetDeviation;
+			get
+			{
+				return CurrentTarget.Distance(CurrentTarget) < MaxTargetDeviation;
+			}
+		}
+
+		public bool IsFinished
+		{
+			get
+			{
+				return AtTarget && Targets.IndexOf(CurrentTarget) == Targets.Count - 1;
+			}
 		}
 	}
 }

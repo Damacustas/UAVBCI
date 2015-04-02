@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E81D80AD-5FD6-47D4-ACE0-BF0CA58F7E2D}</ProjectGuid>
+    <ProjectGuid>{DDDD04FD-28DC-4B39-8449-9FD5A4CD34DB}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>UAV.Common</RootNamespace>
     <AssemblyName>UAV.Common</AssemblyName>
@@ -28,4 +28,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="Vector2D.cs" />
+  </ItemGroup>
 </Project>
