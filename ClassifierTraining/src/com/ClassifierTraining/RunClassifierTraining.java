@@ -1,6 +1,6 @@
 package com.ClassifierTraining;
 
-public class Run {
+public class RunClassifierTraining {
 
 	public static void main(String[] args) {
 
