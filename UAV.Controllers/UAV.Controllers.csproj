@@ -54,5 +54,9 @@
       <Project>{8513D936-7124-40B8-AF04-D7C1361525CE}</Project>
       <Name>UAV.Prediction</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UAV.Common\UAV.Common.csproj">
+      <Project>{DDDD04FD-28DC-4B39-8449-9FD5A4CD34DB}</Project>
+      <Name>UAV.Common</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

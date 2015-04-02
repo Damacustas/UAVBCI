@@ -1,11 +1,12 @@
 ﻿using System;
+using UAV;
 
 namespace UAV.Controllers
 {
 	public interface ICommandProvider
 	{
 		event EventHandler<CommandEventArgs> CommandReceived;
-		object LastCommand { get; }
+		Vector2D LastCommand { get; }
 	}
 }
 

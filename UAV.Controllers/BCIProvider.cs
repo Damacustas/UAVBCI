@@ -12,7 +12,7 @@ namespace UAV.Controllers
 
         public event EventHandler<CommandEventArgs> CommandReceived;
 
-        public object LastCommand { get; private set; }
+        public Vector2D LastCommand { get; private set; }
 
         #endregion
     }

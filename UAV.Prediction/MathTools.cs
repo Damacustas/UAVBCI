@@ -6,7 +6,7 @@ namespace UAV.Prediction
 {
 	public static class MathTools
 	{
-		public static ICollection<double> Mul(ICollection<double> a, ICollection<double> b)
+        public static IReadOnlyCollection<double> Mul(IReadOnlyCollection<double> a, IReadOnlyCollection<double> b)
 		{
 			List<double> s = new List<double>();
 
@@ -33,7 +33,7 @@ namespace UAV.Prediction
 			return l.Aggregate((a,b) => a + b);
 		}
 
-		public static ICollection<double> Pow(IEnumerable<double> a, double power)
+		public static IReadOnlyCollection<double> Pow(IEnumerable<double> a, double power)
 		{
 			return (from x in a
 			        select Math.Pow(x, power)).ToList();

@@ -4,7 +4,7 @@ namespace UAV.Controllers
 {
 	public class CommandEventArgs : EventArgs
 	{
-		public object Command;
+        public Vector2D Command;
 	}
 
 }

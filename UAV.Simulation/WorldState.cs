@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using UAV.Common;
 
 namespace UAV.Simulation
 {
 	public class WorldState
 	{
 		/// <summary>
-		/// The current location of the drone.
-		/// </summary>
-		/// <value>The drone location.</value>
-		public Vector2D DroneLocation { get; set; }
-
-		/// <summary>
 		/// The list of targets the drone is to reach (in order).
 		/// </summary>
 		/// <value>The targets.</value>
 		public List<Vector2D> Targets { get; set; }
+
+        public List<Tuple<double, Vector2D>> LocationHistory { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the maximal target deviation.
@@ -35,11 +32,23 @@ namespace UAV.Simulation
 			}
 		}
 
+        public Vector2D DroneLocation
+        {
+            get
+            {
+                return LocationHistory[LocationHistory.Count - 1].Item2;
+            }
+        }
+
+        public void MoveDrone(Vector2D location, double time)
+        {
+            LocationHistory.Add(new Tuple<double, Vector2D>(time, location));
+        }
+
 		/// <summary>
 		/// Determines whether the given given location is at the target.
 		/// </summary>
 		/// <returns><c>true</c> if the given location is at the current target; otherwise, <c>false</c>.</returns>
-		/// <param name="l">L.</param>
 		public bool AtTarget
 		{
 			get

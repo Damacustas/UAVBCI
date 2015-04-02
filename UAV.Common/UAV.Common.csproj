@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{DDDD04FD-28DC-4B39-8449-9FD5A4CD34DB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>UAV.Common</RootNamespace>
     <AssemblyName>UAV.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -30,5 +30,8 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Vector2D.cs" />
+    <Compile Include="MiscExtensions.cs" />
+    <Compile Include="Range.cs" />
+    <Compile Include="RangeEnumerator.cs" />
   </ItemGroup>
 </Project>

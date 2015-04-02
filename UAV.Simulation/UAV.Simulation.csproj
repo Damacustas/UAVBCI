@@ -38,6 +38,9 @@
     <Compile Include="AbstractDirectionModifier.cs" />
     <Compile Include="NoiseAdder.cs" />
     <Compile Include="Simulation.cs" />
+    <Compile Include="IIntelligence.cs" />
+    <Compile Include="NoIngelligence.cs" />
+    <Compile Include="FitIntelligence.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

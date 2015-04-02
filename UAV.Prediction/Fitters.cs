@@ -13,7 +13,7 @@ namespace UAV.Prediction
         /// <param name="ys">The y-values (y-axis)</param>
         /// <param name="degree">The degree of the polynomial function to create.</param>
         /// <returns>A delegate accepting and t value and returning a y value. f: double -> double</returns>
-        public static Func<double, double> GeneratePolynomialFit(ICollection<double> ts, ICollection<double> ys, int degree)
+        public static Func<double, double> GeneratePolynomialFit(IReadOnlyCollection<double> ts, IReadOnlyCollection<double> ys, int degree)
         {
             Matrix<double> coefficients = FitPolynomialCoefficients(ts, ys, degree);
             return GeneratePolynomialFit(coefficients);
@@ -46,7 +46,7 @@ namespace UAV.Prediction
         /// <param name="ys">The y-values (y-axis).</param>
         /// <param name="n">The degree of the polynomial to fit.</param>
         /// <returns>A (n+1, 1) matrix of coefficients, sorted from lowest degree to highest degree.</returns>
-        public static Matrix<double> FitPolynomialCoefficients(ICollection<double> ts, ICollection<double> ys, int n)
+        public static Matrix<double> FitPolynomialCoefficients(IReadOnlyCollection<double> ts, IReadOnlyCollection<double> ys, int n)
         {
             if (n <= 0)
                 throw new ArgumentException("degree needs to be 1 or higher.", "degree");
@@ -84,7 +84,8 @@ namespace UAV.Prediction
             for (int i = 0; i < m; i++)
             {
                 // B_i = \sum_{j=1}^n y_j \cdot t_j^i
-                B.At(i, 0, MathTools.Sum(MathTools.Mul(ys, MathTools.Pow(ts, i))));
+                var temp = MathTools.Pow(ts, i);
+                B.At(i, 0, MathTools.Sum(MathTools.Mul(ys, temp)));
             }
 
             var InvA = A.Inverse();
@@ -94,13 +95,13 @@ namespace UAV.Prediction
         }
 
         [Obsolete]
-		public static Matrix<double> FitQuadraticCoefficients(ICollection<double> t, ICollection<double> y)
+        public static Matrix<double> FitQuadraticCoefficients(IReadOnlyCollection<double> t, IReadOnlyCollection<double> y)
 		{
             return FitPolynomialCoefficients(t, y, 2);
         }
 
         [Obsolete]
-        public static Matrix<double> FitLinearLinear(ICollection<double> x, ICollection<double> y)
+        public static Matrix<double> FitLinearLinear(IReadOnlyCollection<double> x, IReadOnlyCollection<double> y)
         {
             return FitPolynomialCoefficients(x, y, 1);
         }

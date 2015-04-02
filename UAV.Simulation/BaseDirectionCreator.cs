@@ -1,4 +1,5 @@
 ﻿using System;
+using UAV.Common;
 
 namespace UAV.Simulation
 {

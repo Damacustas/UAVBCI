@@ -1,5 +1,7 @@
 ﻿using System;
 
+using UAV.Common;
+
 namespace UAV.Simulation
 {
 	public class NoiseAdder : AbstractDirectionModifier

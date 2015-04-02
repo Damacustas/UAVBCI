@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UAV.Simulation
+namespace UAV.Common
 {
 	public class Vector2D
 	{
