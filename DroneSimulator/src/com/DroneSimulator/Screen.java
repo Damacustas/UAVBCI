@@ -3,10 +3,14 @@ package com.DroneSimulator;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
 import java.awt.event.WindowEvent;
 
 import javax.swing.*;
@@ -34,6 +38,9 @@ public class Screen extends JPanel{
 	// The location of the cursor.
 	private int cursorX, cursorY;
 	
+	// The timer for the progressbar
+	private Timer timer;
+	
 	/**
 	 * Initializes the screen with the given simulation.
 	 * @param sim The simulation to run in the screen.
@@ -51,13 +58,53 @@ public class Screen extends JPanel{
 		frame.setTitle("UAV BCI Software");
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLayout(new GridBagLayout());
 		this.setBackground(Color.WHITE);
 		frame.add(this);
 		frame.setVisible(true);	
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		
-		// Initialize progress bar.
-		this.progressBar = new JProgressBar();
+		// Initialize progress bar.		
+		progressBar = new JProgressBar(0,5000);
+		progressBar.setValue(0);
+		progressBar.setSize(100, 15);
+//		progressBar.setValue(1);
+//		progressBar.setStringPainted(true);
+		progressBar.setVisible(true);
+		progressBar.setBackground(Color.BLACK);
+		this.add(progressBar);
+		
+		//Initialize timer for progress bar
+		timer = new Timer(50, new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int value = progressBar.getValue() + 50;
+				if (value > progressBar.getMaximum())
+				{
+					//time over! logic here
+					value = 0;
+					timer.stop();
+					
+		        	submitResult();		        	
+		        	currentTrial = simulation.generateNext(); //Reset simulation
+		        	cursorX = (int) currentTrial.getStartX();	// Adjust Coordinates
+		        	cursorY = (int) currentTrial.getStartY(); //
+		        	timer.restart();
+		        	repaint();
+		        	
+		        	
+				}					
+				progressBar.setValue(value);
+			}			
+		});
+		
+		timer.start();
+
+			
+		
+
+		
 		
 		//Initialise Maps for Keybindings.
 		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
@@ -83,13 +130,15 @@ public class Screen extends JPanel{
 	public void paint(Graphics g) 
     {
         super.paint(g);
-        if(isHit()){
-        	submitResult();
-        	
-        	currentTrial = this.simulation.generateNext(); //Reset simulation
-        	cursorX = (int) currentTrial.getStartX();	// Adjust Coordinates
-        	cursorY = (int) currentTrial.getStartY(); //
-        }
+        //Robert: moet ie resetten zodra ie geraakt wordt? Beter de 5 seeconden afwachten?
+        //update: code verplaatst naar actionPerformed van de Timer (listener daarvan :)).
+//        if(isHit() ){
+//        	submitResult();
+//        	
+//        	currentTrial = this.simulation.generateNext(); //Reset simulation
+//        	cursorX = (int) currentTrial.getStartX();	// Adjust Coordinates
+//        	cursorY = (int) currentTrial.getStartY(); //
+//        }
 		int height = (int) currentTrial.getTargetHeight();
         int width = (int) currentTrial.getTargetWidth();
         
