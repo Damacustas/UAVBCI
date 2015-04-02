@@ -23,7 +23,7 @@ namespace UAV.Simulation
         /// The input commandstream generator.
         /// </summary>
         /// <value>The input generator.</value>
-        public AbstractDirectionModifier InputGenerator { get; set; }
+        public InputGenerator InputGenerator { get; set; }
 
         /// <summary>
         /// The Intelligence aiding the input.
@@ -37,6 +37,10 @@ namespace UAV.Simulation
         /// <value>The intelligence factor.</value>
         public double IntelligenceFactor { get; set; }
 
+        /// <summary>
+        /// Sets the starting location of the drone.
+        /// </summary>
+        /// <value>The start location.</value>
         public Vector2D StartLocation
         {
             set

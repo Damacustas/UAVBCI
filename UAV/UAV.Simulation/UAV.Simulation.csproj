@@ -34,13 +34,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldState.cs" />
-    <Compile Include="BaseDirectionCreator.cs" />
-    <Compile Include="AbstractDirectionModifier.cs" />
-    <Compile Include="NoiseAdder.cs" />
     <Compile Include="Simulation.cs" />
     <Compile Include="IIntelligence.cs" />
     <Compile Include="NoIngelligence.cs" />
     <Compile Include="FitIntelligence.cs" />
+    <Compile Include="InputGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
