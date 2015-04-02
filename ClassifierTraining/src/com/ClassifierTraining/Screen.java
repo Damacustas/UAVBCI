@@ -10,12 +10,15 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+
 
 @SuppressWarnings("serial")
 public class Screen extends JPanel {
@@ -55,8 +58,17 @@ public class Screen extends JPanel {
 		countdownLabel.setLocation(dim.width / 2, dim.height / 2);
 		this.add(countdownLabel);
 
+		
+		//Initialise Maps for Keybindings.
+		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap am = this.getActionMap();
+		
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Space");
+		am.put("Space", new KeyAction("Space", this));
 	}
 
+	
+	
 	public void setCue(String cue) {
 		this.cue = cue;
 	}
@@ -76,7 +88,6 @@ public class Screen extends JPanel {
 	}
 
 	private void drawCountdown(Graphics g) {
-
 		// TODO Auto-generated method stub
 		countdownLabel.setText(Integer.toString(breakTimeLeft));
 	}
@@ -130,5 +141,32 @@ public class Screen extends JPanel {
 	public void setBreakTimeLeft(int breakTimeLeft) {
 		this.breakTimeLeft = breakTimeLeft;
 	}
-
+	
+	public void startCountdown(int length) {
+		int timeleft = length;
+		showCountdown();
+		while (timeleft >=0)
+		{
+			setBreakTimeLeft(timeleft--);	
+			repaint();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		hideCountdown();	
+	}
+	
+	/**
+	 * Handles spacebar presses
+	 */
+	public void spaceKey(){
+		if(state==TRIAL_BREAK){
+		
+		startCountdown(2);
+		
+		}
+	}
 }
