@@ -18,6 +18,7 @@ public class TwoClassTrainer implements Trainer {
 		cues = addCues();
 		this.screen = screen;
 
+		
 	}
 
 	@Override
@@ -49,32 +50,15 @@ public class TwoClassTrainer implements Trainer {
 				System.out.println(" Breaktime! (30 seconds)");
 					//screen.setBreakTimeLeft(30);
 					screen.setState(screen.TRIAL_BREAK);					
-					startCountdown(30);
+					screen.startCountdown(30);
 
 				// small break every 5
 			} else if (trialcounter % shortBreakTrials == 0) {
 				System.out.println(" Breaktime! (5 seconds)");
 				screen.setState(screen.TRIAL_BREAK);					
-				startCountdown(5);
+				screen.startCountdown(5);
 			}
 		}
-	}
-
-	public void startCountdown(int length) {
-		int timeleft = length;
-		screen.showCountdown();
-		while (timeleft >=0)
-		{
-			screen.setBreakTimeLeft(timeleft--);	
-			screen.repaint();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		screen.hideCountdown();	
 	}
 
 	/**
