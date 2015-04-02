@@ -7,8 +7,10 @@ import java.util.Random;
 
 public class TwoClassTrainer implements Trainer {
 
+	private int shortBreakTrials = 5;
+	private int longBreakTrials = 40;
 	private String[] classes = { "music", "house" };
-	private static final int TOTAL_TRIALS = 80;
+	private  int totalTrials = 80;
 	private ArrayList<String> cues = new ArrayList<String>();
 	private Screen screen;
 
@@ -43,23 +45,37 @@ public class TwoClassTrainer implements Trainer {
 			}
 
 			// break every 40 trials (30s)
-			if (++trialcounter % 40 == 0) {
+			if (++trialcounter % longBreakTrials == 0) {
 				System.out.println(" Breaktime! (30 seconds)");
-				try {
-					Thread.sleep(30000);
-				} catch (InterruptedException e) {
-				}
+					//screen.setBreakTimeLeft(30);
+					screen.setState(screen.TRIAL_BREAK);					
+					startCountdown(30);
+
 				// small break every 5
-			} else if (trialcounter % 5 == 0) {
+			} else if (trialcounter % shortBreakTrials == 0) {
 				System.out.println(" Breaktime! (5 seconds)");
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
+				screen.setState(screen.TRIAL_BREAK);					
+				startCountdown(5);
 			}
 		}
 	}
-	
+
+	private void startCountdown(int length) {
+		int timeleft = length;
+		screen.showCountdown();
+		while (timeleft >=0)
+		{
+			screen.setBreakTimeLeft(timeleft--);	
+			screen.repaint();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		screen.hideCountdown();	
+	}
 
 	/**
 	 * 
@@ -73,14 +89,23 @@ public class TwoClassTrainer implements Trainer {
 	private ArrayList<String> addCues() {
 		ArrayList<String> cues = new ArrayList<String>();
 
-		for (int i = 0; i < TOTAL_TRIALS; i++) {
+		for (int i = 0; i < totalTrials; i++) {
 			cues.add(classes[i % classes.length]);
 		}
 
 		Collections.shuffle(cues);
 		return cues;
 	}
-	
-	
 
+	public void setShortBreakTrials(int shortBreakTrials) {
+		this.shortBreakTrials = shortBreakTrials;
+	}
+
+	public void setLongBreakTrials(int longBreakTrials) {
+		this.longBreakTrials = longBreakTrials;
+	}
+
+	public void setTotalTrials(int totalTrials) {
+		this.totalTrials = totalTrials;
+	}
 }
