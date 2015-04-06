@@ -1,16 +1,20 @@
 package com.ClassifierTraining;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
+
+import javax.swing.Timer;
 
 public class TwoClassTrainer implements Trainer {
 
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 40;
 	private String[] classes = { "music", "house" };
-	private  int totalTrials = 80;
+	private int totalTrials = 80;
 	private ArrayList<String> cues = new ArrayList<String>();
 	private Screen screen;
 
@@ -47,34 +51,17 @@ public class TwoClassTrainer implements Trainer {
 			// break every 40 trials (30s)
 			if (++trialcounter % longBreakTrials == 0) {
 				System.out.println(" Breaktime! (30 seconds)");
-					//screen.setBreakTimeLeft(30);
-					screen.setState(screen.TRIAL_BREAK);					
-					startCountdown(30);
-
+				// screen.setBreakTimeLeft(30);
+				screen.setState(screen.TRIAL_BREAK);
+				screen.startCountdown(30);
 				// small break every 5
 			} else if (trialcounter % shortBreakTrials == 0) {
 				System.out.println(" Breaktime! (5 seconds)");
-				screen.setState(screen.TRIAL_BREAK);					
-				startCountdown(5);
-			}
-		}
-	}
+				screen.setState(screen.TRIAL_BREAK);
+				screen.startCountdown(5);
 
-	private void startCountdown(int length) {
-		int timeleft = length;
-		screen.showCountdown();
-		while (timeleft >=0)
-		{
-			screen.setBreakTimeLeft(timeleft--);	
-			screen.repaint();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
-		screen.hideCountdown();	
 	}
 
 	/**
@@ -108,4 +95,20 @@ public class TwoClassTrainer implements Trainer {
 	public void setTotalTrials(int totalTrials) {
 		this.totalTrials = totalTrials;
 	}
+
+//	public void startCountdown(int length) {
+//		int timeleft = length;
+//		screen.showCountdown();
+//		while (timeleft >= 0) {
+//			screen.setBreakTimeLeft(timeleft--);
+//			screen.repaint();
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		screen.hideCountdown();
+//	}
 }
