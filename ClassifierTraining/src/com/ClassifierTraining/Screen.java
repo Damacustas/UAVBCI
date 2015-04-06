@@ -165,7 +165,7 @@ public class Screen extends JPanel {
 	public void spaceKey(){
 		if(state==TRIAL_BREAK){
 		
-		startCountdown(2);
+		startCountdown(1);
 		
 		}
 	}

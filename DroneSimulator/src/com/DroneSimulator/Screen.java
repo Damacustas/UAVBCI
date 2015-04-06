@@ -177,7 +177,7 @@ public class Screen extends JPanel {
 	 * Handles up key presses
 	 */
 	public void upKey() {
-		cursorY -= 10;
+		cursorY -= 35;
 		cursorY = (cursorY < 0) ? 0 : cursorY;
 		this.repaint();
 	}
@@ -186,7 +186,7 @@ public class Screen extends JPanel {
 	 * Handles down key presses
 	 */
 	public void downKey() {
-		cursorY += 10;
+		cursorY += 35;
 		cursorY = (int) ((cursorY > (dim.getHeight() - 70)) ? (dim.getHeight() - 70)
 				: cursorY);
 		this.repaint();
@@ -196,7 +196,7 @@ public class Screen extends JPanel {
 	 * Handles right key presses
 	 */
 	public void rightKey() {
-		cursorX += 10;
+		cursorX += 35;
 		cursorX = (int) ((cursorX > (dim.getWidth() - 10)) ? (dim.getWidth() - 10)
 				: cursorX);
 		this.repaint();
@@ -206,7 +206,7 @@ public class Screen extends JPanel {
 	 * Handles left key presses
 	 */
 	public void leftKey() {
-		cursorX -= 10;
+		cursorX -= 35;
 		cursorX = (cursorX < 0) ? 0 : cursorX;
 		this.repaint();
 	}
