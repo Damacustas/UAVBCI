@@ -57,10 +57,10 @@ public class Screen extends JPanel {
 		countdownLabel.setLocation(dim.width / 2, dim.height / 2);
 		this.add(countdownLabel);
 
-		// Initialise Maps for Keybindings.
+		//Initialise Maps for Keybindings.
 		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap am = this.getActionMap();
-
+		
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Space");
 		am.put("Space", new KeyAction("Space", this));
 	}
@@ -142,11 +142,10 @@ public class Screen extends JPanel {
 		breakTimeLeft = length;
 		showCountdown();
 		while (breakTimeLeft > 0) {
-			
+
 			System.out.println("Timeleft: " + breakTimeLeft);
 			setBreakTimeLeft(breakTimeLeft);
-			
-			
+
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -163,7 +162,7 @@ public class Screen extends JPanel {
 			breakTimeLeft--;
 		}
 		hideCountdown();
-	} 
+	}
 
 	/**
 	 * Handles spacebar presses

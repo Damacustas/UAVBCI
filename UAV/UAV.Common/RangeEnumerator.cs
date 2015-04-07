@@ -11,7 +11,7 @@ namespace UAV.Common
 
         public RangeEnumerator(Range range)
         {
-            Range = Range;
+            Range = range;
             this.Reset();
         }
 
@@ -19,20 +19,20 @@ namespace UAV.Common
 
         public bool MoveNext()
         {
-            if (current > Range.End)
+            if (current >= Range.End)
             {
                 return false;
             }
             else
             {
-                current = current + Range.Delta;
+                current += Range.Delta;
                 return true;
             }
         }
 
         public void Reset()
         {
-            current = Range.Start - Range.Delta;
+            current = Range.Start;
         }
 
         object System.Collections.IEnumerator.Current
@@ -45,7 +45,6 @@ namespace UAV.Common
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
 
@@ -53,7 +52,7 @@ namespace UAV.Common
         {
             get
             {
-                return current;
+                return current - Range.Delta;
             }
         }
 

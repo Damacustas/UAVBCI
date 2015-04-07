@@ -52,12 +52,15 @@ public class TwoClassTrainer implements Trainer {
 			if (++trialcounter % longBreakTrials == 0) {
 				System.out.println(" Breaktime! (30 seconds)");
 				// screen.setBreakTimeLeft(30);
-				screen.setState(screen.TRIAL_BREAK);
+				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(30);
+				// screen.setBreakTimeLeft(30);
+
 				// small break every 5
 			} else if (trialcounter % shortBreakTrials == 0) {
 				System.out.println(" Breaktime! (5 seconds)");
-				screen.setState(screen.TRIAL_BREAK);
+
+				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(5);
 
 			}
@@ -96,19 +99,4 @@ public class TwoClassTrainer implements Trainer {
 		this.totalTrials = totalTrials;
 	}
 
-//	public void startCountdown(int length) {
-//		int timeleft = length;
-//		screen.showCountdown();
-//		while (timeleft >= 0) {
-//			screen.setBreakTimeLeft(timeleft--);
-//			screen.repaint();
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		screen.hideCountdown();
-//	}
 }
