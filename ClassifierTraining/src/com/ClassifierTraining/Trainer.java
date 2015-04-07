@@ -13,14 +13,19 @@ public class Trainer {
 
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 40;
-	private String[] classes = { "music", "house" };
+	private String[] classes = new String[2];
 	private int totalTrials = 80;
 	private ArrayList<String> cues = new ArrayList<String>();
 	private Screen screen;
 
-	public Trainer(Screen screen) {
-		cues = addCues();
+	public Trainer(Screen screen, String[] classes){
+	
 		this.screen = screen;
+		
+		for (int i = 0; i<classes.length;i++)
+			this.classes[i] = classes[i];
+		cues = addCues();
+		//this.classes = classes;
 
 	}
 

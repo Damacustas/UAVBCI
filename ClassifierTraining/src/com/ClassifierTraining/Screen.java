@@ -84,7 +84,6 @@ public class Screen extends JPanel {
 	}
 
 	private void drawCountdown(Graphics g) {
-		// TODO Auto-generated method stub
 		countdownLabel.setText(Integer.toString(breakTimeLeft));
 	}
 
@@ -149,14 +148,12 @@ public class Screen extends JPanel {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			repaint();
 			try {
 				Thread.sleep(900);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			breakTimeLeft--;

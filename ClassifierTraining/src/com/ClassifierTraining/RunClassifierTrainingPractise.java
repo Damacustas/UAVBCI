@@ -5,7 +5,8 @@ public class RunClassifierTrainingPractise {
 	public static void main(String[] args) {
 
 		Screen s = new Screen();
-		Trainer tr = new Trainer(s);
+		String[] classes = {"music", "house"};
+		Trainer tr = new Trainer(s, classes);
 		
 		tr.setTotalTrials(20);
 		tr.setLongBreakTrials(2);
