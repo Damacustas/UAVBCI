@@ -37,6 +37,7 @@ public class Screen extends JPanel {
 	private String cue;
 	private int breakTimeLeft;
 	private JLabel countdownLabel = new JLabel();
+	private JLabel cueLabel = new JLabel();
 
 	public Screen() {
 		frame = new JFrame();
@@ -57,10 +58,17 @@ public class Screen extends JPanel {
 		countdownLabel.setLocation(dim.width / 2, dim.height / 2);
 		this.add(countdownLabel);
 
-		//Initialise Maps for Keybindings.
+		cueLabel.setVisible(false);
+		cueLabel.setFont(new Font(null, Font.PLAIN, 100));
+		cueLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		cueLabel.setText("");
+		cueLabel.setLocation(dim.width / 2, dim.height / 2);
+		this.add(cueLabel);
+		
+		// Initialise Maps for Keybindings.
 		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap am = this.getActionMap();
-		
+
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Space");
 		am.put("Space", new KeyAction("Space", this));
 	}
@@ -71,14 +79,18 @@ public class Screen extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
+		cueLabel.setVisible(false);
 		if (state == TRIAL_START) {
+			cueLabel.setVisible(false);
 			drawFixationCross(g);
 			// playBeep();
 		} else if (state == TRIAL_CUE) {
-			drawFixationCross(g);
+			// drawFixationCross(g);
+			cueLabel.setVisible(true);
 			drawCueImage(g, cue);
+			
 		} else if (state == TRIAL_BREAK) {
+			cueLabel.setVisible(false);
 			drawCountdown(g);
 		}
 	}
@@ -98,20 +110,23 @@ public class Screen extends JPanel {
 	}
 
 	private void drawCueImage(Graphics g, String cue) {
-		BufferedImage img = null;
-		String filename = "Images/" + cue + ".png";
-		try {
+		
+			BufferedImage img = null;
+			String filename = "Images/" + cue + ".png";
+			try {
 
-			img = ImageIO.read(new File(filename));
-		} catch (IOException ex) {
-			System.err.println("Something went wrong loading the image ("
-					+ filename + ")");
-		}
+				img = ImageIO.read(new File(filename));
+				g.drawImage(img, dim.width / 2 - CUE_ICON_WIDTH / 2, dim.height / 2
+						- CUE_ICON_HEIGHT / 2, CUE_ICON_WIDTH, CUE_ICON_HEIGHT,
+						Color.white, null);
+			} catch (IOException ex) {
+				System.err.println("Something went wrong loading the image ("
+						+ filename + ") Drawing text!");
+				cueLabel.setText(cue);
+			}
 
-		g.drawImage(img, dim.width / 2 - CUE_ICON_WIDTH / 2, dim.height / 2
-				- CUE_ICON_HEIGHT / 2, CUE_ICON_WIDTH, CUE_ICON_HEIGHT,
-				Color.white, null);
-
+			
+		
 	}
 
 	public void setState(int state) {
