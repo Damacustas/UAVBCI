@@ -5,7 +5,7 @@ public class RunClassifierTraining {
 	public static void main(String[] args) {
 
 		Screen s = new Screen();
-		Trainer tr = new TwoClassTrainer(s);
+		Trainer tr = new Trainer(s);
 		tr.startClassifierTraining();
 
 	}
