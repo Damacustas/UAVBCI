@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -34,13 +35,21 @@ public class Screen extends JPanel {
 	private TrialParameters currentTrial = null;
 
 	// The Simulation which the screen is running.
-	private Simulation simulation = null;
+	//private Simulation simulation = null;
 
 	// The location of the cursor.
 	private int cursorX, cursorY;
+	
+	private int state = Screen.TRIAL_IDLE;
 
 	// The timer for the progressbar
 	private Timer timer;
+	
+	public static final int TRIAL_BUSY = 0;
+	public static final int TRIAL_BREAK = 1;
+	public static final int TRIAL_IDLE = 2;
+	
+	private ArrayList<TrialResults> results = new ArrayList<TrialResults>();
 
 	/**
 	 * Initializes the screen with the given simulation.
@@ -48,12 +57,12 @@ public class Screen extends JPanel {
 	 * @param sim
 	 *            The simulation to run in the screen.
 	 */
-	public Screen(Simulation sim) {
+	public Screen() {
 		// Initialize fields
-		this.simulation = sim;
-		this.currentTrial = this.simulation.generateNext();
-		cursorX = (int) currentTrial.getStartX();
-		cursorY = (int) currentTrial.getStartY();
+		//this.simulation = sim;
+		// TODO put in loop: this.currentTrial = this.simulation.generateNext();
+//		cursorX = (int) currentTrial.getStartX();
+//		cursorY = (int) currentTrial.getStartY();
 
 		// Initialize display frame.
 		frame = new JFrame();
@@ -73,7 +82,7 @@ public class Screen extends JPanel {
 		progressBar.setPreferredSize(new Dimension(100,100));
 		// progressBar.setValue(1);
 		//progressBar.setStringPainted(true);
-		progressBar.setVisible(true);
+		progressBar.setVisible(false);
 		progressBar.setBackground(Color.BLACK);
 		this.add(progressBar);
 
@@ -90,8 +99,8 @@ public class Screen extends JPanel {
 					value = 0;
 					timer.stop();
 
-					submitResult();
-					reset();			
+					//submitResult();
+					//reset();			
 
 				}
 				progressBar.setValue(value);
@@ -122,6 +131,10 @@ public class Screen extends JPanel {
 		am.put("Left", new KeyAction("Left", this));
 	}
 
+	public void setCurrentTrial(TrialParameters currentTrial) {
+		this.currentTrial = currentTrial;
+	}
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -136,25 +149,34 @@ public class Screen extends JPanel {
 		// cursorX = (int) currentTrial.getStartX(); // Adjust Coordinates
 		// cursorY = (int) currentTrial.getStartY(); //
 		// }
-		int height = (int) currentTrial.getTargetHeight();
-		int width = (int) currentTrial.getTargetWidth();
+		
+		if (state == Screen.TRIAL_BUSY)
+		{
+			int height = (int) currentTrial.getTargetHeight();
+			int width = (int) currentTrial.getTargetWidth();
 
-		g.setColor(Color.RED);
-		g.fillRect(dim.width / 2 - width / 2, dim.height / 2 - height / 2,
-				width, height);
-		g.setColor(Color.BLACK);
-		g.fillOval(cursorX, cursorY, 10, 10);
+			g.setColor(Color.RED);
+			g.fillRect(dim.width / 2 - width / 2, dim.height / 2 - height / 2,
+					width, height);
+			g.setColor(Color.BLACK);
+			g.fillOval(cursorX, cursorY, 10, 10);
+		}
+		else if (state == Screen.TRIAL_BREAK)
+		{
+			// iets met countdown.
+		}
+		
 	}
 
 	/**
 	 * Submits the simulation results to the Simulation.
 	 */
 	private void submitResult() {
-		TrialResults results = new TrialResults();
-		results.setHit(isHit());
-		results.setTimeRequired(1337); // TODO: change
-		results.setSimulationDetails(currentTrial);
-		simulation.reportSimulationResults(results);
+		TrialResults result = new TrialResults();
+		result.setHit(isHit());
+		//result.setTimeRequired(1337); // TODO: change
+		result.setSimulationDetails(currentTrial);
+		// TODO put in loop: simulation.reportSimulationResults(result);
 	}
 
 	/**
@@ -211,6 +233,10 @@ public class Screen extends JPanel {
 		this.repaint();
 	}
 
+	public void setState(int state) {
+		this.state = state;
+	}
+
 	/**
 	 * Checks if the cursor hit the target
 	 * 
@@ -226,9 +252,9 @@ public class Screen extends JPanel {
 				&& (cursorX) >= (dim.getWidth() / 2 - currentTrial
 						.getTargetWidth() / 2);
 	}
-
+// TODO put in loop:
 	public void reset() {
-		currentTrial = simulation.generateNext(); // Reset simulation
+		// TODO put in loop: currentTrial = simulation.generateNext(); // Reset simulation
 		cursorX = (int) currentTrial.getStartX(); // Adjust Coordinates
 		cursorY = (int) currentTrial.getStartY(); //
 		timer.stop();
@@ -239,5 +265,11 @@ public class Screen extends JPanel {
 	{
 		//timer.st
 	}
+
+	public void showProgressBar() {
+		progressBar.setVisible(true);
+		
+	}
+
 
 }

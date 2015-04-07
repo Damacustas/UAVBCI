@@ -25,17 +25,80 @@ public class Simulation
 	// Used to find the screensize.
 	private Dimension dim = null;
 	
+	private Screen screen;
+	
 	private TrialParameters last = null;
 	
-	public Simulation()
+	private int shortBreakTrials = 5;
+	private int longBreakTrials = 40;
+	
+	public void setShortBreakTrials(int shortBreakTrials) {
+		this.shortBreakTrials = shortBreakTrials;
+	}
+
+	public void setLongBreakTrials(int longBreakTrials) {
+		this.longBreakTrials = longBreakTrials;
+	}
+
+	public Simulation(Screen s)
 	{
+		this.screen = s;
 		random = new Random();
 		velocity = duration = devianceX = devianceY = 0;
 		//xHits = yHits = totalTrials = 0;
 		initialTargetHeight = initialTargetWidth = 100;
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
+		startExperiment();
 	}
 	
+	public void startExperiment()
+	{
+		int teller = 1;
+		//screen.setState()
+		// reset
+		//
+		while(true)
+		{
+			//teller++;
+			
+			if (teller++ % longBreakTrials == 0)
+			{
+				// TODO make countdown
+				try {
+					Thread.sleep(30000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else if (teller % shortBreakTrials == 0)
+			{// TODO change to countdown
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			screen.setCurrentTrial(generateNext());
+			try {
+				Thread.sleep(randomBreakTime());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			screen.reset();
+			screen.setState(Screen.TRIAL_BUSY);
+			screen.showProgressBar();
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+	}
 	/**
 	private void generateInitial()
 	{		
@@ -177,6 +240,14 @@ public class Simulation
 	public void setInitialTargetWidth(double initialTargetWidth)
 	{
 		this.initialTargetWidth = initialTargetWidth;
+	}
+	/**
+	 * 
+	 * @return random number between 500 and 2500
+	 */
+	private long randomBreakTime() {
+		Random rand = new Random();
+		return rand.nextInt(2000) + 500;
 	}
 	
 
