@@ -124,6 +124,7 @@ public class Screen extends JPanel {
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "Down");
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "Right");
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "Left");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Space");
 
 		am.put("Escape", new KeyAction("Escape", this));
 		am.put("Enter", new KeyAction("Enter", this));
@@ -131,6 +132,7 @@ public class Screen extends JPanel {
 		am.put("Down", new KeyAction("Down", this));
 		am.put("Right", new KeyAction("Right", this));
 		am.put("Left", new KeyAction("Left", this));
+		am.put("Space", new KeyAction("Space", this));
 	}
 
 	public void setCurrentTrial(TrialParameters currentTrial) {
@@ -177,16 +179,11 @@ public class Screen extends JPanel {
 			setBreakTimeLeft(breakTimeLeft);
 
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-			try {
-				Thread.sleep(900);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+
 			repaint();
 			breakTimeLeft--;
 		}
