@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
+using System.IO.Compression;
 
 namespace UAV.Simulation
 {
@@ -12,6 +13,7 @@ namespace UAV.Simulation
         static int passed, total, numLen;
         static DateTime start, prev;
         static readonly int numSims = 20;
+        static List<Simulation> results;
 
 		public static void Main (string[] args)
 		{
@@ -31,6 +33,8 @@ namespace UAV.Simulation
             total = noiseFactors.Length * intelligenceFactors.Length * historyLenghts.Length * fitDegrees.Length * numSims;
             numLen = total.ToString().Length;
 
+            results = new List<Simulation>(total);
+
             start = DateTime.UtcNow;
             prev = start;
 
@@ -46,7 +50,8 @@ namespace UAV.Simulation
 
                         sim.Run(verbose: false);
 
-                        WriteSimulationResults(sim, n);
+                        //WriteSimulationResults(sim, n);
+                        results.Add(sim);
                         PrintProgress();
                     }
 
@@ -61,7 +66,8 @@ namespace UAV.Simulation
 
                                 sim.Run(verbose: false);
 
-                                WriteSimulationResults(sim, n);
+                                //WriteSimulationResults(sim, n);
+                                results.Add(sim);
                                 PrintProgress();
                             }
                         }
@@ -74,6 +80,13 @@ namespace UAV.Simulation
 
             Console.WriteLine();
             Console.WriteLine("Ran {0} simulations in {1} ({2} ms).", passed, (end-start).ToString(@"hh\:mm\:ss"), ms);
+
+            var json = JsonConvert.SerializeObject(results);
+            results.Clear();
+            using (StreamWriter writer = new StreamWriter(Path.Combine("Output", "output.json")))
+            {
+                writer.Write(json);
+            }
 		}
 
         private static Simulation GenerateSimulationNoIntelligence(double intelligenceFactor, double noiseFactor)
@@ -138,6 +151,7 @@ namespace UAV.Simulation
         /// <param name="n">The n-th simulation under the same simulation parameters.</param>
         private static void WriteSimulationResults(Simulation sim, int n)
         {
+            /*
             string[] strings =
                 {
                     string.Format("noise_{0}", sim.InputGenerator.NoiseRatio),
@@ -150,10 +164,15 @@ namespace UAV.Simulation
             //var dir = EnsureDirectory(new string[] { "Output" }.Concat(strings).ToArray());
             EnsureDirectory("Output");
 
-            using (StreamWriter writer = new StreamWriter(File.OpenWrite(Path.Combine("Output", filename))))
+            var p = Path.Combine("Output", filename);
+            p = Path.GetFullPath(p);
+            using (StreamWriter writer = new StreamWriter(File.OpenWrite(p)))
             {
                 writer.Write(json);
+                writer.Close();
             }
+            */
+            Console.WriteLine(JsonConvert.SerializeObject(sim));
         }
 
         /// <summary>
