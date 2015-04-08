@@ -32,6 +32,14 @@ namespace UAV.Simulation
 
         #region IIntelligence implementation
 
+        public string IntelligenceName
+        {
+            get
+            {
+                return "FitIntelligence";
+            }
+        }
+
         public Vector2D ComputeCommand(WorldState worldState, Vector2D baseCommand)
         {
             // Create a range for t values.
@@ -42,7 +50,7 @@ namespace UAV.Simulation
                 Fitters.GeneratePolynomialFit(
                     ts,
                     (from l in worldState.InputHistory.TakeLast(HistoryLength)
-                        select l.Item2.X).ToList(),
+                        select l.Value.X).ToList(),
                     FitFunctionDegree
                 );
 
@@ -51,7 +59,7 @@ namespace UAV.Simulation
                 Fitters.GeneratePolynomialFit(
                     ts,
                     (from l in worldState.InputHistory.TakeLast(HistoryLength)
-                        select l.Item2.Y).ToList(),
+                        select l.Value.Y).ToList(),
                     FitFunctionDegree
                 );
 

@@ -6,8 +6,8 @@ namespace UAV.Simulation
 {
 	public class WorldState
 	{
-        public List<Tuple<double, Vector2D>> LocationHistory { get; private set; }
-        public List<Tuple<double, Vector2D>> InputHistory { get; private set; }
+        public List<HistoryItem> LocationHistory { get; private set; }
+        public List<HistoryItem> InputHistory { get; private set; }
 
         /// <summary>
         /// Gets the current target.
@@ -19,20 +19,20 @@ namespace UAV.Simulation
         {
             get
             {
-                return LocationHistory[LocationHistory.Count - 1].Item2;
+                return LocationHistory[LocationHistory.Count - 1].Value;
             }
         }
 
         public WorldState()
         {
-            LocationHistory = new List<Tuple<double, Vector2D>>();
-            InputHistory = new List<Tuple<double, Vector2D>>();
+            LocationHistory = new List<HistoryItem>();
+            InputHistory = new List<HistoryItem>();
         }
 
         public void MoveDrone(Vector2D location, Vector2D input, double time)
         {
-            LocationHistory.Add(new Tuple<double, Vector2D>(time, location));
-            InputHistory.Add(new Tuple<double, Vector2D>(time, input));
+            LocationHistory.Add(new HistoryItem(location, time));
+            InputHistory.Add(new HistoryItem(input, time));
         }
 	}
 }

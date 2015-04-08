@@ -74,13 +74,14 @@ namespace UAV.Simulation
         public Simulation()
         {
             epoch = 0;
+            State = new WorldState();
         }
 
 
         /// <summary>
         /// Run this instance of the simulation.
         /// </summary>
-        public void Run()
+        public void Run(bool verbose)
         {
             State.MoveDrone(StartLocation, new Vector2D(0,0), 0);
             State.CurrentTarget = Targets[0];
@@ -104,11 +105,15 @@ namespace UAV.Simulation
                 epoch++;
                 State.MoveDrone(newPos, dir_input, epoch);
 
-                Console.WriteLine("\nEpoch #{0}", epoch);
-                Console.WriteLine("Location: {0}, Target: {1}", State.DroneLocation, State.CurrentTarget);
-                Console.WriteLine("Input: {0}", dir_input);
-                Console.WriteLine("Intelligence: {0}", dir_intelligence);
-                Console.WriteLine("Final: {0}", new Vector2D(x, y));
+                // Print some debugging information.
+                if (verbose)
+                {
+                    Console.WriteLine("\nEpoch #{0}", epoch);
+                    Console.WriteLine("Location: {0}, Target: {1}", State.DroneLocation, State.CurrentTarget);
+                    Console.WriteLine("Input: {0}", dir_input);
+                    Console.WriteLine("Intelligence: {0}", dir_intelligence);
+                    Console.WriteLine("Final: {0}", new Vector2D(x, y));
+                }
 
                 // Advance to next target if required.
                 if (AtTarget())
