@@ -29,7 +29,7 @@ namespace UAV.Common
         }
         #endregion
 
-        int IReadOnlyCollection<double>.Count
+        public int Count
         {
             get
             {

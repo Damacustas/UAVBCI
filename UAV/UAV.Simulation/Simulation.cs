@@ -74,6 +74,7 @@ namespace UAV.Simulation
         public Simulation()
         {
             epoch = 0;
+            State = new WorldState();
         }
 
 
@@ -104,6 +105,7 @@ namespace UAV.Simulation
                 epoch++;
                 State.MoveDrone(newPos, dir_input, epoch);
 
+                // Print some debugging information.
                 if (verbose)
                 {
                     Console.WriteLine("\nEpoch #{0}", epoch);
