@@ -29,12 +29,17 @@ public class Simulation {
 
 	private Screen screen;
 
-	private TrialParameters last = null;
+	//private TrialParameters last = null;
 
 	private int shortBreakTrials = 1;
-	private int longBreakTrials = 2;
-	private int totalTrials = 80;
-
+	private int longBreakTrials = 10;
+	private double totalTrials = 20;
+	private int cursorDistance = 200;
+	private double hits;
+	private double sizeDecrease = 10;
+	private double hitRateConv = 0.80;
+	private double sizeIncrease = (int) (sizeDecrease/((1-hitRateConv)/hitRateConv));
+	
 	public void setShortBreakTrials(int shortBreakTrials) {
 		this.shortBreakTrials = shortBreakTrials;
 	}
@@ -51,10 +56,12 @@ public class Simulation {
 		initialTargetHeight = initialTargetWidth = 100;
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		startExperiment();
+		
 	}
 
 	public void startExperiment() {
 		int teller = 0;
+		hits = 0;
 		while (teller < totalTrials) {
 			if (teller % longBreakTrials == 0 && teller != 0) {
 				screen.setState(Screen.TRIAL_BREAK);
@@ -64,7 +71,15 @@ public class Simulation {
 				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(5);
 			}
-			screen.setCurrentTrial(generateNext());
+		
+			if(teller == 0)
+			{
+				screen.setCurrentTrial(generateInitial());
+			}
+			else 
+			{
+				screen.setCurrentTrial(generateNext());
+			}
 //			try {
 //				Thread.sleep(randomBreakTime());
 //			} catch (InterruptedException e) {
@@ -79,23 +94,33 @@ public class Simulation {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
+			System.out.println("Trial completed: " + teller);
 			teller++;
 		}
+		System.out.println("Experiment Completed! :D");
+		System.out.println("Total trials: " + totalTrials);
+		System.out.println("Total number of hits: " + hits);
+		System.out.println("Performance on a scale of 200 to 50: " + screen.getCurrentTrial().getTargetHeight());
 	}
 
-	/**
-	 * private void generateInitial() { // Create the first simulation run
-	 * object. last = new TrialParameters(); double angle =
-	 * random.nextDouble()*360; last.setStartX(dim.width/2 +
-	 * 200*Math.cos(angle)); last.setStartY(dim.height/2 + 200*Math.sin(angle));
-	 * last.setTargetWidth(initialTargetWidth);
-	 * last.setTargetHeight(initialTargetHeight); }
-	 */
+	
+	
+	  private TrialParameters generateInitial() { // Create the first simulation run
+		TrialParameters last = new TrialParameters(); 
+		double angle =random.nextDouble()*360; 
+		last.setStartX(dim.width/2 + cursorDistance*Math.cos(angle)); 
+		last.setStartY(dim.height/2 + cursorDistance*Math.sin(angle));
+		last.setTargetWidth(initialTargetWidth);
+		last.setTargetHeight(initialTargetHeight);
+		return last;
+	 }
+	 
 
+	
 	public TrialParameters generateNext() {
 		double lastWidth, lastHeight;
-
+		// Get the size of the target from the last trial.
+		TrialParameters last = screen.getCurrentTrial();
 		if (last != null) {
 			lastWidth = last.getTargetWidth();
 			lastHeight = last.getTargetHeight();
@@ -103,46 +128,28 @@ public class Simulation {
 			lastWidth = initialTargetWidth;
 			lastHeight = initialTargetHeight;
 		}
-
-		// TODO: Calculate new width/height here.
-
-		// Pseudocode because there are no necessary variables/classes for
-		// controlling the cursor implemented yet
-		//
-		// totalTrials++
-		// if lastXHit
-		// xHits++;
-		//
-		// double hitPercentageX = xHits / totalTrials;
-		// if hitPercentageX > grensVoorPerformance + waardeOmChanceTeVerkleinen
-		// {
-		// newWidth = last.getTargetWidth() - someValue; (or
-		// last.getTargetWidth() / someValue)
-		// }
-		// else
-		// if hitPercentageX < grensVoorPerformance - waardeOmChanceTeVerkleinen
-		// newWidth = last.getTargetWidth() + someValue; (or....)
-		//
-		// Same for calculating the new height
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		// SOMEWHERE IN A METHOD CALL totalTrials++
-
+		System.out.println(lastWidth);
+		// Calculate new size based on the Weighted Up-Down method.
 		double newWidth, newHeight;
-		newWidth = lastWidth;
-		newHeight = lastHeight;
-
+		if (screen.isHit() && lastWidth > 50 && lastHeight > 50){
+			newWidth = lastWidth - sizeDecrease;
+			newHeight = lastHeight - sizeDecrease;
+			hits++;
+		}
+		else if (screen.isHit() && lastWidth <= 60 && lastHeight <= 60){
+			newWidth = 50;
+			newHeight = 50;
+		}
+		else {
+			newWidth = lastWidth + (sizeIncrease * (1 - (hits/totalTrials)));
+			newHeight = lastHeight + (sizeIncrease * (1 - (hits/totalTrials)));
+		}
+	
 		// Create the new simulation run object.
 		TrialParameters run = new TrialParameters();
 		double angle = random.nextDouble() * 360;
-		run.setStartX(dim.width / 2 + 200 * Math.cos(angle));
-		run.setStartY(dim.height / 2 + 200 * Math.sin(angle));
+		run.setStartX(dim.width / 2 + cursorDistance * Math.cos(angle));
+		run.setStartY(dim.height / 2 + cursorDistance * Math.sin(angle));
 		run.setTargetWidth(newWidth);
 		run.setTargetHeight(newHeight);
 		return run;
