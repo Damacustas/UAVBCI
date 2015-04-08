@@ -1,5 +1,6 @@
 ﻿using System;
 using UAV.Common;
+using System.Collections.Generic;
 
 namespace UAV.Simulation
 {
@@ -38,17 +39,22 @@ namespace UAV.Simulation
         public double IntelligenceFactor { get; set; }
 
         /// <summary>
+        /// Gets or sets the maximal target deviation.
+        /// </summary>
+        /// <value>The max target deviation.</value>
+        public static double MaxTargetDeviation { get; set; }
+
+        /// <summary>
+        /// The list of targets the drone is to reach (in order).
+        /// </summary>
+        /// <value>The targets.</value>
+        public List<Vector2D> Targets { get; set; }
+
+        /// <summary>
         /// Sets the starting location of the drone.
         /// </summary>
         /// <value>The start location.</value>
-        public Vector2D StartLocation
-        {
-            set
-            {
-                State.LocationHistory.Clear();
-                State.MoveDrone(value, 0);
-            }
-        }
+        public Vector2D StartLocation { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UAV.Simulation.Simulation"/> class.
@@ -58,9 +64,16 @@ namespace UAV.Simulation
             time = 0;
         }
 
+
+        /// <summary>
+        /// Run this instance of the simulation.
+        /// </summary>
         public void Run()
         {
-            while (!State.IsFinished && time < (double)MaxSimulationSteps)
+            State.MoveDrone(StartLocation, new Vector2D(0,0), 0);
+            State.CurrentTarget = Targets[0];
+
+            while (!IsFinished() && time < (double)MaxSimulationSteps)
             {
                 // Compute input movement direction.
                 Vector2D dir_input = InputGenerator.ComputeNewDirection(State);
@@ -77,9 +90,35 @@ namespace UAV.Simulation
 
                 // Go to next step.
                 time++;
-                State.MoveDrone(newPos, time);
+                State.MoveDrone(newPos, dir_input, time);
 
+                // Advance to next target if required.
+                if (AtTarget())
+                {
+                    if (!IsFinished())
+                    {
+                        State.CurrentTarget = Targets[Targets.IndexOf(State.CurrentTarget) + 1];
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Determines whether the given given location is at the target.
+        /// </summary>
+        /// <returns><c>true</c> if the given location is at the current target; otherwise, <c>false</c>.</returns>
+        private bool AtTarget()
+        {
+            return State.CurrentTarget.Distance(State.DroneLocation) < MaxTargetDeviation;
+        }
+
+        /// <summary>
+        /// Determines whether this simulation is finished.
+        /// </summary>
+        /// <returns><c>true</c> if this instance is finished; otherwise, <c>false</c>.</returns>
+        public bool IsFinished()
+        {
+            return AtTarget() && Targets.IndexOf(State.CurrentTarget) == Targets.Count - 1;
         }
     }
 }

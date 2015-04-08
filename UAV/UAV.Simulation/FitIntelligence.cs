@@ -7,8 +7,10 @@ namespace UAV.Simulation
 {
     public class FitIntelligence : IIntelligence
     {
-        public FitIntelligence()
+        public FitIntelligence(int historyLength, int functionDegree)
         {
+            HistoryLength = historyLength;
+            FitFunctionDegree = functionDegree;
         }
 
         public int FitFunctionDegree { get; set; }
@@ -18,18 +20,20 @@ namespace UAV.Simulation
 
         public Vector2D ComputeCommand(WorldState worldState, Vector2D baseCommand)
         {
+            var ts = new UAV.Common.Range(0, HistoryLength, 1);
+
             Func<double, double> funcX = 
                 Fitters.GeneratePolynomialFit(
-                    new UAV.Common.Range(0, HistoryLength, 1),
-                    (from l in worldState.LocationHistory.TakeLast(HistoryLength)
+                    ts,
+                    (from l in worldState.InputHistory.TakeLast(HistoryLength)
                         select l.Item2.X).ToList(),
                     FitFunctionDegree
                 );
 
             Func<double, double> funcY = 
                 Fitters.GeneratePolynomialFit(
-                    new UAV.Common.Range(0, HistoryLength, 1),
-                    (from l in worldState.LocationHistory.TakeLast(HistoryLength)
+                    ts,
+                    (from l in worldState.InputHistory.TakeLast(HistoryLength)
                         select l.Item2.Y).ToList(),
                     FitFunctionDegree
                 );
