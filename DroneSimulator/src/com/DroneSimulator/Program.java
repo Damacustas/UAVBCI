@@ -70,8 +70,11 @@ public class Program {
 			initialHeight = 50; //px.
 		}
 
+		Screen scrn = new Screen();
+		scrn.setVisible(true);
+		
 		// Create some objects, set some values.
-		Simulation sim = new Simulation();
+		Simulation sim = new Simulation(scrn);
 		sim.setDevianceX(devianceX);
 		sim.setDevianceY(devianceY);
 		sim.setDuration(duration);
@@ -79,8 +82,7 @@ public class Program {
 		sim.setInitialTargetWidth(initialWidth);
 
 
-		Screen scrn = new Screen(sim);
-		scrn.setVisible(true);
+		
 	}
 
 	private static CommandLine parseArguments(String[] args)
