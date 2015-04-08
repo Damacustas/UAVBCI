@@ -97,7 +97,7 @@ public class Screen extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				int value = progressBar.getValue() + TIMER_DELAY;
 				if (value > progressBar.getMaximum()) {
-					System.out.println(value);
+					//System.out.println(value);
 					value = 0;
 					timer.stop();
 
@@ -106,7 +106,7 @@ public class Screen extends JPanel {
 
 				}
 				progressBar.setValue(value);
-				System.out.println(value); 
+				//System.out.println(value); 
 				repaint();
 				
 			}
@@ -298,6 +298,13 @@ public class Screen extends JPanel {
 	public void showProgressBar() {
 		progressBar.setVisible(true);
 		
+	}
+	
+	public void spaceKey() {
+		if (state == TRIAL_BREAK) {
+			breakTimeLeft = 2;
+			System.out.println("Space pressed");
+		}
 	}
 	
 //	public void showCountdown() {
