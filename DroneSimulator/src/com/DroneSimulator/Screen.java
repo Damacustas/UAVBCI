@@ -1,9 +1,12 @@
 package com.DroneSimulator;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -23,7 +26,7 @@ import javax.swing.*;
  */
 public class Screen extends JPanel {
 
-	private static final int TIMER_DELAY = 10;
+	private static final int TIMER_DELAY = 50;
 	// The frame that contains the display.
 	private JFrame frame;
 	private JProgressBar progressBar = null;
@@ -49,7 +52,11 @@ public class Screen extends JPanel {
 	public static final int TRIAL_BREAK = 1;
 	public static final int TRIAL_IDLE = 2;
 	
+	
+	
 	private ArrayList<TrialResults> results = new ArrayList<TrialResults>();
+	//private JLabel countdownLabel = new JLabel();
+	private int breakTimeLeft;
 
 	/**
 	 * Initializes the screen with the given simulation.
@@ -58,17 +65,13 @@ public class Screen extends JPanel {
 	 *            The simulation to run in the screen.
 	 */
 	public Screen() {
-		// Initialize fields
-		//this.simulation = sim;
-		// TODO put in loop: this.currentTrial = this.simulation.generateNext();
-//		cursorX = (int) currentTrial.getStartX();
-//		cursorY = (int) currentTrial.getStartY();
 
 		// Initialize display frame.
 		frame = new JFrame();
 		frame.setTitle("UAV BCI Software");
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//this.setLayout(new GridBagLayout());
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBackground(Color.WHITE);
 		frame.add(this);
@@ -76,10 +79,10 @@ public class Screen extends JPanel {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		// Initialize progress bar.
-		progressBar = new JProgressBar(0, 5000);
+		progressBar = new JProgressBar(0, Simulation.TRIAL_LENGTH);
 		progressBar.setValue(0);
 		//progressBar.setSize(100, 100);
-		progressBar.setPreferredSize(new Dimension(100,100));
+		progressBar.setPreferredSize(new Dimension(50,150));
 		// progressBar.setValue(1);
 		//progressBar.setStringPainted(true);
 		progressBar.setVisible(false);
@@ -89,13 +92,12 @@ public class Screen extends JPanel {
 		// Initialize timer for progress bar
 		
 		timer = new Timer(TIMER_DELAY, new ActionListener() {
-
-			
+	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int value = progressBar.getValue() + TIMER_DELAY;
 				if (value > progressBar.getMaximum()) {
-					// time over! logic here
+					//System.out.println(value);
 					value = 0;
 					timer.stop();
 
@@ -104,12 +106,12 @@ public class Screen extends JPanel {
 
 				}
 				progressBar.setValue(value);
+				//System.out.println(value); 
 				repaint();
+				
 			}
 
 		});
-
-		timer.start();
 
 		// Initialise Maps for Keybindings.
 		InputMap im = this.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
@@ -122,6 +124,7 @@ public class Screen extends JPanel {
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "Down");
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "Right");
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "Left");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Space");
 
 		am.put("Escape", new KeyAction("Escape", this));
 		am.put("Enter", new KeyAction("Enter", this));
@@ -129,6 +132,7 @@ public class Screen extends JPanel {
 		am.put("Down", new KeyAction("Down", this));
 		am.put("Right", new KeyAction("Right", this));
 		am.put("Left", new KeyAction("Left", this));
+		am.put("Space", new KeyAction("Space", this));
 	}
 
 	public void setCurrentTrial(TrialParameters currentTrial) {
@@ -138,17 +142,6 @@ public class Screen extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		// Robert: moet ie resetten zodra ie geraakt wordt? Beter de 5 seeconden
-		// afwachten?
-		// update: code verplaatst naar actionPerformed van de Timer (listener
-		// daarvan :)).
-		// if(isHit() ){
-		// submitResult();
-		//
-		// currentTrial = this.simulation.generateNext(); //Reset simulation
-		// cursorX = (int) currentTrial.getStartX(); // Adjust Coordinates
-		// cursorY = (int) currentTrial.getStartY(); //
-		// }
 		
 		if (state == Screen.TRIAL_BUSY)
 		{
@@ -163,8 +156,42 @@ public class Screen extends JPanel {
 		}
 		else if (state == Screen.TRIAL_BREAK)
 		{
-			// iets met countdown.
+			drawCountdown(g);
 		}
+		
+	}
+
+	private void drawCountdown(Graphics g) {
+		//countdownLabel.setText(Integer.toString(breakTimeLeft));
+		Font font = new Font(null, Font.PLAIN, 100);
+		g.setFont(font);
+		int stringWidth = (int) g.getFontMetrics(font).getStringBounds(Integer.toString(breakTimeLeft), g).getWidth();
+		g.drawString(Integer.toString(breakTimeLeft), dim.width / 2 - stringWidth / 2,dim.height / 2);
+				
+	}
+	
+	public void startCountdown(int length) {
+		breakTimeLeft = length;
+//		showCountdown();
+		while (breakTimeLeft > 0) {
+
+			System.out.println("Timeleft: " + breakTimeLeft);
+			setBreakTimeLeft(breakTimeLeft);
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			repaint();
+			breakTimeLeft--;
+		}
+//		hideCountdown();
+	}
+
+	private void setBreakTimeLeft(int btl) {
+		this.breakTimeLeft = btl;
 		
 	}
 
@@ -254,7 +281,6 @@ public class Screen extends JPanel {
 	}
 // TODO put in loop:
 	public void reset() {
-		// TODO put in loop: currentTrial = simulation.generateNext(); // Reset simulation
 		cursorX = (int) currentTrial.getStartX(); // Adjust Coordinates
 		cursorY = (int) currentTrial.getStartY(); //
 		timer.stop();
@@ -270,6 +296,21 @@ public class Screen extends JPanel {
 		progressBar.setVisible(true);
 		
 	}
+	
+	public void spaceKey() {
+		if (state == TRIAL_BREAK) {
+			breakTimeLeft = 2;
+			System.out.println("Space pressed");
+		}
+	}
+	
+//	public void showCountdown() {
+//		countdownLabel.setVisible(true);
+//	}
+//
+//	public void hideCountdown() {
+//		countdownLabel.setVisible(false);
+//	}
 
 
 }

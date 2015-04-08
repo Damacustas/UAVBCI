@@ -27,6 +27,8 @@ public class KeyAction extends AbstractAction {
 		case "Down": screen.downKey(); break;
 		case "Right": screen.rightKey(); break;
 		case "Left": screen.leftKey(); break;
+		case "Space": screen.spaceKey(); break;
+		
 		}
 		
 	
