@@ -36,6 +36,11 @@ namespace UAV.Common
 			double len = Math.Sqrt (Math.Pow (X, 2) + Math.Pow (Y, 2));
 			return new Vector2D (X / len, Y / len);
 		}
+
+        public override string ToString()
+        {
+            return string.Format("(X={0}, Y={1})", X, Y);
+        }
 	}
 }
 

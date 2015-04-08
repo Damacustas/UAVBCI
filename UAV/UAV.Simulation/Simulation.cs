@@ -6,7 +6,7 @@ namespace UAV.Simulation
 {
     public class Simulation
     {
-        private double time;
+        private double epoch;
 
         /// <summary>
         /// Represents the state of the simulation.
@@ -18,7 +18,7 @@ namespace UAV.Simulation
         /// The maximum amount of simulation steps.
         /// </summary>
         /// <value>The max simulation steps.</value>
-        public int MaxSimulationSteps { get; set; }
+        public int MaxEpochs { get; set; }
 
         /// <summary>
         /// The input commandstream generator.
@@ -42,7 +42,7 @@ namespace UAV.Simulation
         /// Gets or sets the maximal target deviation.
         /// </summary>
         /// <value>The max target deviation.</value>
-        public static double MaxTargetDeviation { get; set; }
+        public double MaxTargetDeviation { get; set; }
 
         /// <summary>
         /// The list of targets the drone is to reach (in order).
@@ -57,11 +57,23 @@ namespace UAV.Simulation
         public Vector2D StartLocation { get; set; }
 
         /// <summary>
+        /// Determines whether this simulation is finished.
+        /// </summary>
+        /// <returns><c>true</c> if this instance is finished; otherwise, <c>false</c>.</returns>
+        public bool IsFinished
+        {
+            get
+            {
+                return AtTarget() && Targets.IndexOf(State.CurrentTarget) == Targets.Count - 1;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UAV.Simulation.Simulation"/> class.
         /// </summary>
         public Simulation()
         {
-            time = 0;
+            epoch = 0;
         }
 
 
@@ -73,7 +85,7 @@ namespace UAV.Simulation
             State.MoveDrone(StartLocation, new Vector2D(0,0), 0);
             State.CurrentTarget = Targets[0];
 
-            while (!IsFinished() && time < (double)MaxSimulationSteps)
+            while (!IsFinished && epoch < (double)MaxEpochs)
             {
                 // Compute input movement direction.
                 Vector2D dir_input = InputGenerator.ComputeNewDirection(State);
@@ -89,13 +101,19 @@ namespace UAV.Simulation
                 Vector2D newPos = State.DroneLocation + new Vector2D(x, y);
 
                 // Go to next step.
-                time++;
-                State.MoveDrone(newPos, dir_input, time);
+                epoch++;
+                State.MoveDrone(newPos, dir_input, epoch);
+
+                Console.WriteLine("\nEpoch #{0}", epoch);
+                Console.WriteLine("Location: {0}, Target: {1}", State.DroneLocation, State.CurrentTarget);
+                Console.WriteLine("Input: {0}", dir_input);
+                Console.WriteLine("Intelligence: {0}", dir_intelligence);
+                Console.WriteLine("Final: {0}", new Vector2D(x, y));
 
                 // Advance to next target if required.
                 if (AtTarget())
                 {
-                    if (!IsFinished())
+                    if (!IsFinished)
                     {
                         State.CurrentTarget = Targets[Targets.IndexOf(State.CurrentTarget) + 1];
                     }
@@ -110,15 +128,6 @@ namespace UAV.Simulation
         private bool AtTarget()
         {
             return State.CurrentTarget.Distance(State.DroneLocation) < MaxTargetDeviation;
-        }
-
-        /// <summary>
-        /// Determines whether this simulation is finished.
-        /// </summary>
-        /// <returns><c>true</c> if this instance is finished; otherwise, <c>false</c>.</returns>
-        public bool IsFinished()
-        {
-            return AtTarget() && Targets.IndexOf(State.CurrentTarget) == Targets.Count - 1;
         }
     }
 }

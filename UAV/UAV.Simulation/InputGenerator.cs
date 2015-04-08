@@ -29,9 +29,9 @@ namespace UAV.Simulation
             double y_noise = (noiseGenerator.NextDouble() * 2) - 1;
 
             return new Vector2D(
-                x: x_noise * NoiseRatio + dir.X * (1-NoiseRatio),
-                y: y_noise * NoiseRatio + dir.Y * (1-NoiseRatio)
-            );
+                x: x_noise * NoiseRatio + dir.X * (1 - NoiseRatio),
+                y: y_noise * NoiseRatio + dir.Y * (1 - NoiseRatio)
+            ).GetNormalized();
         }
     }
 }

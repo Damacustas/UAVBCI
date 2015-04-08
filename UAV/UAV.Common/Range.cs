@@ -33,7 +33,8 @@ namespace UAV.Common
         {
             get
             {
-                return (int)((End - Start) / Delta);
+                int x = (int)((End - Start) / Delta);
+                return x;
             }
         }
     }
