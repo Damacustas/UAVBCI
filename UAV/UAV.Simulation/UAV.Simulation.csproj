@@ -29,6 +29,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -39,6 +42,7 @@
     <Compile Include="NoIngelligence.cs" />
     <Compile Include="FitIntelligence.cs" />
     <Compile Include="InputGenerator.cs" />
+    <Compile Include="HistoryItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -50,5 +54,8 @@
       <Project>{DDDD04FD-28DC-4B39-8449-9FD5A4CD34DB}</Project>
       <Name>UAV.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

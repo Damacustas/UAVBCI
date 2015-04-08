@@ -1,6 +1,7 @@
 ﻿using System;
 using UAV.Common;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace UAV.Simulation
 {
@@ -17,20 +18,17 @@ namespace UAV.Simulation
             sim.MaxTargetDeviation = 3.0f;
             sim.Targets = new List<Vector2D>() { new Vector2D(100, 100) };
 
-
             sim.Intelligence = new FitIntelligence(10, 2);
-            //sim.Intelligence = new NoIngelligence();
 
-            sim.Run();
+            DateTime start = DateTime.UtcNow;
+            sim.Run(verbose: false);
+            DateTime end = DateTime.UtcNow;
 
-            if (sim.IsFinished())
-            {
-                Console.WriteLine("Finished path. :D");
-            }
-            else
-            {
-                Console.WriteLine("Didn't finish path. :(");
-            }
+            var ms = (end - start).TotalMilliseconds;
+
+            string json = JsonConvert.SerializeObject(sim, Formatting.Indented);
+
+            int i = 0;
 		}
 	}
 }

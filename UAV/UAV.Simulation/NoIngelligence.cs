@@ -15,6 +15,14 @@ namespace UAV.Simulation
 
         #region IIntelligence implementation
 
+        public string IntelligenceName
+        {
+            get
+            {
+                return "NoIntelligence";
+            }
+        }
+
         public Vector2D ComputeCommand(WorldState worldState, Vector2D baseCommand)
         {
             return baseCommand;
