@@ -1,4 +1,6 @@
 package com.DroneSimulator;
+import java.io.IOException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -73,16 +75,21 @@ public class Program {
 		Screen scrn = new Screen();
 		scrn.setVisible(true);
 		
-		// Create some objects, set some values.
-		Simulation sim = new Simulation(scrn);
-		sim.setDevianceX(devianceX);
-		sim.setDevianceY(devianceY);
-		sim.setDuration(duration);
-		sim.setInitialTargetHeight(initialHeight);
-		sim.setInitialTargetWidth(initialWidth);
-
-
-		
+		try
+		{
+			// Create some objects, set some values.
+			Simulation sim = new Simulation(scrn);
+			sim.setDevianceX(devianceX);
+			sim.setDevianceY(devianceY);
+			sim.setDuration(duration);
+			sim.setInitialTargetHeight(initialHeight);
+			sim.setInitialTargetWidth(initialWidth);
+		}
+		catch(IOException ex)
+		{
+			scrn.setVisible(false);
+			System.out.println("Couldn't open output file.\n" + ex.toString());
+		}
 	}
 
 	private static CommandLine parseArguments(String[] args)

@@ -2,6 +2,11 @@ package com.DroneSimulator;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 public class Simulation {
@@ -28,6 +33,9 @@ public class Simulation {
 	private Dimension dim = null;
 
 	private Screen screen;
+	
+	private BufferedWriter dataOut;
+	private static String headerLine = "isHit,timeRequired,startX,startY,targetWidth,targetHeight,score";
 
 	//private TrialParameters last = null;
 
@@ -36,6 +44,7 @@ public class Simulation {
 	private double totalTrials = 20;
 	private int cursorDistance = 200;
 	private double hits;
+	private double score;
 	private double sizeDecrease = 10;
 	private double hitRateConv = 0.80;
 	private double sizeIncrease = (int) (sizeDecrease/((1-hitRateConv)/hitRateConv));
@@ -48,7 +57,7 @@ public class Simulation {
 		this.longBreakTrials = longBreakTrials;
 	}
 
-	public Simulation(Screen s) {
+	public Simulation(Screen s) throws IOException{
 		this.screen = s;
 		random = new Random();
 		velocity = duration = devianceX = devianceY = 0;
@@ -59,7 +68,13 @@ public class Simulation {
 		
 	}
 
-	public void startExperiment() {
+	public void startExperiment() throws IOException {
+		Date dt = Calendar.getInstance().getTime();
+		String filename = dt.getHours() + "-" + dt.getMinutes() + "-" + dt.getSeconds() + ".csv";
+		this.dataOut = new BufferedWriter(new FileWriter(filename));
+		this.dataOut.write(headerLine);
+		this.dataOut.newLine();
+		
 		int teller = 0;
 		hits = 0;
 		while (teller < totalTrials) {
@@ -98,10 +113,12 @@ public class Simulation {
 			System.out.println("Trial completed: " + teller);
 			teller++;
 		}
+		this.dataOut.close();
+		
 		System.out.println("Experiment Completed! :D");
 		System.out.println("Total trials: " + totalTrials);
 		System.out.println("Total number of hits: " + hits);
-		double score = ((screen.getCurrentTrial().getTargetHeight()) - 50)/15;
+		score = ((screen.getCurrentTrial().getTargetHeight()) - 50)/15;
 		System.out.println("Performance on a scale of 200 to 50: " + screen.getCurrentTrial().getTargetHeight());
 		System.out.println("Score on a scale of 10 to 1: " + score);
 	}
@@ -165,10 +182,30 @@ public class Simulation {
 	 *            The run to save.
 	 * @return
 	 */
-	public void reportSimulationResults(TrialResults run) {
-		// TODO: implement.
-		// My idea was to save all the data to a json file.
-		// Alternatively, we can save it to a csv (comma seperated value) file.
+	public void reportSimulationResults(TrialResults run)
+	{
+		try
+		{
+			dataOut.write(run.isHit() ? "true" : "false");
+			dataOut.write(",");
+			dataOut.write(Double.toString(run.getTimeRequired()));
+			dataOut.write(",");
+			dataOut.write(Double.toString(run.getSimulationDetails().getStartX()));
+			dataOut.write(",");
+			dataOut.write(Double.toString(run.getSimulationDetails().getStartY()));
+			dataOut.write(",");
+			dataOut.write(Double.toString(run.getSimulationDetails().getTargetWidth()));
+			dataOut.write(",");
+			dataOut.write(Double.toString(run.getSimulationDetails().getTargetHeight()));
+			dataOut.write(",");
+			dataOut.write(Double.toString(score));
+			dataOut.newLine();
+			dataOut.flush();
+		}
+		catch(IOException ex)
+		{
+			// TODO: Handle
+		}
 	}
 
 	public double getDevianceY() {
