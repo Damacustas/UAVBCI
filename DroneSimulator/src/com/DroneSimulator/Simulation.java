@@ -39,8 +39,8 @@ public class Simulation {
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 10;
 	private double totalTrials = 5;
-	private int cursorDistance = 200;
-	private int minTargetSize = 50;
+	private int cursorDistance = 4*Screen.STEPSIZE;
+	private int minTargetSize = Screen.STEPSIZE;
 	private double hits;
 	private double score;
 	private double sizeDecrease = 10;
@@ -85,7 +85,7 @@ public class Simulation {
 				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(5);
 			}
-		
+			
 			if(teller == 0)
 			{
 				screen.setCurrentTrial(generateInitial());

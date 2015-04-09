@@ -44,7 +44,7 @@ public class Screen extends JPanel {
 
 	// The location of the cursor.
 	private int cursorX, cursorY;
-	private int stepSize = 50;
+	public static final int STEPSIZE = 100;
 
 	private int state = Screen.TRIAL_EMPTY;
 
@@ -251,7 +251,7 @@ public class Screen extends JPanel {
 	 * Handles up key presses
 	 */
 	public void upKey() {
-		cursorY -= stepSize;
+		cursorY -= STEPSIZE;
 		cursorY = (cursorY < 0) ? 0 : cursorY;
 		this.repaint();
 	}
@@ -260,7 +260,7 @@ public class Screen extends JPanel {
 	 * Handles down key presses
 	 */
 	public void downKey() {
-		cursorY += stepSize;
+		cursorY += STEPSIZE;
 		cursorY = (int) ((cursorY > (dim.getHeight() - 70)) ? (dim.getHeight() - 70)
 				: cursorY);
 		this.repaint();
@@ -270,7 +270,7 @@ public class Screen extends JPanel {
 	 * Handles right key presses
 	 */
 	public void rightKey() {
-		cursorX += stepSize;
+		cursorX += STEPSIZE;
 		cursorX = (int) ((cursorX > (dim.getWidth() - 10)) ? (dim.getWidth() - 10)
 				: cursorX);
 		this.repaint();
@@ -280,7 +280,7 @@ public class Screen extends JPanel {
 	 * Handles left key presses
 	 */
 	public void leftKey() {
-		cursorX -= stepSize;
+		cursorX -= STEPSIZE;
 		cursorX = (cursorX < 0) ? 0 : cursorX;
 		this.repaint();
 	}
