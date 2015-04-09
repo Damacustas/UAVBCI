@@ -38,7 +38,7 @@ public class Simulation {
 
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 10;
-	private double totalTrials = 5;
+	private double totalTrials = 20;
 	private int cursorDistance = 200;
 	private int minTargetSize = 50;
 	private double hits;
@@ -94,6 +94,7 @@ public class Simulation {
 			{
 				screen.setCurrentTrial(generateNext());
 			}
+			screen.setState(Screen.TRIAL_EMPTY);
 			try {
 				Thread.sleep(randomBreakTime());
 			} catch (InterruptedException e) {
