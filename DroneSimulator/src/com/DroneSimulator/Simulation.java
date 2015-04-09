@@ -40,6 +40,7 @@ public class Simulation {
 	private int longBreakTrials = 10;
 	private double totalTrials = 5;
 	private int cursorDistance = 200;
+	private int minTargetSize = 50;
 	private double hits;
 	private double score;
 	private double sizeDecrease = 10;
@@ -93,12 +94,10 @@ public class Simulation {
 			{
 				screen.setCurrentTrial(generateNext());
 			}
-			screen.setState(Screen.TRIAL_EMPTY);
-			//break after each trial
 			try {
 				Thread.sleep(randomBreakTime());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+			// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			screen.setState(Screen.TRIAL_BUSY);
@@ -109,7 +108,6 @@ public class Simulation {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
 			System.out.println("Trial completed: " + teller);
 			submitResult();
 			teller++;
@@ -122,7 +120,7 @@ public class Simulation {
 		System.out.println("Total number of hits: " + hits);
 		score = ((screen.getCurrentTrial().getTargetHeight()) - 50)/15;
 		System.out.println("Performance on a scale of 200 to 50: " + screen.getCurrentTrial().getTargetHeight());
-		System.out.println("Score on a scale of 10 to 1: " + score);
+		System.out.println("Score on a scale of 10 to 0: " + score);
 	}
 
 	
@@ -153,20 +151,24 @@ public class Simulation {
 		System.out.println(lastWidth);
 		// Calculate new size based on the Weighted Up-Down method.
 		double newWidth, newHeight;
-		if (screen.isHit() && lastWidth > 50 && lastHeight > 50){
+		if (screen.isHit() && lastWidth > minTargetSize && lastHeight > minTargetSize){
 			newWidth = lastWidth - sizeDecrease;
 			newHeight = lastHeight - sizeDecrease;
 			hits++;
 		}
-		else if (screen.isHit() && lastWidth <= 60 && lastHeight <= 60){
-			newWidth = 50;
-			newHeight = 50;
+		else if (screen.isHit() && lastWidth <= (minTargetSize+sizeDecrease) && lastHeight <= (minTargetSize+sizeDecrease)){
+			newWidth = minTargetSize;
+			newHeight = minTargetSize;
+			hits++;
 		}
-		else {
+		else if (lastWidth <= cursorDistance && lastHeight <= cursorDistance) {
 			newWidth = lastWidth + (sizeIncrease * (1 - (hits/totalTrials)));
 			newHeight = lastHeight + (sizeIncrease * (1 - (hits/totalTrials)));
+		}else
+		{
+			newWidth = cursorDistance;
+			newHeight = cursorDistance;
 		}
-	
 		// Create the new simulation run object.
 		TrialParameters run = new TrialParameters();
 		double angle = random.nextDouble() * 360;
