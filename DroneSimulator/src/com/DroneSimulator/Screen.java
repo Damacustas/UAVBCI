@@ -98,7 +98,7 @@ public class Screen extends JPanel {
 				int value = progressBar.getValue() + TIMER_DELAY;
 				if (value > progressBar.getMaximum()) {
 					//System.out.println(value);
-					value = 0;
+					value = progressBar.getMaximum();
 					timer.stop();
 
 					//submitResult();
