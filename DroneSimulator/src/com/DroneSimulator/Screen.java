@@ -139,6 +139,9 @@ public class Screen extends JPanel {
 		this.currentTrial = currentTrial;
 	}
 
+	public TrialParameters getCurrentTrial(){
+		return currentTrial;
+	}
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -226,7 +229,7 @@ public class Screen extends JPanel {
 	 * Handles up key presses
 	 */
 	public void upKey() {
-		cursorY -= 35;
+		cursorY -= 50;
 		cursorY = (cursorY < 0) ? 0 : cursorY;
 		this.repaint();
 	}
@@ -235,7 +238,7 @@ public class Screen extends JPanel {
 	 * Handles down key presses
 	 */
 	public void downKey() {
-		cursorY += 35;
+		cursorY += 50;
 		cursorY = (int) ((cursorY > (dim.getHeight() - 70)) ? (dim.getHeight() - 70)
 				: cursorY);
 		this.repaint();
@@ -245,7 +248,7 @@ public class Screen extends JPanel {
 	 * Handles right key presses
 	 */
 	public void rightKey() {
-		cursorX += 35;
+		cursorX += 50;
 		cursorX = (int) ((cursorX > (dim.getWidth() - 10)) ? (dim.getWidth() - 10)
 				: cursorX);
 		this.repaint();
@@ -255,7 +258,7 @@ public class Screen extends JPanel {
 	 * Handles left key presses
 	 */
 	public void leftKey() {
-		cursorX -= 35;
+		cursorX -= 50;
 		cursorX = (cursorX < 0) ? 0 : cursorX;
 		this.repaint();
 	}
