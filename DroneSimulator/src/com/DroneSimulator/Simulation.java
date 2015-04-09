@@ -38,14 +38,14 @@ public class Simulation {
 
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 10;
-
-	private double totalTrials = 5;
+	private double totalTrials = 2;
+	
 	private int cursorDistance = 4*Screen.STEPSIZE;
 	private int minTargetSize = Screen.STEPSIZE;
 
 	private double hits;
 	private double score;
-	private double sizeDecrease = 10;
+	private double sizeDecrease = 0.2*Screen.STEPSIZE;
 	private double hitRateConv = 0.80;
 	private double sizeIncrease = (int) (sizeDecrease/((1-hitRateConv)/hitRateConv));
 	
@@ -62,7 +62,7 @@ public class Simulation {
 		random = new Random();
 		velocity = duration = devianceX = devianceY = 0;
 		// xHits = yHits = totalTrials = 0;
-		initialTargetHeight = initialTargetWidth = 100;
+		initialTargetHeight = initialTargetWidth = 2*Screen.STEPSIZE;
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		startExperiment();
 		
@@ -92,10 +92,6 @@ public class Simulation {
 			{
 				screen.setCurrentTrial(generateInitial());
 			}
-			else 
-			{
-				screen.setCurrentTrial(generateNext());
-			}
 			screen.setState(Screen.TRIAL_EMPTY);
 			try {
 				Thread.sleep(randomBreakTime());
@@ -111,6 +107,12 @@ public class Simulation {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			if (screen.isHit())
+			{
+				hits++;
+			}
+			screen.setCurrentTrial(generateNext());
 			System.out.println("Trial completed: " + teller);
 			submitResult();
 			teller++;
@@ -121,8 +123,10 @@ public class Simulation {
 		System.out.println("Experiment Completed! :D");
 		System.out.println("Total trials: " + totalTrials);
 		System.out.println("Total number of hits: " + hits);
-		score = ((screen.getCurrentTrial().getTargetHeight()) - 50)/15;
-		System.out.println("Performance on a scale of 200 to 50: " + screen.getCurrentTrial().getTargetHeight());
+		score = ((screen.getCurrentTrial().getTargetHeight()) - minTargetSize)/((cursorDistance - minTargetSize)/10);
+		System.out.format("Performance on a scale of %d to %d: %f%n", cursorDistance, minTargetSize, screen.getCurrentTrial().getTargetHeight());
+		//System.out.printf("Performance on a scale of %i to %i")
+		//System.out.println("Performance on a scale of 200 to 50: " + screen.getCurrentTrial().getTargetHeight());
 		System.out.println("Score on a scale of 10 to 0: " + score);
 	}
 
@@ -157,12 +161,10 @@ public class Simulation {
 		if (screen.isHit() && lastWidth > minTargetSize && lastHeight > minTargetSize){
 			newWidth = lastWidth - sizeDecrease;
 			newHeight = lastHeight - sizeDecrease;
-			hits++;
 		}
 		else if (screen.isHit() && lastWidth <= (minTargetSize+sizeDecrease) && lastHeight <= (minTargetSize+sizeDecrease)){
 			newWidth = minTargetSize;
 			newHeight = minTargetSize;
-			hits++;
 		}
 		else if (lastWidth <= cursorDistance && lastHeight <= cursorDistance) {
 			newWidth = lastWidth + (sizeIncrease * (1 - (hits/totalTrials)));
