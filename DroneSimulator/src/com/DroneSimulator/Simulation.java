@@ -22,9 +22,6 @@ public class Simulation {
 	// These represent the initial dimensions of the target.
 	private double initialTargetHeight, initialTargetWidth;
 
-	// // These represent the percentages of targets hit by the user, depending
-	// on the dimension.
-	// private double xHits, yHits, totalTrials;
 
 	// Used to generate the random start positions.
 	private Random random;
@@ -41,7 +38,7 @@ public class Simulation {
 
 	private int shortBreakTrials = 1;
 	private int longBreakTrials = 10;
-	private double totalTrials = 20;
+	private double totalTrials = 5;
 	private int cursorDistance = 200;
 	private double hits;
 	private double score;
@@ -111,6 +108,7 @@ public class Simulation {
 				e.printStackTrace();
 			}
 			System.out.println("Trial completed: " + teller);
+			submitResult();
 			teller++;
 		}
 		this.dataOut.close();
@@ -208,6 +206,14 @@ public class Simulation {
 		}
 	}
 
+	public void submitResult() {
+		TrialResults result = new TrialResults();
+		result.setHit(screen.isHit());
+		//result.setTimeRequired(1337); // TODO: change
+		result.setSimulationDetails(screen.getCurrentTrial());
+		reportSimulationResults(result);
+		// TODO put in loop: simulation.reportSimulationResults(result);
+	}
 	public double getDevianceY() {
 		return devianceY;
 	}

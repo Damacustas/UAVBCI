@@ -201,6 +201,7 @@ public class Screen extends JPanel {
 	/**
 	 * Submits the simulation results to the Simulation.
 	 */
+	/*
 	private void submitResult() {
 		TrialResults result = new TrialResults();
 		result.setHit(isHit());
@@ -208,7 +209,7 @@ public class Screen extends JPanel {
 		result.setSimulationDetails(currentTrial);
 		// TODO put in loop: simulation.reportSimulationResults(result);
 	}
-
+*/
 	/**
 	 * Handles enter key presses
 	 */
