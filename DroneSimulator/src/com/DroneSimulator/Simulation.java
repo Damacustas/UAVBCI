@@ -36,9 +36,9 @@ public class Simulation {
 
 	//private TrialParameters last = null;
 
-	private int shortBreakTrials = 1;
+	private int shortBreakTrials = 5;
 	private int longBreakTrials = 10;
-	private double totalTrials = 20;
+	private double totalTrials = 5;
 	private int cursorDistance = 200;
 	private double hits;
 	private double score;
@@ -114,6 +114,7 @@ public class Simulation {
 			submitResult();
 			teller++;
 		}
+		screen.setState(Screen.TRIAL_END);
 		this.dataOut.close();
 		
 		System.out.println("Experiment Completed! :D");
