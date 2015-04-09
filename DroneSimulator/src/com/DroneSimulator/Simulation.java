@@ -36,7 +36,7 @@ public class Simulation {
 
 	//private TrialParameters last = null;
 
-	private int shortBreakTrials = 5;
+	private int shortBreakTrials = 1;
 	private int longBreakTrials = 10;
 	private double totalTrials = 20;
 	private int cursorDistance = 200;

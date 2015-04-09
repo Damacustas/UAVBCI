@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -166,10 +167,15 @@ public class Screen extends JPanel {
 
 	private void drawCountdown(Graphics g) {
 		//countdownLabel.setText(Integer.toString(breakTimeLeft));
+		Graphics2D graphics2D = (Graphics2D) g;
+		graphics2D.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		Font font = new Font(null, Font.PLAIN, 100);
-		g.setFont(font);
-		int stringWidth = (int) g.getFontMetrics(font).getStringBounds(Integer.toString(breakTimeLeft), g).getWidth();
-		g.drawString(Integer.toString(breakTimeLeft), dim.width / 2 - stringWidth / 2,dim.height / 2);
+		graphics2D.setFont(font);
+		
+		int stringWidth = (int) graphics2D.getFontMetrics(font).getStringBounds(Integer.toString(breakTimeLeft), g).getWidth();
+		graphics2D.drawString(Integer.toString(breakTimeLeft), dim.width / 2 - stringWidth / 2,dim.height / 2);
 				
 	}
 	
