@@ -43,14 +43,14 @@ public class Screen extends JPanel {
 	// The location of the cursor.
 	private int cursorX, cursorY;
 	
-	private int state = Screen.TRIAL_IDLE;
+	private int state = Screen.TRIAL_EMPTY;
 
 	// The timer for the progressbar
 	private Timer timer;
 	
 	public static final int TRIAL_BUSY = 0;
 	public static final int TRIAL_BREAK = 1;
-	public static final int TRIAL_IDLE = 2;
+	public static final int TRIAL_EMPTY = 2;
 	
 	
 	
