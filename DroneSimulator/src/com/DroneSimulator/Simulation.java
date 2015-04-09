@@ -63,6 +63,7 @@ public class Simulation {
 		int teller = 0;
 		hits = 0;
 		while (teller < totalTrials) {
+			/*
 			if (teller % longBreakTrials == 0 && teller != 0) {
 				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(30);
@@ -71,7 +72,7 @@ public class Simulation {
 				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(5);
 			}
-		
+		*/
 			if(teller == 0)
 			{
 				screen.setCurrentTrial(generateInitial());
@@ -100,7 +101,9 @@ public class Simulation {
 		System.out.println("Experiment Completed! :D");
 		System.out.println("Total trials: " + totalTrials);
 		System.out.println("Total number of hits: " + hits);
+		double score = ((screen.getCurrentTrial().getTargetHeight()) - 50)/15;
 		System.out.println("Performance on a scale of 200 to 50: " + screen.getCurrentTrial().getTargetHeight());
+		System.out.println("Score on a scale of 10 to 1: " + score);
 	}
 
 	
