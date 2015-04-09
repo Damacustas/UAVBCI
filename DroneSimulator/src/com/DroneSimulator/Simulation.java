@@ -38,7 +38,7 @@ public class Simulation {
 
 	private int shortBreakTrials = 1;
 	private int longBreakTrials = 10;
-	private double totalTrials = 5;
+	private double totalTrials = 20;
 	private int cursorDistance = 200;
 	private int minTargetSize = 50;
 	private double hits;
@@ -76,7 +76,7 @@ public class Simulation {
 		int teller = 0;
 		hits = 0;
 		while (teller < totalTrials) {
-			/*
+			
 			if (teller % longBreakTrials == 0 && teller != 0) {
 				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(30);
@@ -85,7 +85,7 @@ public class Simulation {
 				screen.setState(Screen.TRIAL_BREAK);
 				screen.startCountdown(5);
 			}
-		*/
+		
 			if(teller == 0)
 			{
 				screen.setCurrentTrial(generateInitial());
@@ -94,12 +94,12 @@ public class Simulation {
 			{
 				screen.setCurrentTrial(generateNext());
 			}
-//			try {
-//				Thread.sleep(randomBreakTime());
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			try {
+				Thread.sleep(randomBreakTime());
+			} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			screen.setState(Screen.TRIAL_BUSY);
 			screen.reset();			
 			screen.showProgressBar();

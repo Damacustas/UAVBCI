@@ -27,6 +27,7 @@ import javax.swing.*;
  */
 public class Screen extends JPanel {
 
+	private static final int DRONE_SIZE = 10;
 	private static final int TIMER_DELAY = 50;
 	// The frame that contains the display.
 	private JFrame frame;
@@ -43,7 +44,7 @@ public class Screen extends JPanel {
 
 	// The location of the cursor.
 	private int cursorX, cursorY;
-	
+	private int stepSize = 50;
 	private int state = Screen.TRIAL_EMPTY;
 
 	// The timer for the progressbar
@@ -156,7 +157,7 @@ public class Screen extends JPanel {
 			g.fillRect(dim.width / 2 - width / 2, dim.height / 2 - height / 2,
 					width, height);
 			g.setColor(Color.BLACK);
-			g.fillOval(cursorX, cursorY, 10, 10);
+			g.fillOval(cursorX, cursorY, DRONE_SIZE, DRONE_SIZE);
 		}
 		else if (state == Screen.TRIAL_BREAK)
 		{
@@ -236,7 +237,7 @@ public class Screen extends JPanel {
 	 * Handles up key presses
 	 */
 	public void upKey() {
-		cursorY -= 50;
+		cursorY -= stepSize;
 		cursorY = (cursorY < 0) ? 0 : cursorY;
 		this.repaint();
 	}
@@ -245,7 +246,7 @@ public class Screen extends JPanel {
 	 * Handles down key presses
 	 */
 	public void downKey() {
-		cursorY += 50;
+		cursorY += stepSize;
 		cursorY = (int) ((cursorY > (dim.getHeight() - 70)) ? (dim.getHeight() - 70)
 				: cursorY);
 		this.repaint();
@@ -255,7 +256,7 @@ public class Screen extends JPanel {
 	 * Handles right key presses
 	 */
 	public void rightKey() {
-		cursorX += 50;
+		cursorX += stepSize;
 		cursorX = (int) ((cursorX > (dim.getWidth() - 10)) ? (dim.getWidth() - 10)
 				: cursorX);
 		this.repaint();
@@ -265,7 +266,7 @@ public class Screen extends JPanel {
 	 * Handles left key presses
 	 */
 	public void leftKey() {
-		cursorX -= 50;
+		cursorX -= stepSize;
 		cursorX = (cursorX < 0) ? 0 : cursorX;
 		this.repaint();
 	}
@@ -280,13 +281,13 @@ public class Screen extends JPanel {
 	 * @return true if hit, otherwise false.
 	 */
 	public boolean isHit() {
-		return (cursorY) <= (dim.getHeight() / 2 + currentTrial
+		return (cursorY+(DRONE_SIZE/2)) <= (dim.getHeight() / 2 + currentTrial
 				.getTargetHeight() / 2)
-				&& (cursorY) >= (dim.getHeight() / 2 - currentTrial
+				&& (cursorY+(DRONE_SIZE/2)) >= (dim.getHeight() / 2 - currentTrial
 						.getTargetHeight() / 2)
-				&& (cursorX) <= (dim.getWidth() / 2 + currentTrial
+				&& (cursorX+(DRONE_SIZE/2)) <= (dim.getWidth() / 2 + currentTrial
 						.getTargetWidth() / 2)
-				&& (cursorX) >= (dim.getWidth() / 2 - currentTrial
+				&& (cursorX+(DRONE_SIZE/2)) >= (dim.getWidth() / 2 - currentTrial
 						.getTargetWidth() / 2);
 	}
 // TODO put in loop:
