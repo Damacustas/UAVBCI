@@ -25,12 +25,14 @@ namespace UAV.Simulation
 
             // Different parameters
             double[] intelligenceFactors = new double[]{ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
-            double[] noiseFactors = new double[]{0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            int[] historyLenghts = new int[] { 2, 5, 10, 15, 20, 25 };
-            int[] fitDegrees = new int[] { 1, 2, 3, 4, 5, 6 };
+            double[] noiseFactors = new double[]{0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
+            int[] historyLenghts = new int[] { 2, 5, 10, 15, 20 };
+            int[] fitDegrees = new int[] { 1, 2, 3, 4 };
 
             passed = 0;
-            total = noiseFactors.Length * intelligenceFactors.Length * historyLenghts.Length * fitDegrees.Length * numSims;
+            total = noiseFactors.Length * intelligenceFactors.Length * historyLenghts.Length * fitDegrees.Length * numSims
+                + noiseFactors.Length * intelligenceFactors.Length * numSims;
+
             numLen = total.ToString().Length;
 
             results = new List<Simulation>(total);
@@ -81,11 +83,14 @@ namespace UAV.Simulation
             Console.WriteLine();
             Console.WriteLine("Ran {0} simulations in {1} ({2} ms).", passed, (end-start).ToString(@"hh\:mm\:ss"), ms);
 
-            var json = JsonConvert.SerializeObject(results);
-            results.Clear();
+            EnsureDirectory("Output");
             using (StreamWriter writer = new StreamWriter(Path.Combine("Output", "output.json")))
             {
-                writer.Write(json);
+                using (JsonWriter jsonWriter = new JsonTextWriter(writer))
+                {
+                    var serializer = new JsonSerializer();
+                    serializer.Serialize(jsonWriter, results);
+                }
             }
 		}
 
