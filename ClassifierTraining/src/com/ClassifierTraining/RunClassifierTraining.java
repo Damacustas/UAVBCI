@@ -1,5 +1,7 @@
 package com.ClassifierTraining;
 
+import java.io.IOException;
+
 public class RunClassifierTraining {
 
 	public static void main(String[] args) {
@@ -7,7 +9,12 @@ public class RunClassifierTraining {
 		Screen s = new Screen();
 		String[] classes = {"music", "house"};
 		Trainer tr = new Trainer(s, classes);
-		tr.startClassifierTraining();
+		try {
+			tr.startClassifierTraining();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }

@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
+import java.io.*;
+import java.nio.*;
+
+import nl.fcdonders.fieldtrip.bufferclient.*;
 
 import javax.swing.Timer;
 
@@ -29,24 +33,70 @@ public class Trainer {
 
 	}
 
-	public void startClassifierTraining() {
-		// TODO Auto-generated method stub
-		Iterator<String> it = cues.iterator();
+	public void startClassifierTraining() throws IOException {
+		// TODO Add buffer stuff
+		String hostname = "localhost";
+		int port = 1972;
+		int timeout = 5000;
+		
+		BufferClientClock c = new BufferClientClock();
 
+		Header hdr = null;
+		while (hdr == null) {
+			try {
+				System.out.println("Connecting to " + hostname + ":" + port);
+				c.connect(hostname, port);
+				// C.setAutoReconnect(true);
+				if (c.isConnected()) {
+					System.out.println("GETHEADER");
+					hdr = c.getHeader();
+				}
+			} catch (IOException e) {
+				hdr = null;
+			}
+			if (hdr == null) {
+				System.out.println("Invalid Header... waiting");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+
+		}
+		//Print stuff
+		System.out.println("#channels....: " + hdr.nChans);
+		System.out.println("#samples.....: " + hdr.nSamples);
+		System.out.println("#events......: " + hdr.nEvents);
+		System.out.println("Sampling Freq: " + hdr.fSample);
+		System.out.println("data type....: " + hdr.dataType);
+		for (int n = 0; n < hdr.nChans; n++) {
+			if (hdr.labels[n] != null) {
+				System.out.println("Ch. " + n + ": " + hdr.labels[n]);
+			}
+		}
+		
+		
+		Iterator<String> it = cues.iterator();
 		int trialcounter = 0;
 		String next;
 		// Loop through all trials
 		while (it.hasNext()) {
-			// System.out.println(it.next());
 			next = it.next();
 			System.out.println("Now doing: " + next);
 			try {
 				screen.setState(Screen.TRIAL_START);
+				//TODO cahnge?
+				c.putEvent(new BufferEvent("Start", "", -1));
 				Thread.sleep(1000);
 				screen.setCue(next);
 				screen.setState(Screen.TRIAL_CUE);
+				c.putEvent(new BufferEvent("Cue", next, -1));
 				Thread.sleep(4000);
 				screen.setState(Screen.TRIAL_EMPTY);
+				c.putEvent(new BufferEvent("Finish", "", -1));
 				Thread.sleep(randomBreakTime());
 			} catch (InterruptedException e) {
 				System.err.println("ERROR");
@@ -55,8 +105,8 @@ public class Trainer {
 			// break every 40 trials (30s)
 			if (++trialcounter % longBreakTrials == 0) {
 				System.out.println(" Breaktime! (30 seconds)");
-				// screen.setBreakTimeLeft(30);
 				screen.setState(Screen.TRIAL_BREAK);
+				c.putEvent(new BufferEvent("Break", 30, -1));
 				screen.startCountdown(30);
 				// screen.setBreakTimeLeft(30);
 
@@ -65,10 +115,12 @@ public class Trainer {
 				System.out.println(" Breaktime! (5 seconds)");
 
 				screen.setState(Screen.TRIAL_BREAK);
+				c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(5);
 
 			}
 		}
+		c.disconnect();
 	}
 
 	/**

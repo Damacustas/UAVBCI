@@ -55,6 +55,7 @@ public class Screen extends JPanel {
 	public static final int TRIAL_BREAK = 1;
 	public static final int TRIAL_EMPTY = 2;
 	public static final int TRIAL_END = 3;
+	public static final int TRIAL_CLASSIFYING = 4;
 
 	private ArrayList<TrialResults> results = new ArrayList<TrialResults>();
 	// private JLabel countdownLabel = new JLabel();
@@ -149,7 +150,7 @@ public class Screen extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		if (state == Screen.TRIAL_BUSY) {
+		if (state == Screen.TRIAL_BUSY || state == Screen.TRIAL_CLASSIFYING ) {
 			int height = (int) currentTrial.getTargetHeight();
 			int width = (int) currentTrial.getTargetWidth();
 
@@ -287,6 +288,10 @@ public class Screen extends JPanel {
 
 	public void setState(int state) {
 		this.state = state;
+	}
+
+	public int getState() {
+		return state;
 	}
 
 	/**
