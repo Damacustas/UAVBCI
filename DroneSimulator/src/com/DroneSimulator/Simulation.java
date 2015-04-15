@@ -54,15 +54,8 @@ public class Simulation {
 	
 	//bufferstuff
 	private BufferClientClock c;
+	private Header hdr;
 	
-	public void setShortBreakTrials(int shortBreakTrials) {
-		this.shortBreakTrials = shortBreakTrials;
-	}
-
-	public void setLongBreakTrials(int longBreakTrials) {
-		this.longBreakTrials = longBreakTrials;
-	}
-
 	public Simulation(Screen s) throws IOException{
 		
 		this.screen = s;
@@ -74,8 +67,8 @@ public class Simulation {
 		
 		
 		connectBuffer();
-		
-		
+		(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
+
 		startExperiment();
 		
 	}
@@ -83,10 +76,10 @@ public class Simulation {
 	private void connectBuffer() {
 		String hostname = "localhost";
 		int port = 1972;
-		int timeout = 5000;
+		
 		c = new BufferClientClock();
 
-		Header hdr = null;
+		hdr = null;
 		while (hdr == null) {
 			try {
 				System.out.println("Connecting to " + hostname + ":" + port);
@@ -166,7 +159,9 @@ public class Simulation {
 			c.putEvent(new BufferEvent("TrialStart", "", -1));
 			screen.showProgressBar();
 			try {
-				Thread.sleep(TRIAL_LENGTH);
+				Thread.sleep(2000);
+				screen.setState(Screen.TRIAL_CLASSIFYING);
+				Thread.sleep(TRIAL_LENGTH-2000);
 				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -335,6 +330,14 @@ public class Simulation {
 
 	public void setInitialTargetWidth(double initialTargetWidth) {
 		this.initialTargetWidth = initialTargetWidth;
+	}
+
+	public void setShortBreakTrials(int shortBreakTrials) {
+		this.shortBreakTrials = shortBreakTrials;
+	}
+
+	public void setLongBreakTrials(int longBreakTrials) {
+		this.longBreakTrials = longBreakTrials;
 	}
 
 	/**
