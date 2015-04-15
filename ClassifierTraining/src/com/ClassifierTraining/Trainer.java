@@ -79,48 +79,48 @@ public class Trainer {
 		}
 		
 		
-//		Iterator<String> it = cues.iterator();
-//		int trialcounter = 0;
-//		String next;
-//		// Loop through all trials
-//		while (it.hasNext()) {
-//			next = it.next();
-//			System.out.println("Now doing: " + next);
-//			try {
-//				screen.setState(Screen.TRIAL_START);
-//				//TODO cahnge?
-//				c.putEvent(new BufferEvent("Start", "", -1));
-//				Thread.sleep(1000);
-//				screen.setCue(next);
-//				screen.setState(Screen.TRIAL_CUE);
-//				c.putEvent(new BufferEvent("Cue", next, -1));
-//				Thread.sleep(4000);
-//				screen.setState(Screen.TRIAL_EMPTY);
-//				c.putEvent(new BufferEvent("Finish", "", -1));
-//				Thread.sleep(randomBreakTime());
-//			} catch (InterruptedException e) {
-//				System.err.println("ERROR");
-//			}
-//
-//			// break every 40 trials (30s)
-//			if (++trialcounter % longBreakTrials == 0) {
-//				System.out.println(" Breaktime! (30 seconds)");
-//				screen.setState(Screen.TRIAL_BREAK);
-//				c.putEvent(new BufferEvent("Break", 30, -1));
-//				screen.startCountdown(30);
-//				// screen.setBreakTimeLeft(30);
-//
-//				// small break every 5
-//			} else if (trialcounter % shortBreakTrials == 0) {
-//				System.out.println(" Breaktime! (5 seconds)");
-//
-//				screen.setState(Screen.TRIAL_BREAK);
-//				c.putEvent(new BufferEvent("Break", 5, -1));
-//				screen.startCountdown(5);
-//
-//			}
-//		}
-//		c.disconnect();
+		Iterator<String> it = cues.iterator();
+		int trialcounter = 0;
+		String next;
+		// Loop through all trials
+		while (it.hasNext()) {
+			next = it.next();
+			System.out.println("Now doing: " + next);
+			try {
+				screen.setState(Screen.TRIAL_START);
+				//TODO cahnge?
+				c.putEvent(new BufferEvent("Start", "", -1));
+				Thread.sleep(1000);
+				screen.setCue(next);
+				screen.setState(Screen.TRIAL_CUE);
+				c.putEvent(new BufferEvent("Cue", next, -1));
+				Thread.sleep(4000);
+				screen.setState(Screen.TRIAL_EMPTY);
+				c.putEvent(new BufferEvent("Finish", "", -1));
+				Thread.sleep(randomBreakTime());
+			} catch (InterruptedException e) {
+				System.err.println("ERROR");
+			}
+
+			// break every 40 trials (30s)
+			if (++trialcounter % longBreakTrials == 0) {
+				System.out.println(" Breaktime! (30 seconds)");
+				screen.setState(Screen.TRIAL_BREAK);
+				c.putEvent(new BufferEvent("Break", 30, -1));
+				screen.startCountdown(30);
+				// screen.setBreakTimeLeft(30);
+
+				// small break every 5
+			} else if (trialcounter % shortBreakTrials == 0) {
+				System.out.println(" Breaktime! (5 seconds)");
+
+				screen.setState(Screen.TRIAL_BREAK);
+				c.putEvent(new BufferEvent("Break", 5, -1));
+				screen.startCountdown(5);
+
+			}
+		}
+		c.disconnect();
 	}
 
 	/**

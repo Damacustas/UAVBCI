@@ -1,6 +1,7 @@
 package com.DroneSimulator;
 
 import java.awt.Dimension;
+
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+
+import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
 	public static final int TRIAL_LENGTH = 5000;
@@ -49,6 +52,9 @@ public class Simulation {
 	private double hitRateConv = 0.80;
 	private double sizeIncrease = (int) (sizeDecrease/((1-hitRateConv)/hitRateConv));
 	
+	//bufferstuff
+	private BufferClientClock c;
+	
 	public void setShortBreakTrials(int shortBreakTrials) {
 		this.shortBreakTrials = shortBreakTrials;
 	}
@@ -58,14 +64,64 @@ public class Simulation {
 	}
 
 	public Simulation(Screen s) throws IOException{
+		
 		this.screen = s;
 		random = new Random();
 		velocity = duration = devianceX = devianceY = 0;
 		// xHits = yHits = totalTrials = 0;
 		initialTargetHeight = initialTargetWidth = 2*Screen.STEPSIZE;
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		
+		connectBuffer();
+		
+		
 		startExperiment();
 		
+	}
+
+	private void connectBuffer() {
+		String hostname = "localhost";
+		int port = 1972;
+		int timeout = 5000;
+		c = new BufferClientClock();
+
+		Header hdr = null;
+		while (hdr == null) {
+			try {
+				System.out.println("Connecting to " + hostname + ":" + port);
+				c.connect(hostname, port);
+				// C.setAutoReconnect(true);
+				if (c.isConnected()) {
+					System.out.println("GETHEADER");
+					hdr = c.getHeader();
+				}
+			} catch (IOException e) {
+				hdr = null;
+			}
+			if (hdr == null) {
+				System.out.println("Invalid Header... waiting");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+
+		}
+		//Print stuff
+		System.out.println("#channels....: " + hdr.nChans);
+		System.out.println("#samples.....: " + hdr.nSamples);
+		System.out.println("#events......: " + hdr.nEvents);
+		System.out.println("Sampling Freq: " + hdr.fSample);
+		System.out.println("data type....: " + hdr.dataType);
+		for (int n = 0; n < hdr.nChans; n++) {
+			if (hdr.labels[n] != null) {
+				System.out.println("Ch. " + n + ": " + hdr.labels[n]);
+			}
+		}
 	}
 
 	public void startExperiment() throws IOException {
@@ -81,33 +137,41 @@ public class Simulation {
 			
 			if (teller % longBreakTrials == 0 && teller != 0) {
 				screen.setState(Screen.TRIAL_BREAK);
+				//c.putEvent(new BufferEvent("Break", 30, -1));
 				screen.startCountdown(30);
 
 			} else if (teller % shortBreakTrials == 0 && teller != 0) {
 				screen.setState(Screen.TRIAL_BREAK);
+				//c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(5);
 			}
+			
+			
 			
 			if(teller == 0)
 			{
 				screen.setCurrentTrial(generateInitial());
 			}
 			screen.setState(Screen.TRIAL_EMPTY);
+			
 			try {
 				Thread.sleep(randomBreakTime());
 			} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			screen.setState(Screen.TRIAL_BUSY);
-			screen.reset();			
+			
+			screen.setState(Screen.TRIAL_BUSY);			
+			screen.reset();
+			c.putEvent(new BufferEvent("TrialStart", "", -1));
 			screen.showProgressBar();
 			try {
 				Thread.sleep(TRIAL_LENGTH);
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+			c.putEvent(new BufferEvent("TrialEnd", "", -1));
 			if (screen.isHit())
 			{
 				hits++;
