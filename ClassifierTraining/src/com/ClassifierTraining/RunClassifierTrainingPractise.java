@@ -1,8 +1,10 @@
 package com.ClassifierTraining;
 
+import java.io.IOException;
+
 public class RunClassifierTrainingPractise {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		Screen s = new Screen();
 		String[] classes = {"music", "house"};
