@@ -6,7 +6,7 @@ namespace UAV.Simulation
 {
     public class Simulation
     {
-        private double epoch;
+        public double CurrentEpoch { get; private set; }
 
         /// <summary>
         /// Represents the state of the simulation.
@@ -73,7 +73,7 @@ namespace UAV.Simulation
         /// </summary>
         public Simulation()
         {
-            epoch = 0;
+            CurrentEpoch = 0;
             State = new WorldState();
         }
 
@@ -86,8 +86,11 @@ namespace UAV.Simulation
             State.MoveDrone(StartLocation, new Vector2D(0,0), 0);
             State.CurrentTarget = Targets[0];
 
-            while (!IsFinished && epoch < (double)MaxEpochs)
+            while (!IsFinished && CurrentEpoch < (double)MaxEpochs)
             {
+                Vector2D optimal_dir = State.CurrentTarget - State.DroneLocation;
+                optimal_dir = optimal_dir.GetNormalized();
+
                 // Compute input movement direction.
                 Vector2D dir_input = InputGenerator.ComputeNewDirection(State);
 
@@ -102,13 +105,13 @@ namespace UAV.Simulation
                 Vector2D newPos = State.DroneLocation + new Vector2D(x, y);
 
                 // Go to next step.
-                epoch++;
-                State.MoveDrone(newPos, dir_input, epoch);
+                CurrentEpoch++;
+                State.MoveDrone(newPos, dir_input, CurrentEpoch);
 
                 // Print some debugging information.
                 if (verbose)
                 {
-                    Console.WriteLine("\nEpoch #{0}", epoch);
+                    Console.WriteLine("\nEpoch #{0}", CurrentEpoch);
                     Console.WriteLine("Location: {0}, Target: {1}", State.DroneLocation, State.CurrentTarget);
                     Console.WriteLine("Input: {0}", dir_input);
                     Console.WriteLine("Intelligence: {0}", dir_intelligence);

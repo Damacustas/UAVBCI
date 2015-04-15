@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
-using System.IO.Compression;
 
 namespace UAV.Simulation
 {
@@ -12,26 +11,32 @@ namespace UAV.Simulation
 	{
         static int passed, total, numLen;
         static DateTime start, prev;
-        static readonly int numSims = 20;
+        static readonly int numSims = 500;
         static List<Simulation> results;
 
+        // Different parameters
+        static double[] IntelligenceFactors = new double[]{ 0.25, 0.50, 0.75 };
+        static double[] InputAccuracies = new double[]{0.5, 0.6, 0.7};
+        static int[] historyLenghts = new int[] { 5, 10, 15 };
+        static int[] fitDegrees = new int[] { 2, 3, 4 };
+
 		public static void Main (string[] args)
-		{
+        {
+            //RunSimulationsForNoIntelligence();
+            RunSimulationsForFitIntelligence();
+        }
+
+        private static void RunAllSimulations()
+        {
             // Delete previous results.
             if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output")))
             {
                 Directory.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output"), true);
             }
 
-            // Different parameters
-            double[] intelligenceFactors = new double[]{ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 };
-            double[] noiseFactors = new double[]{0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
-            int[] historyLenghts = new int[] { 2, 5, 10, 15, 20 };
-            int[] fitDegrees = new int[] { 1, 2, 3, 4 };
-
             passed = 0;
-            total = noiseFactors.Length * intelligenceFactors.Length * historyLenghts.Length * fitDegrees.Length * numSims
-                + noiseFactors.Length * intelligenceFactors.Length * numSims;
+            total = InputAccuracies.Length * IntelligenceFactors.Length * historyLenghts.Length * fitDegrees.Length * numSims
+                + InputAccuracies.Length * IntelligenceFactors.Length * numSims;
 
             numLen = total.ToString().Length;
 
@@ -41,9 +46,9 @@ namespace UAV.Simulation
             prev = start;
 
             // Loop through all the parameters.
-            foreach (double intelligenceFactor in intelligenceFactors)
+            foreach (double intelligenceFactor in IntelligenceFactors)
             {
-                foreach (double noiseFactor in noiseFactors)
+                foreach (double noiseFactor in InputAccuracies)
                 {
                     // Run for NoIntelligence
                     for (int n = 0; n < numSims; n++)
@@ -94,14 +99,101 @@ namespace UAV.Simulation
             }
 		}
 
-        private static Simulation GenerateSimulationNoIntelligence(double intelligenceFactor, double noiseFactor)
+        private static void RunSimulationsForFitIntelligence()
+        {
+            int x = IntelligenceFactors.Length * InputAccuracies.Length * historyLenghts.Length * fitDegrees.Length;
+            int y = 1;
+
+            // Loop through all the parameters.
+            foreach (double intelligenceFactor in IntelligenceFactors)
+            {
+                foreach (double inputAccuracy in InputAccuracies)
+                {
+                    // Run for FitIntelligence
+                    foreach (int historyLength in historyLenghts)
+                    {
+                        foreach (int fitDegree in fitDegrees)
+                        {
+                            List<double> timeToCompletions = new List<double>();
+
+                            for (int n = 0; n < numSims; n++)
+                            {
+                                Simulation sim = GenerateSimulationFitIntelligence(intelligenceFactor, inputAccuracy, historyLength, fitDegree);
+                                sim.Run(verbose: false);
+                                timeToCompletions.Add(sim.CurrentEpoch);
+                            }
+
+                            // Analyse
+                            double avg = timeToCompletions.Aggregate(0.0d, (left, right) => left + right) / timeToCompletions.Count;
+                            double sd = (from ttc in timeToCompletions
+                                select Math.Pow(ttc - avg, 2)).Aggregate(0.0d, (left, right) => left + right);
+                            sd *= (1.0 / timeToCompletions.Count);
+                            sd = Math.Sqrt(sd);
+
+                            // Report results:
+                            Console.WriteLine("({8}/{9}) IF={0}, IA={1}, HL={2}, FD={3}: avg={4}, sd={5}, hits={6}, max={7}",
+                                intelligenceFactor.ToString("0.00"),
+                                inputAccuracy.ToString("0.00"),
+                                historyLength.ToString("##"),
+                                fitDegree,
+                                avg.ToString("###.00").PadLeft(6),
+                                sd.ToString("##0.00").PadLeft(6),
+                                timeToCompletions.Count(ttc => ttc < 500),
+                                timeToCompletions.Aggregate(0.0d, (left, right) => left > right ? left : right),
+                                y++,
+                                x
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void RunSimulationsForNoIntelligence()
+        {
+            // Loop through all the parameters.
+            foreach (double intelligenceFactor in IntelligenceFactors)
+            {
+                foreach (double inputAccuraccy in InputAccuracies)
+                {
+                    List<double> timeToCompletions = new List<double>();
+
+                    // Run for NoIntelligence
+                    for (int n = 0; n < numSims; n++)
+                    {
+                        Simulation sim = GenerateSimulationNoIntelligence(intelligenceFactor, inputAccuraccy);
+                        sim.Run(verbose: false);
+                        timeToCompletions.Add(sim.CurrentEpoch);
+                    }
+
+                    // Analyse
+                    double avg = timeToCompletions.Aggregate(0.0d, (left, right) => left + right) / timeToCompletions.Count;
+                    double sd = (from ttc in timeToCompletions
+                                                select Math.Pow(ttc - avg, 2)).Aggregate(0.0d, (left, right) => left + right);
+                    sd *= (1.0 / timeToCompletions.Count);
+                    sd = Math.Sqrt(sd);
+
+                    // Report results:
+                    Console.WriteLine("IF={0}, IA={1}: avg={2}, sd={3}, hits={4}, max={5}",
+                        intelligenceFactor.ToString("0.00"),
+                        inputAccuraccy.ToString("0.00"),
+                        avg.ToString("###.00").PadLeft(6),
+                        sd.ToString("##0.00").PadLeft(6),
+                        timeToCompletions.Count(ttc => ttc < 500),
+                        timeToCompletions.Aggregate(0.0d, (left, right) => left > right ? left : right)
+                    );
+                }
+            }
+        }
+
+        private static Simulation GenerateSimulationNoIntelligence(double intelligenceFactor, double inputAccuracy)
         {
             Simulation sim = new Simulation();
-            sim.InputGenerator = new InputGenerator(noiseFactor);
+            sim.InputGenerator = new InputGenerator(inputAccuracy);
             sim.MaxEpochs = 500;
             sim.IntelligenceFactor = intelligenceFactor;
             sim.StartLocation = new Vector2D();
-            sim.MaxTargetDeviation = 3.0f;
+            sim.MaxTargetDeviation = 0.5f;
             sim.Targets = new List<Vector2D>() { new Vector2D(100, 100) };
 
             sim.Intelligence = new NoIngelligence();
@@ -116,7 +208,7 @@ namespace UAV.Simulation
             sim.MaxEpochs = 500;
             sim.IntelligenceFactor = intelligenceFactor;
             sim.StartLocation = new Vector2D();
-            sim.MaxTargetDeviation = 3.0f;
+            sim.MaxTargetDeviation = 0.5f;
             sim.Targets = new List<Vector2D>() { new Vector2D(100, 100) };
 
             sim.Intelligence = new FitIntelligence(historyLength, fitDegree);
