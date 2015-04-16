@@ -17,11 +17,11 @@ public class Trainer {
 	private ArrayList<String> cues = new ArrayList<String>();
 	private Screen screen;
 
-	public Trainer(Screen screen, String[] classes){
-	
+	public Trainer(Screen screen, String[] classes) {
+
 		this.screen = screen;
-		
-		for (int i = 0; i<classes.length;i++)
+
+		for (int i = 0; i < classes.length; i++)
 			this.classes[i] = classes[i];
 		cues = addCues();
 	}
@@ -29,56 +29,22 @@ public class Trainer {
 	public void startClassifierTraining() throws IOException {
 		String hostname = "localhost";
 		int port = 1972;
-		
 		BufferClientClock c = new BufferClientClock();
 
-		Header hdr = null;
-		while (hdr == null) {
-			try {
-				System.out.println("Connecting to " + hostname + ":" + port);
-				c.connect(hostname, port);
-				// C.setAutoReconnect(true);
-				if (c.isConnected()) {
-					System.out.println("GETHEADER");
-					hdr = c.getHeader();
-				}
-			} catch (IOException e) {
-				hdr = null;
-			}
-			if (hdr == null) {
-				System.out.println("Invalid Header... waiting");
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			
+		// try to connect to bufferclientclock and retrieve header
+		Header hdr = connect(hostname, port, c);
+		printSettings(hdr);
 
-		}
-		//Print stuff
-		System.out.println("#channels....: " + hdr.nChans);
-		System.out.println("#samples.....: " + hdr.nSamples);
-		System.out.println("#events......: " + hdr.nEvents);
-		System.out.println("Sampling Freq: " + hdr.fSample);
-		System.out.println("data type....: " + hdr.dataType);
-		for (int n = 0; n < hdr.nChans; n++) {
-			if (hdr.labels[n] != null) {
-				System.out.println("Ch. " + n + ": " + hdr.labels[n]);
-			}
-		}
-		
-		
 		Iterator<String> it = cues.iterator();
 		int trialcounter = 0;
 		String next;
-		// Loop through all trials
+		// Loop through all trials (and do stuff)
 		while (it.hasNext()) {
 			next = it.next();
 			System.out.println("Now doing: " + next);
 			try {
 				screen.setState(Screen.TRIAL_START);
-				//TODO change events?
+				// TODO change events?
 				c.putEvent(new BufferEvent("Start", "", -1));
 				Thread.sleep(1000);
 				screen.setCue(next);
@@ -89,6 +55,7 @@ public class Trainer {
 				c.putEvent(new BufferEvent("Finish", "", -1));
 				Thread.sleep(randomBreakTime());
 			} catch (InterruptedException e) {
+				e.printStackTrace();
 				System.err.println("ERROR");
 			}
 
@@ -110,7 +77,48 @@ public class Trainer {
 
 			}
 		}
+		//disconnect for bufferclientclock when done
 		c.disconnect();
+	}
+
+	private void printSettings(Header hdr) {
+		System.out.println("#channels....: " + hdr.nChans);
+		System.out.println("#samples.....: " + hdr.nSamples);
+		System.out.println("#events......: " + hdr.nEvents);
+		System.out.println("Sampling Freq: " + hdr.fSample);
+		System.out.println("data type....: " + hdr.dataType);
+		for (int n = 0; n < hdr.nChans; n++) {
+			if (hdr.labels[n] != null) {
+				System.out.println("Ch. " + n + ": " + hdr.labels[n]);
+			}
+		}
+	}
+
+	private Header connect(String hostname, int port, BufferClientClock C) {
+		Header hdr = null;
+		while (hdr == null) {
+			try {
+				System.out.println("Connecting to " + hostname + ":" + port);
+				C.connect(hostname, port);
+				// C.setAutoReconnect(true);
+				if (C.isConnected()) {
+					System.out.println("GETHEADER");
+					hdr = C.getHeader();
+				}
+			} catch (IOException e) {
+				hdr = null;
+			}
+			if (hdr == null) {
+				System.out.println("Invalid Header... waiting");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+		return hdr;
 	}
 
 	/**
