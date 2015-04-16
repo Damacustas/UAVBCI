@@ -32,8 +32,8 @@ public class Trainer {
 		BufferClientClock c = new BufferClientClock();
 
 		// try to connect to bufferclientclock and retrieve header
-		//Header hdr = connect(hostname, port, c);
-		//printSettings(hdr);
+		Header hdr = connect(hostname, port, c);
+		printSettings(hdr);
 
 		Iterator<String> it = cues.iterator();
 		int trialcounter = 0;
@@ -45,14 +45,14 @@ public class Trainer {
 			try {
 				screen.setState(Screen.TRIAL_START);
 				// TODO change events?
-				//c.putEvent(new BufferEvent("Start", "", -1));
+				c.putEvent(new BufferEvent("Start", "", -1));
 				
 				
 				//cue shown after 1 second
 				Thread.sleep(1000);
 				screen.setCue(next);
 				screen.setState(Screen.TRIAL_CUE);
-				//c.putEvent(new BufferEvent("Cue", next, -1));
+				c.putEvent(new BufferEvent("Cue", next, -1));
 				
 				//start "classifying phase" (data being collected) after 2 seconds (total)
 				Thread.sleep(1000);				
@@ -61,7 +61,7 @@ public class Trainer {
 				//clear the screen after 5 seconds (total)
 				Thread.sleep(3000);				
 				screen.setState(Screen.TRIAL_EMPTY);
-				//c.putEvent(new BufferEvent("Finish", "", -1));
+				c.putEvent(new BufferEvent("Finish", "", -1));
 				
 				
 			} catch (InterruptedException e) {

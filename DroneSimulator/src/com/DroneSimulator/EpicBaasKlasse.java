@@ -61,6 +61,10 @@ public class EpicBaasKlasse implements Runnable {
 							case "right": screen.rightKey(); break;
 							}
 						}
+						else
+						{
+							System.out.println("Event: " + evt.toString());
+						}
 
 					}
 				} else { // timed out without new events
