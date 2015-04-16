@@ -1,17 +1,12 @@
 package com.ClassifierTraining;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 import java.io.*;
-import java.nio.*;
 
 import nl.fcdonders.fieldtrip.bufferclient.*;
-
-import javax.swing.Timer;
 
 public class Trainer {
 
@@ -29,15 +24,11 @@ public class Trainer {
 		for (int i = 0; i<classes.length;i++)
 			this.classes[i] = classes[i];
 		cues = addCues();
-		//this.classes = classes;
-
 	}
 
 	public void startClassifierTraining() throws IOException {
-		// TODO Add buffer stuff
 		String hostname = "localhost";
 		int port = 1972;
-		int timeout = 5000;
 		
 		BufferClientClock c = new BufferClientClock();
 
@@ -59,7 +50,6 @@ public class Trainer {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -88,7 +78,7 @@ public class Trainer {
 			System.out.println("Now doing: " + next);
 			try {
 				screen.setState(Screen.TRIAL_START);
-				//TODO cahnge?
+				//TODO change events?
 				c.putEvent(new BufferEvent("Start", "", -1));
 				Thread.sleep(1000);
 				screen.setCue(next);

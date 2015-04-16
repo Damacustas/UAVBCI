@@ -11,7 +11,6 @@ public class RunClassifierTrainingSMA {
 		try {
 			tr.startClassifierTraining();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
