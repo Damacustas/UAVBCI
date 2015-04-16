@@ -1,5 +1,7 @@
 package com.DroneSimulator;
 
+//TODO Maak vlak andere kleur als je niet kan bewegen!!!11!1!11!1!
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

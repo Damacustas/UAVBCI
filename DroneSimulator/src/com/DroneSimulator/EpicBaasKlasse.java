@@ -52,13 +52,14 @@ public class EpicBaasKlasse implements Runnable {
 						}
 						// only process if it's an event of a type we care about
 						// only process if trial is busy and type is classifier.prediction 
-						else if (evttype.equals("classifier.prediction") && screen.getState() == Screen.TRIAL_CLASSIFYING) {
+						//else if (evttype.equals("classifier.prediction") && screen.getState() == Screen.TRIAL_CLASSIFYING) {
+						else if (evttype.equals("keyboard") && screen.getState() == Screen.TRIAL_CLASSIFYING) {	
 							switch(evt.getValue().toString())
 							{
-							case "up": screen.upKey(); break;
-							case "down": screen.downKey(); break;
-							case "left": screen.leftKey(); break;
-							case "right": screen.rightKey(); break;
+							case "w": screen.upKey(); System.out.println("pressed W");break;
+							case "s": screen.downKey();System.out.println("pressed S"); break;
+							case "a": screen.leftKey(); System.out.println("pressed A");break;
+							case "d": screen.rightKey(); System.out.println("pressed D");break;
 							}
 						}
 						else

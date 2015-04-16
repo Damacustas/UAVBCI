@@ -41,7 +41,7 @@ public class Simulation {
 
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 10;
-	private double totalTrials = 2;
+	private double totalTrials = 10;
 	
 	private int cursorDistance = 4*Screen.STEPSIZE;
 	private int minTargetSize = Screen.STEPSIZE;
