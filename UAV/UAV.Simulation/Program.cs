@@ -26,6 +26,7 @@ namespace UAV.Simulation
             RunSimulationsForFitIntelligence();
         }
 
+        /*
         private static void RunAllSimulations()
         {
             // Delete previous results.
@@ -98,6 +99,7 @@ namespace UAV.Simulation
                 }
             }
 		}
+        */
 
         private static void RunSimulationsForFitIntelligence()
         {
@@ -188,110 +190,112 @@ namespace UAV.Simulation
 
         private static Simulation GenerateSimulationNoIntelligence(double intelligenceFactor, double inputAccuracy)
         {
-            Simulation sim = new Simulation();
-            sim.InputGenerator = new InputGenerator(inputAccuracy);
-            sim.MaxEpochs = 500;
-            sim.IntelligenceFactor = intelligenceFactor;
-            sim.StartLocation = new Vector2D();
-            sim.MaxTargetDeviation = 0.5f;
-            sim.Targets = new List<Vector2D>() { new Vector2D(100, 100) };
+            Simulation sim = GenerateBaseSimulation(intelligenceFactor, inputAccuracy);
 
             sim.Intelligence = new NoIngelligence();
 
             return sim;
         }
 
-        private static Simulation GenerateSimulationFitIntelligence(double intelligenceFactor, double noiseFactor, int historyLength, int fitDegree)
+        private static Simulation GenerateSimulationFitIntelligence(double intelligenceFactor, double inputAccuracy, int historyLength, int fitDegree)
         {
-            Simulation sim = new Simulation();
-            sim.InputGenerator = new InputGenerator(noiseFactor);
-            sim.MaxEpochs = 500;
-            sim.IntelligenceFactor = intelligenceFactor;
-            sim.StartLocation = new Vector2D();
-            sim.MaxTargetDeviation = 0.5f;
-            sim.Targets = new List<Vector2D>() { new Vector2D(100, 100) };
+            Simulation sim = GenerateBaseSimulation(intelligenceFactor, inputAccuracy);
 
             sim.Intelligence = new FitIntelligence(historyLength, fitDegree);
 
             return sim;
         }
 
-        private static void PrintProgress()
+        private static Simulation GenerateBaseSimulation(double IF, double inputAccuracy)
         {
-            // Progress report.
-            passed++;
-            if (passed % 25 == 0)
-            {
-                var now = DateTime.UtcNow;
+            Simulation sim = new Simulation();
+            sim.InputGenerator = new InputGenerator(inputAccuracy);
+            sim.MaxEpochs = 500;
+            sim.IntelligenceFactor = IF;
+            sim.StartLocation = new Vector2D();
+            sim.MaxTargetDeviation = 0.5f;
+            sim.Targets = new List<Vector2D>() { new Vector2D(100, 100) };
 
-                double msLeft = (now - start).TotalMilliseconds;
-                msLeft /= (double)passed;
-                msLeft *= (total - passed);
-
-                Console.WriteLine("{0}/{1} ({2}%), delta: {3} ms, total: {4}, esimated time left: {5}",
-                    passed.ToString().PadLeft(numLen),
-                    total,
-                    (((double)passed/(double)total)*100).ToString("##.0"),
-                    (now - prev).TotalMilliseconds.ToString("####.0"),
-                    (now - start).ToString(@"hh\:mm\:ss"),
-                    new TimeSpan(0, 0, 0, 0, (int)msLeft).ToString(@"hh\:mm\:ss")
-                );
-
-                prev = now;
-            }
+            return sim;
         }
 
-        /// <summary>
-        /// Writes the simulation results to a file.
-        /// </summary>
-        /// <param name="sim">The simulation to write.</param>
-        /// <param name="n">The n-th simulation under the same simulation parameters.</param>
-        private static void WriteSimulationResults(Simulation sim, int n)
-        {
-            /*
-            string[] strings =
-                {
-                    string.Format("noise_{0}", sim.InputGenerator.NoiseRatio),
-                    string.Format("intelligenceFactor_{0}", sim.IntelligenceFactor),
-                    sim.Intelligence.IntelligenceName
-                };
-
-            var json = JsonConvert.SerializeObject(sim);
-            var filename = string.Join("-", strings.Concat(new string[] {(n+1).ToString()})) + ".json";
-            //var dir = EnsureDirectory(new string[] { "Output" }.Concat(strings).ToArray());
-            EnsureDirectory("Output");
-
-            var p = Path.Combine("Output", filename);
-            p = Path.GetFullPath(p);
-            using (StreamWriter writer = new StreamWriter(File.OpenWrite(p)))
-            {
-                writer.Write(json);
-                writer.Close();
-            }
-            */
-            Console.WriteLine(JsonConvert.SerializeObject(sim));
-        }
-
-        /// <summary>
-        /// Ensures the directory exists.
-        /// </summary>
-        /// <returns>The directory.</returns>
-        /// <param name="path">Path.</param>
-        private static string EnsureDirectory(params string[] path)
-        {
-            string fullpath = AppDomain.CurrentDomain.BaseDirectory;
-
-            foreach (string p in path)
-            {
-                fullpath = Path.Combine(fullpath, p);
-
-                if (!Directory.Exists(fullpath))
-                {
-                    Directory.CreateDirectory(fullpath);
-                }
-            }
-
-            return fullpath;
-        }
+//
+//        private static void PrintProgress()
+//        {
+//            // Progress report.
+//            passed++;
+//            if (passed % 25 == 0)
+//            {
+//                var now = DateTime.UtcNow;
+//
+//                double msLeft = (now - start).TotalMilliseconds;
+//                msLeft /= (double)passed;
+//                msLeft *= (total - passed);
+//
+//                Console.WriteLine("{0}/{1} ({2}%), delta: {3} ms, total: {4}, esimated time left: {5}",
+//                    passed.ToString().PadLeft(numLen),
+//                    total,
+//                    (((double)passed/(double)total)*100).ToString("##.0"),
+//                    (now - prev).TotalMilliseconds.ToString("####.0"),
+//                    (now - start).ToString(@"hh\:mm\:ss"),
+//                    new TimeSpan(0, 0, 0, 0, (int)msLeft).ToString(@"hh\:mm\:ss")
+//                );
+//
+//                prev = now;
+//            }
+//        }
+//
+//        /// <summary>
+//        /// Writes the simulation results to a file.
+//        /// </summary>
+//        /// <param name="sim">The simulation to write.</param>
+//        /// <param name="n">The n-th simulation under the same simulation parameters.</param>
+//        private static void WriteSimulationResults(Simulation sim, int n)
+//        {
+//            /*
+//            string[] strings =
+//                {
+//                    string.Format("noise_{0}", sim.InputGenerator.NoiseRatio),
+//                    string.Format("intelligenceFactor_{0}", sim.IntelligenceFactor),
+//                    sim.Intelligence.IntelligenceName
+//                };
+//
+//            var json = JsonConvert.SerializeObject(sim);
+//            var filename = string.Join("-", strings.Concat(new string[] {(n+1).ToString()})) + ".json";
+//            //var dir = EnsureDirectory(new string[] { "Output" }.Concat(strings).ToArray());
+//            EnsureDirectory("Output");
+//
+//            var p = Path.Combine("Output", filename);
+//            p = Path.GetFullPath(p);
+//            using (StreamWriter writer = new StreamWriter(File.OpenWrite(p)))
+//            {
+//                writer.Write(json);
+//                writer.Close();
+//            }
+//            */
+//            Console.WriteLine(JsonConvert.SerializeObject(sim));
+//        }
+//
+//        /// <summary>
+//        /// Ensures the directory exists.
+//        /// </summary>
+//        /// <returns>The directory.</returns>
+//        /// <param name="path">Path.</param>
+//        private static string EnsureDirectory(params string[] path)
+//        {
+//            string fullpath = AppDomain.CurrentDomain.BaseDirectory;
+//
+//            foreach (string p in path)
+//            {
+//                fullpath = Path.Combine(fullpath, p);
+//
+//                if (!Directory.Exists(fullpath))
+//                {
+//                    Directory.CreateDirectory(fullpath);
+//                }
+//            }
+//
+//            return fullpath;
+//        }
 	}
 }
