@@ -28,6 +28,7 @@ public class Screen extends JPanel {
 	public static final int TRIAL_START = 1;
 	public static final int TRIAL_CUE = 2;
 	public static final int TRIAL_BREAK = 3;
+	public static final int TRIAL_CLASSIFYING = 4;
 
 	private JFrame frame;
 	private Dimension dim = null;
@@ -82,7 +83,7 @@ public class Screen extends JPanel {
 			cueLabel.setVisible(false);
 			drawFixationCross(g);
 			// playBeep();
-		} else if (state == TRIAL_CUE) {
+		} else if (state == TRIAL_CUE || state == Screen.TRIAL_CLASSIFYING) {
 			// drawFixationCross(g);
 			cueLabel.setVisible(true);
 			drawCueImage(g, cue);

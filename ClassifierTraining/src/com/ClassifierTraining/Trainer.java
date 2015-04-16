@@ -32,8 +32,8 @@ public class Trainer {
 		BufferClientClock c = new BufferClientClock();
 
 		// try to connect to bufferclientclock and retrieve header
-		Header hdr = connect(hostname, port, c);
-		printSettings(hdr);
+		//Header hdr = connect(hostname, port, c);
+		//printSettings(hdr);
 
 		Iterator<String> it = cues.iterator();
 		int trialcounter = 0;
@@ -45,15 +45,25 @@ public class Trainer {
 			try {
 				screen.setState(Screen.TRIAL_START);
 				// TODO change events?
-				c.putEvent(new BufferEvent("Start", "", -1));
+				//c.putEvent(new BufferEvent("Start", "", -1));
+				
+				
+				//cue shown after 1 second
 				Thread.sleep(1000);
 				screen.setCue(next);
 				screen.setState(Screen.TRIAL_CUE);
-				c.putEvent(new BufferEvent("Cue", next, -1));
-				Thread.sleep(4000);
+				//c.putEvent(new BufferEvent("Cue", next, -1));
+				
+				//start "classifying phase" (data being collected) after 2 seconds (total)
+				Thread.sleep(1000);				
+				screen.setState(Screen.TRIAL_CLASSIFYING);
+				
+				//clear the screen after 5 seconds (total)
+				Thread.sleep(3000);				
 				screen.setState(Screen.TRIAL_EMPTY);
-				c.putEvent(new BufferEvent("Finish", "", -1));
-				Thread.sleep(randomBreakTime());
+				//c.putEvent(new BufferEvent("Finish", "", -1));
+				
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				System.err.println("ERROR");
@@ -61,23 +71,28 @@ public class Trainer {
 
 			// break every 40 trials (30s)
 			if (++trialcounter % longBreakTrials == 0) {
-				System.out.println(" Breaktime! (30 seconds)");
+				System.out.printf(" Breaktime! (%d seconds)", 30);
 				screen.setState(Screen.TRIAL_BREAK);
-				c.putEvent(new BufferEvent("Break", 30, -1));
+				//c.putEvent(new BufferEvent("Break", 30, -1));
 				screen.startCountdown(30);
-				// screen.setBreakTimeLeft(30);
 
 				// small break every 5
 			} else if (trialcounter % shortBreakTrials == 0) {
 				System.out.println(" Breaktime! (5 seconds)");
 
 				screen.setState(Screen.TRIAL_BREAK);
-				c.putEvent(new BufferEvent("Break", 5, -1));
+				//c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(5);
-
+			}
+			try {
+				Thread.sleep(randomBreakTime());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		//disconnect for bufferclientclock when done
+		//c.putEvent(new BufferEvent("exit", "", -1));
 		c.disconnect();
 	}
 
