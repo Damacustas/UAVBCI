@@ -13,7 +13,11 @@ public class RunClassifierTrainingPractise {
 		tr.setTotalTrials(20);
 		tr.setLongBreakTrials(2);
 		tr.setShortBreakTrials(1);
-		tr.startClassifierTraining();
+		try {
+			tr.startClassifierTraining();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 }

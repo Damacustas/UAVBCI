@@ -1,10 +1,8 @@
 package com.ClassifierTraining;
 
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 
 
 /**
@@ -12,6 +10,7 @@ import javax.swing.Action;
  * @author jgeerts
  * This class creates Action depending on the keypresses and returns them to screen.
  */
+@SuppressWarnings("serial")
 public class KeyAction extends AbstractAction  {
 
 	private String action;
