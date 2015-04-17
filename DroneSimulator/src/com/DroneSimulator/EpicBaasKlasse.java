@@ -75,6 +75,12 @@ public class EpicBaasKlasse implements Runnable {
 				System.err.println("Error in " + this.getClass().getName());
 				e.printStackTrace();
 			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

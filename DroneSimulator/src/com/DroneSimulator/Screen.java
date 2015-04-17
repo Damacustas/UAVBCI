@@ -152,11 +152,15 @@ public class Screen extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		if (state == Screen.TRIAL_BUSY || state == Screen.TRIAL_CLASSIFYING ) {
+		if (state == Screen.TRIAL_BUSY || state == Screen.TRIAL_CLASSIFYING) {
 			int height = (int) currentTrial.getTargetHeight();
 			int width = (int) currentTrial.getTargetWidth();
 
-			g.setColor(Color.RED);
+			if (state == Screen.TRIAL_BUSY)
+				g.setColor(Color.RED);
+			else if (state == Screen.TRIAL_CLASSIFYING)
+				g.setColor(Color.GREEN);
+			
 			g.fillRect(dim.width / 2 - width / 2, dim.height / 2 - height / 2,
 					width, height);
 			g.setColor(Color.BLACK);
@@ -289,7 +293,7 @@ public class Screen extends JPanel {
 	}
 
 	public void setState(int state) {
-		this.state = state;
+		this.state = state;		
 	}
 
 	public int getState() {
