@@ -1,7 +1,5 @@
 package com.DroneSimulator;
 
-//TODO Maak vlak andere kleur als je niet kan bewegen!!!11!1!11!1!
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -30,7 +28,7 @@ import javax.swing.*;
 public class Screen extends JPanel {
 
 	private static final int DRONE_SIZE = 10;
-	private static final int TIMER_DELAY = 50;
+	private static final int TIMER_DELAY = 1;
 	// The frame that contains the display.
 	private JFrame frame;
 	private JProgressBar progressBar = null;
@@ -97,12 +95,25 @@ public class Screen extends JPanel {
 		// Initialize timer for progress bar
 
 		timer = new Timer(TIMER_DELAY, new ActionListener() {
+			long starttime = System.currentTimeMillis();
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int value = progressBar.getValue() + TIMER_DELAY;
-				if (value > progressBar.getMaximum()) {
-					// System.out.println(value);
+				long value;
+				if (progressBar.getValue() == 0) {
+					starttime = System.currentTimeMillis();
+					value = 1;
+				} else {
+					value = (System.currentTimeMillis() - starttime);
+				}
+
+				// int value = progressBar.getValue() + TIMER_DELAY;
+
+				//System.out.println(value);
+				if (value >= progressBar.getMaximum()) {
+					System.out.println("Time elapsed since start of trial: "
+							+ (System.currentTimeMillis() - starttime));
+
 					value = progressBar.getMaximum();
 					timer.stop();
 
@@ -110,7 +121,8 @@ public class Screen extends JPanel {
 					// reset();
 
 				}
-				progressBar.setValue(value);
+
+				progressBar.setValue((int) value);
 				// System.out.println(value);
 				repaint();
 
@@ -160,14 +172,12 @@ public class Screen extends JPanel {
 				g.setColor(Color.RED);
 			else if (state == Screen.TRIAL_CLASSIFYING)
 				g.setColor(Color.GREEN);
-			
+
 			g.fillRect(dim.width / 2 - width / 2, dim.height / 2 - height / 2,
 					width, height);
 			g.setColor(Color.BLACK);
 			g.fillOval(cursorX, cursorY, DRONE_SIZE, DRONE_SIZE);
-		}
-		else if (state == Screen.TRIAL_BREAK)
-		{
+		} else if (state == Screen.TRIAL_BREAK) {
 			drawCountdown(g);
 		} else if (state == Screen.TRIAL_END) {
 			drawEnd(g);
@@ -184,8 +194,8 @@ public class Screen extends JPanel {
 		String tekst = "That's all folks!";
 		int stringWidth = (int) graphics2D.getFontMetrics(font)
 				.getStringBounds(tekst, g).getWidth();
-		graphics2D.drawString(tekst, dim.width / 2
-				- stringWidth / 2, dim.height / 2);
+		graphics2D.drawString(tekst, dim.width / 2 - stringWidth / 2,
+				dim.height / 2);
 
 	}
 
@@ -293,7 +303,7 @@ public class Screen extends JPanel {
 	}
 
 	public void setState(int state) {
-		this.state = state;		
+		this.state = state;
 	}
 
 	public int getState() {
@@ -306,13 +316,13 @@ public class Screen extends JPanel {
 	 * @return true if hit, otherwise false.
 	 */
 	public boolean isHit() {
-		return (cursorY+(DRONE_SIZE/2)) <= (dim.getHeight() / 2 + currentTrial
+		return (cursorY + (DRONE_SIZE / 2)) <= (dim.getHeight() / 2 + currentTrial
 				.getTargetHeight() / 2)
-				&& (cursorY+(DRONE_SIZE/2)) >= (dim.getHeight() / 2 - currentTrial
+				&& (cursorY + (DRONE_SIZE / 2)) >= (dim.getHeight() / 2 - currentTrial
 						.getTargetHeight() / 2)
-				&& (cursorX+(DRONE_SIZE/2)) <= (dim.getWidth() / 2 + currentTrial
+				&& (cursorX + (DRONE_SIZE / 2)) <= (dim.getWidth() / 2 + currentTrial
 						.getTargetWidth() / 2)
-				&& (cursorX+(DRONE_SIZE/2)) >= (dim.getWidth() / 2 - currentTrial
+				&& (cursorX + (DRONE_SIZE / 2)) >= (dim.getWidth() / 2 - currentTrial
 						.getTargetWidth() / 2);
 	}
 
@@ -320,7 +330,7 @@ public class Screen extends JPanel {
 	public void reset() {
 		cursorX = (int) currentTrial.getStartX(); // Adjust Coordinates
 		cursorY = (int) currentTrial.getStartY(); //
-		timer.stop();
+		// timer.stop();
 		progressBar.setValue(0);
 		timer.start();
 	}

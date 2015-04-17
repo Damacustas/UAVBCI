@@ -66,7 +66,7 @@ public class Simulation {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		connectBuffer();
-		(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
+		//(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
 
 		startExperiment();
 
@@ -136,7 +136,7 @@ public class Simulation {
 					c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(5);
 			}
-
+			
 			if (teller == 0) {
 				screen.setCurrentTrial(generateInitial());
 			}
@@ -171,6 +171,10 @@ public class Simulation {
 		screen.setState(Screen.TRIAL_END);
 		this.dataOut.close();
 
+		printResults();
+	}
+
+	private void printResults() {
 		System.out.println("Experiment Completed! :D");
 		System.out.println("Total trials: " + totalTrials);
 		System.out.println("Total number of hits: " + hits);
