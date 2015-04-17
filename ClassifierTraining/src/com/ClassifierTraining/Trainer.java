@@ -43,7 +43,7 @@ public class Trainer {
 		while (it.hasNext()) {
 			next = it.next();
 			System.out.println("Now doing: " + next);
-				screen.setState(Screen.TRIAL_START);
+				screen.setState(Screen.States.TRIAL_START);
 				// TODO change events?
 				c.putEvent(new BufferEvent("Start", "", -1));
 				
@@ -51,23 +51,23 @@ public class Trainer {
 				//cue shown after 1 second
 				sleep(1000);
 				screen.setCue(next);
-				screen.setState(Screen.TRIAL_CUE);
+				screen.setState(Screen.States.TRIAL_CUE);
 				c.putEvent(new BufferEvent("Cue", next, -1));
 				
 				//start "classifying phase" (data being collected) after 2 seconds (total)
 				sleep(1000);				
-				screen.setState(Screen.TRIAL_CLASSIFYING);
+				screen.setState(Screen.States.TRIAL_CLASSIFYING);
 				
 				//clear the screen after 5 seconds (total)
 				sleep(3000);				
-				screen.setState(Screen.TRIAL_EMPTY);
+				screen.setState(Screen.States.TRIAL_EMPTY);
 				c.putEvent(new BufferEvent("Finish", "", -1));
 
 
 			// break every 40 trials (30s)
 			if (++trialcounter % longBreakTrials == 0) {
 				System.out.printf(" Breaktime! (%d seconds)", 30);
-				screen.setState(Screen.TRIAL_BREAK);
+				screen.setState(Screen.States.TRIAL_BREAK);
 				//c.putEvent(new BufferEvent("Break", 30, -1));
 				screen.startCountdown(30);
 
@@ -75,7 +75,7 @@ public class Trainer {
 			} else if (trialcounter % shortBreakTrials == 0) {
 				System.out.println(" Breaktime! (5 seconds)");
 
-				screen.setState(Screen.TRIAL_BREAK);
+				screen.setState(Screen.States.TRIAL_BREAK);
 				//c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(5);
 			}

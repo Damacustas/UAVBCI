@@ -25,15 +25,18 @@ public class Screen extends JPanel implements KeyListener{
 	private static final int CUE_ICON_WIDTH = 100;
 
 	// States
-	public static final int TRIAL_EMPTY = 0;
-	public static final int TRIAL_START = 1;
-	public static final int TRIAL_CUE = 2;
-	public static final int TRIAL_BREAK = 3;
-	public static final int TRIAL_CLASSIFYING = 4;
+	public static enum States {
+		TRIAL_EMPTY, TRIAL_START, TRIAL_CUE, TRIAL_BREAK, TRIAL_CLASSIFYING
+	}
+//	public static final int TRIAL_EMPTY = 0;
+//	public static final int TRIAL_START = 1;
+//	public static final int TRIAL_CUE = 2;
+//	public static final int TRIAL_BREAK = 3;
+//	public static final int TRIAL_CLASSIFYING = 4;
 
 	private JFrame frame;
 	private Dimension dim = null;
-	private int state = 0;
+	private States state = States.TRIAL_EMPTY;
 	private String cue;
 	private int breakTimeLeft;
 	private JLabel countdownLabel = new JLabel();
@@ -82,16 +85,16 @@ public class Screen extends JPanel implements KeyListener{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		cueLabel.setVisible(false);
-		if (state == TRIAL_START) {
+		if (state == States.TRIAL_START) {
 			cueLabel.setVisible(false);
 			drawFixationCross(g);
 			// playBeep();
-		} else if (state == TRIAL_CUE || state == Screen.TRIAL_CLASSIFYING) {
+		} else if (state == States.TRIAL_CUE || state == States.TRIAL_CLASSIFYING) {
 			// drawFixationCross(g);
 			cueLabel.setVisible(true);
 			drawCueImage(g, cue);
 			
-		} else if (state == TRIAL_BREAK) {
+		} else if (state == States.TRIAL_BREAK) {
 			cueLabel.setVisible(false);
 			drawCountdown(g);
 		}
@@ -131,7 +134,7 @@ public class Screen extends JPanel implements KeyListener{
 		
 	}
 
-	public void setState(int state) {
+	public void setState(States state) {
 		this.state = state;
 		// should probably post a bufferevent or sometihng
 		repaint();
@@ -182,7 +185,7 @@ public class Screen extends JPanel implements KeyListener{
 	 * Handles spacebar presses
 	 */
 	public void spaceKey() {
-		if (state == TRIAL_BREAK) {
+		if (state == States.TRIAL_BREAK) {
 			breakTimeLeft = 2;
 			System.out.println("Space pressed");
 		}
