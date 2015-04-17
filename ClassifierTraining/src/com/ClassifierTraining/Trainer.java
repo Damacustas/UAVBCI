@@ -9,11 +9,12 @@ import java.io.*;
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Trainer {
-
+	//
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 40;
-	private String[] classes = new String[2];
 	private int totalTrials = 80;
+	private String[] classes = new String[2];
+	
 	private ArrayList<String> cues = new ArrayList<String>();
 	private Screen screen;
 
@@ -42,32 +43,26 @@ public class Trainer {
 		while (it.hasNext()) {
 			next = it.next();
 			System.out.println("Now doing: " + next);
-			try {
 				screen.setState(Screen.TRIAL_START);
 				// TODO change events?
 				c.putEvent(new BufferEvent("Start", "", -1));
 				
 				
 				//cue shown after 1 second
-				Thread.sleep(1000);
+				sleep(1000);
 				screen.setCue(next);
 				screen.setState(Screen.TRIAL_CUE);
 				c.putEvent(new BufferEvent("Cue", next, -1));
 				
 				//start "classifying phase" (data being collected) after 2 seconds (total)
-				Thread.sleep(1000);				
+				sleep(1000);				
 				screen.setState(Screen.TRIAL_CLASSIFYING);
 				
 				//clear the screen after 5 seconds (total)
-				Thread.sleep(3000);				
+				sleep(3000);				
 				screen.setState(Screen.TRIAL_EMPTY);
 				c.putEvent(new BufferEvent("Finish", "", -1));
-				
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				System.err.println("ERROR");
-			}
+
 
 			// break every 40 trials (30s)
 			if (++trialcounter % longBreakTrials == 0) {
@@ -84,16 +79,20 @@ public class Trainer {
 				//c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(5);
 			}
-			try {
-				Thread.sleep(randomBreakTime());
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sleep(randomBreakTime());
 		}
 		//disconnect for bufferclientclock when done
 		//c.putEvent(new BufferEvent("exit", "", -1));
 		c.disconnect();
+	}
+
+	private void sleep(long ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void printSettings(Header hdr) {

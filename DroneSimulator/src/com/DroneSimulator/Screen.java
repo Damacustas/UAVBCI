@@ -28,7 +28,7 @@ import javax.swing.*;
 public class Screen extends JPanel {
 
 	private static final int DRONE_SIZE = 10;
-	private static final int TIMER_DELAY = 1;
+	private static final int TIMER_DELAY = 15;
 	// The frame that contains the display.
 	private JFrame frame;
 	private JProgressBar progressBar = null;
