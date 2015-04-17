@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class Screen extends JPanel {
+public class Screen extends JPanel implements KeyListener{
 	// Size settings
 	private static final int CROSS_SIZE = 50;
 	private static final int CUE_ICON_HEIGHT = 100;
@@ -47,6 +48,8 @@ public class Screen extends JPanel {
 		frame.setVisible(true);
 		this.setBackground(Color.WHITE);
 		this.setLayout(new GridBagLayout());
+		//this.setFocusable(true);
+		frame.addKeyListener(this);
 
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -183,5 +186,24 @@ public class Screen extends JPanel {
 			breakTimeLeft = 2;
 			System.out.println("Space pressed");
 		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(arg0.getKeyCode());
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+		
 	}
 }
