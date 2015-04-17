@@ -5,7 +5,7 @@
 .mtj.tmp/
 
 # log files
-.csv
+*.csv
 # Package Files #
 #*.jar
 *.war
