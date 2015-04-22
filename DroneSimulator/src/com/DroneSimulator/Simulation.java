@@ -1,7 +1,6 @@
 package com.DroneSimulator;
 
 import java.awt.Dimension;
-
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -349,12 +348,23 @@ public class Simulation {
 	}
 
 	public static void sleep(long ms) {
-		try {
-			Thread.sleep(ms);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//		try {
+//			Thread.sleep(ms);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		long startTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() < (startTime + ms))
+		{
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
 	}
 
 }
