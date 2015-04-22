@@ -66,7 +66,7 @@ public class Simulation {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		connectBuffer();
-		//(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
+		(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
 
 		startExperiment();
 
