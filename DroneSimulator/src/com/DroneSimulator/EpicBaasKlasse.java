@@ -62,6 +62,10 @@ public class EpicBaasKlasse implements Runnable {
 							case "d": screen.rightKey(); System.out.println("pressed D");break;
 							}
 						}
+						else if (evttype.equalsIgnoreCase("classifier.prediction"))
+						{
+							System.err.println("Found prediction event!!!!!!!!!");
+						}
 						else
 						{
 							System.out.println("Event: " + evt.toString());
@@ -75,12 +79,12 @@ public class EpicBaasKlasse implements Runnable {
 				System.err.println("Error in " + this.getClass().getName());
 				e.printStackTrace();
 			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				//Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 }

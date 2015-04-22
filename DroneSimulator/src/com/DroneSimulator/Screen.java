@@ -88,7 +88,7 @@ public class Screen extends JPanel {
 		progressBar.setPreferredSize(new Dimension(50, 150));
 		// progressBar.setValue(1);
 		// progressBar.setStringPainted(true);
-		progressBar.setVisible(false);
+		progressBar.setVisible(true);
 		progressBar.setBackground(Color.BLACK);
 		this.add(progressBar);
 

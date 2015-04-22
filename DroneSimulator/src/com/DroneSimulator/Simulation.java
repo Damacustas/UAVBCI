@@ -146,7 +146,8 @@ public class Simulation {
 			screen.setState(Screen.TRIAL_BUSY);
 			screen.reset();
 			if (bufferConnected)
-				c.putEvent(new BufferEvent("TrialStart", "", -1));
+				//c.putEvent(new BufferEvent("TrialStart", "", -1));
+				c.putEvent(new BufferEvent("startPhase.cmd","testing", -1));
 			screen.showProgressBar();
 
 			sleep(2000);
@@ -154,7 +155,8 @@ public class Simulation {
 			System.out.println("Statechange at " + (System.currentTimeMillis() - starttime));
 			sleep(TRIAL_LENGTH - 2000);
 			if (bufferConnected)
-				c.putEvent(new BufferEvent("TrialEnd", "", -1));
+				//c.putEvent(new BufferEvent("TrialEnd", "", -1));
+				c.putEvent(new BufferEvent("testing", "end", -1));
 			if (screen.isHit()) {
 				hits++;
 			}
@@ -357,12 +359,7 @@ public class Simulation {
 		long startTime = System.currentTimeMillis();
 		while (System.currentTimeMillis() < (startTime + ms))
 		{
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		
 		}
 		
 	}
