@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
+
+import javax.swing.Timer;
 
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
@@ -14,9 +18,12 @@ public class Trainer {
 	private int longBreakTrials = 40;
 	private int totalTrials = 80;
 	private String[] classes = new String[2];
-	
+
 	private ArrayList<String> cues = new ArrayList<String>();
 	private Screen screen;
+	
+	// Used for timing 
+	boolean sleepTimeOver = false;
 
 	public Trainer(Screen screen, String[] classes) {
 
@@ -43,32 +50,31 @@ public class Trainer {
 		while (it.hasNext()) {
 			next = it.next();
 			System.out.println("Now doing: " + next);
-				screen.setState(Screen.States.TRIAL_START);
-				// TODO change events?
-				c.putEvent(new BufferEvent("Start", "", -1));
-				
-				
-				//cue shown after 1 second
-				sleep(1000);
-				screen.setCue(next);
-				screen.setState(Screen.States.TRIAL_CUE);
-				c.putEvent(new BufferEvent("Cue", next, -1));
-				
-				//start "classifying phase" (data being collected) after 2 seconds (total)
-				sleep(1000);				
-				screen.setState(Screen.States.TRIAL_CLASSIFYING);
-				
-				//clear the screen after 5 seconds (total)
-				sleep(3000);				
-				screen.setState(Screen.States.TRIAL_EMPTY);
-				c.putEvent(new BufferEvent("Finish", "", -1));
+			screen.setState(Screen.States.TRIAL_START);
+			// TODO change events?
+			c.putEvent(new BufferEvent("Start", "", -1));
 
+			// cue shown after 1 second
+			sleep(1000);
+			screen.setCue(next);
+			screen.setState(Screen.States.TRIAL_CUE);
+			c.putEvent(new BufferEvent("Cue", next, -1));
+
+			// start "classifying phase" (data being collected) after 2 seconds
+			// (total)
+			sleep(1000);
+			screen.setState(Screen.States.TRIAL_CLASSIFYING);
+
+			// clear the screen after 5 seconds (total)
+			sleep(3000);
+			screen.setState(Screen.States.TRIAL_EMPTY);
+			c.putEvent(new BufferEvent("Finish", "", -1));
 
 			// break every 40 trials (30s)
 			if (++trialcounter % longBreakTrials == 0) {
 				System.out.printf(" Breaktime! (%d seconds)", 30);
 				screen.setState(Screen.States.TRIAL_BREAK);
-				//c.putEvent(new BufferEvent("Break", 30, -1));
+				// c.putEvent(new BufferEvent("Break", 30, -1));
 				screen.startCountdown(30);
 
 				// small break every 5
@@ -76,23 +82,36 @@ public class Trainer {
 				System.out.println(" Breaktime! (5 seconds)");
 
 				screen.setState(Screen.States.TRIAL_BREAK);
-				//c.putEvent(new BufferEvent("Break", 5, -1));
+				// c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(5);
 			}
 			sleep(randomBreakTime());
 		}
-		//disconnect for bufferclientclock when done
-		//c.putEvent(new BufferEvent("exit", "", -1));
+		// disconnect for bufferclientclock when done
+		// c.putEvent(new BufferEvent("exit", "", -1));
 		c.disconnect();
 	}
 
-	private void sleep(long ms) {
+	private void sleep(final long ms) {
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+//		Timer t = new Timer(500, new ActionListener() {
+//			long starttime = System.currentTimeMillis();
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				// TODO Auto-generated method stub
+//				sleepTimeOver = (System.currentTimeMillis() - starttime) >= ms;				
+//			}
+//		});
+//		while(!sleepTimeOver)
+//		{
+//			
+//		}
 	}
 
 	private void printSettings(Header hdr) {
