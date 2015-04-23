@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 using UAV.Prediction;
+using OxyPlot;
+using OxyPlot.Series;
+using System.Windows.Forms;
 
 namespace UAV.Simulation
 {
@@ -21,12 +24,36 @@ namespace UAV.Simulation
         static int[] historyLenghts = { 5, 10, 15 };
         static int[] fitDegrees = { 2, 3, 4 };
 
+        [STAThread]
 		public static void Main (string[] args)
         {
             //RunSimulationsForNoIntelligence();
             //RunSimulationsForFitIntelligence(1.0);
             //RunSimulationsForAttractorIntelligence();
-            RunSmoothnessFitIntelligence();
+            //RunSmoothnessFitIntelligence();
+            var model = new PlotModel();
+            model.Title = "Path on X-axis over time.";
+            model.LegendPosition = LegendPosition.LeftTop;
+
+            List<Simulation> sims = new List<Simulation>();
+            for(int i = 0; i < 5; i++)
+            {
+                var sim = GenerateSimulationFitIntelligence(0.5, 0.6, 10, 2, 2);
+                sim.Run(verbose: false);
+                sims.Add(sim);
+
+                var linePlot = new LineSeries("Fit Simulation " + (i + 1));
+                linePlot.Points.AddRange(
+                    from p in sim.State.LocationHistory select new DataPoint(p.Epoch, p.Value.X)
+                    );
+                model.Series.Add(linePlot);
+            }
+
+            MainForm form = new MainForm();
+            form.plotView.Model = model;
+            form.plotView.InvalidatePlot(true);
+
+            Application.Run(form);
         }
 
         private static void RunSmoothnessFitIntelligence()
