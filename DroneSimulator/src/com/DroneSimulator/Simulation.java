@@ -54,6 +54,8 @@ public class Simulation {
 	private BufferClientClock c;
 	private Header hdr;
 	private boolean bufferConnected = false;
+	
+	private Thread t;
 
 	public Simulation(Screen s) throws IOException {
 
@@ -65,7 +67,8 @@ public class Simulation {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		connectBuffer();
-		(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
+		t = new Thread(new BufferReader(screen, hdr, c));
+		t.start();
 
 		startExperiment();
 
@@ -170,6 +173,8 @@ public class Simulation {
 			
 		}
 		screen.setState(Screen.TRIAL_END);
+		// TODO change (because deprecated and unsafe)
+		t.stop();
 		this.dataOut.close();
 
 		printResults();

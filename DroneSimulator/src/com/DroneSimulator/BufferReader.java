@@ -4,13 +4,13 @@ import java.io.IOException;
 
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
-public class EpicBaasKlasse implements Runnable {
+public class BufferReader implements Runnable {
 
 	private Screen screen;
 	Header hdr;
 	BufferClientClock c;
 
-	public EpicBaasKlasse(Screen s, Header hdr, BufferClientClock c) {
+	public BufferReader(Screen s, Header hdr, BufferClientClock c) {
 		this.screen = s;
 		this.hdr = hdr;
 		this.c = c;
