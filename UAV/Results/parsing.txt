@@ -1,0 +1,6 @@
+output = ' \\\\\n'.join(input.replace(', ', ' & ').replace('IF=', '').replace('IA=', '').replace('HL=', '').replace(': ', ' & ').replace('avg=', '').replace('sd=', '').replace('hits=', '').replace('FD=', '').replace('max=', '').split('\n'))
+temp = [l[l.index(' '):] for l in output.split('\n') if l.strip() != '']
+print("\n".join(temp))
+
+
+output = ' \\\\\n'.join(input.replace(', ', ' & ').replace('IF=', '').replace('IA=', '').replace(': ', ' & ').replace('avg=', '').replace('sd=', '').replace('hits=', '').replace('max=', '').split('\n'))

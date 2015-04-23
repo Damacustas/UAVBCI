@@ -15,19 +15,19 @@ namespace UAV.Controllers
 		public virtual void StartController()
 		{
 			State = ControllerState.Control;
-			Drone.Takeoff ();
+			//Drone.Takeoff ();
 		}
 
 		public virtual void StopController()
 		{
 			State = ControllerState.Hover;
-			Drone.Land ();
+			//Drone.Land ();
 		}
 
 		public void EnterHoverState()
 		{
 			State = ControllerState.Hover;
-			Drone.Hover ();
+			//Drone.Hover ();
 		}
 
 		public void LeaveHoverState()
@@ -39,7 +39,8 @@ namespace UAV.Controllers
 		{
 			if (State == ControllerState.Control)
 			{
-				Drone.Progress (AR.Drone.Client.Command.FlightMode.Progressive, roll, 0.0f, 0.0f, gaz);
+				//Drone.Progress (AR.Drone.Client.Command.FlightMode.Progressive, roll, 0.0f, 0.0f, gaz);
+                Console.WriteLine("Progressing...");
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace UAV.Controllers
 {
@@ -6,14 +7,19 @@ namespace UAV.Controllers
 	{
 		public static void Main(string[] args)
 		{
-			if (args[0] == "--shared")
+			
+            if (args.Length == 0 || args[0] == "--unshared")
 			{
-				// TODO: Implement.
+                BCIProvider provider = new BCIProvider();
+                PasstroughController controller = new PasstroughController(provider);
+                controller.StartController();
+                while (true)
+                    Thread.Yield();
 			}
-			else if (args[0] == "--unshared")
-			{
-				// TODO: Implement.
-			}
+            else if (args[0] == "--shared")
+            {
+                // TODO: Implement.
+            }
 			else if (args[0] == "--help")
 			{
 				Console.WriteLine("Options:");

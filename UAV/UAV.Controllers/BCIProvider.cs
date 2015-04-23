@@ -24,14 +24,19 @@ namespace UAV.Controllers
             {
                 try
                 {
-                    Console.Write("Connecting to 'localhost:1972...");
+                    Console.Write("Connecting to 'localhost:1972'...");
                     clock.connect("localhost", 1972);
                     Console.WriteLine(" done");
 
                     if(clock.isConnected())
                     {
+                        Console.WriteLine("GETHEADER");
                         hdr = clock.getHeader();
                         lastEvent = hdr.nEvents;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not connected!");
                     }
                 }
                 catch
@@ -55,6 +60,16 @@ namespace UAV.Controllers
 
         #endregion
 
+        private void OnCommandReceived(Vector2D cmd)
+        {
+            if (CommandReceived != null)
+            {
+                var eventArgs = new CommandEventArgs();
+                eventArgs.Command = cmd;
+                CommandReceived(this, eventArgs);
+            }
+        }
+
         /// <summary>
         /// Handles receiving data from blackboard.
         /// </summary>
@@ -67,9 +82,38 @@ namespace UAV.Controllers
 
                 foreach (var evt in events)
                 {
-                    Console.WriteLine(evt);
 
-                    // TODO: Process events of interest.
+                    string evttype = evt.getType().toString();
+                    if (evttype == "keyboard")
+                    {
+                        string val = evt.getValue().toString();
+
+                        switch (val)
+                        {
+                            case "w":
+                                OnCommandReceived(new Vector2D(0, 1));
+                                break;
+
+                            case "a":
+                                OnCommandReceived(new Vector2D(-1, 0));
+                                break;
+
+                            case "s":
+                                OnCommandReceived(new Vector2D(0, -1));
+                                break;
+
+                            case "d":
+                                OnCommandReceived(new Vector2D(1, 0));
+                                break;
+
+                        }
+
+                        Console.WriteLine(">> " + evt);
+                    }
+                    else
+                    {
+                        Console.WriteLine("   " + evt);
+                    }
                 }
             }
             else
