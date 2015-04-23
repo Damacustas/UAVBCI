@@ -12,7 +12,14 @@ namespace UAV.Controllers
 			CommandProvider.CommandReceived += HandleCommandReceived;
 		}
 
-		void HandleCommandReceived (object sender, CommandEventArgs e)
+        public override void StartController()
+        {
+            CommandProvider.Initialize();
+
+            base.StartController();
+        }
+
+        void HandleCommandReceived (object sender, CommandEventArgs e)
 		{
 			SendFlightCommand (
 				roll: 0.0f,

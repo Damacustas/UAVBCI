@@ -12,13 +12,13 @@ namespace UAV.Controllers
 		{
 		}
 
-		public void StartController()
+		public virtual void StartController()
 		{
 			State = ControllerState.Control;
 			Drone.Takeoff ();
 		}
 
-		public void StopController()
+		public virtual void StopController()
 		{
 			State = ControllerState.Hover;
 			Drone.Land ();
