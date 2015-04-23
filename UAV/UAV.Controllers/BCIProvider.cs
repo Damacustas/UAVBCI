@@ -1,5 +1,6 @@
 ﻿using System;
 using UAV.Common;
+using FieldTrip.Buffer;
 
 namespace UAV.Controllers
 {
@@ -10,6 +11,11 @@ namespace UAV.Controllers
         }
 
         #region ICommandProvider implementation
+
+        public void Initialize()
+        {
+
+        }
 
         public event EventHandler<CommandEventArgs> CommandReceived;
 
