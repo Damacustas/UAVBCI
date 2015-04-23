@@ -24,14 +24,16 @@ namespace UAV.Simulation
                              );
             noise = noise.GetNormalized();
 
+            int v = noiseGenerator.Next(0, 100);
 
-
-            //Console.WriteLine("n_x: {0}, n_y: {1}", x_noise, y_noise);
-
-            return new Vector2D(
-                x: noise.X * (1.0 - InputAccuracy) + dir.X * InputAccuracy,
-                y: noise.Y * (1.0 - InputAccuracy) + dir.Y * InputAccuracy
-            ).GetNormalized();
+            if (v < (int)(InputAccuracy * 100.0d))
+            {
+                return dir;
+            }
+            else
+            {
+                return noise;
+            }
         }
     }
 }
