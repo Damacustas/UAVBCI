@@ -22,38 +22,39 @@ namespace UAV.Simulation
         static double[] IntelligenceFactors = { 0.25, 0.50, 0.75 };
         static double[] InputAccuracies = {0.5, 0.6, 0.7};
         static int[] historyLenghts = { 5, 10, 15 };
-        static int[] fitDegrees = { 2, 3, 4 };
+        static int[] fitDegrees = {1, 2, 3 };
 
         [STAThread]
 		public static void Main (string[] args)
         {
             //RunSimulationsForNoIntelligence();
-            //RunSimulationsForFitIntelligence(1.0);
+            RunSimulationsForFitIntelligence(1.0);
             //RunSimulationsForAttractorIntelligence();
             //RunSmoothnessFitIntelligence();
-            var model = new PlotModel();
-            model.Title = "Path on X-axis over time.";
-            model.LegendPosition = LegendPosition.LeftTop;
 
-            List<Simulation> sims = new List<Simulation>();
-            for(int i = 0; i < 5; i++)
-            {
-                var sim = GenerateSimulationFitIntelligence(0.5, 0.6, 10, 2, 2);
-                sim.Run(verbose: false);
-                sims.Add(sim);
-
-                var linePlot = new LineSeries("Fit Simulation " + (i + 1));
-                linePlot.Points.AddRange(
-                    from p in sim.State.LocationHistory select new DataPoint(p.Epoch, p.Value.X)
-                    );
-                model.Series.Add(linePlot);
-            }
-
-            MainForm form = new MainForm();
-            form.plotView.Model = model;
-            form.plotView.InvalidatePlot(true);
-
-            Application.Run(form);
+//            var model = new PlotModel();
+//            model.Title = "Path on X-axis over time.";
+//            model.LegendPosition = LegendPosition.LeftTop;
+//
+//            List<Simulation> sims = new List<Simulation>();
+//            for(int i = 0; i < 5; i++)
+//            {
+//                var sim = GenerateSimulationFitIntelligence(0.5, 0.6, 10, 2, 2);
+//                sim.Run(verbose: false);
+//                sims.Add(sim);
+//
+//                var linePlot = new LineSeries("Fit Simulation " + (i + 1));
+//                linePlot.Points.AddRange(
+//                    from p in sim.State.LocationHistory select new DataPoint(p.Epoch, p.Value.X)
+//                    );
+//                model.Series.Add(linePlot);
+//            }
+//
+//            MainForm form = new MainForm();
+//            form.plotView.Model = model;
+//            form.plotView.InvalidatePlot(true);
+//
+//            Application.Run(form);
         }
 
         private static void RunSmoothnessFitIntelligence()
