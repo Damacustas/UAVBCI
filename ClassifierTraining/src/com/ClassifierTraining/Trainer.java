@@ -16,7 +16,7 @@ public class Trainer {
 	//
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 40;
-	private int totalTrials = 80;
+	private int totalTrials = 10;
 	private String[] classes = new String[2];
 
 	private ArrayList<String> cues = new ArrayList<String>();

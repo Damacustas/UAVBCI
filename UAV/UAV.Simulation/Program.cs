@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
+using UAV.Prediction;
 
 namespace UAV.Simulation
 {
@@ -15,15 +16,104 @@ namespace UAV.Simulation
         static List<Simulation> results;
 
         // Different parameters
-        static double[] IntelligenceFactors = new double[]{ 0.25, 0.50, 0.75 };
-        static double[] InputAccuracies = new double[]{0.5, 0.6, 0.7};
-        static int[] historyLenghts = new int[] { 5, 10, 15 };
-        static int[] fitDegrees = new int[] { 2, 3, 4 };
+        static double[] IntelligenceFactors = { 0.25, 0.50, 0.75 };
+        static double[] InputAccuracies = {0.5, 0.6, 0.7};
+        static int[] historyLenghts = { 5, 10, 15 };
+        static int[] fitDegrees = { 2, 3, 4 };
 
 		public static void Main (string[] args)
         {
             //RunSimulationsForNoIntelligence();
-            RunSimulationsForFitIntelligence();
+            //RunSimulationsForFitIntelligence(1.0);
+            //RunSimulationsForAttractorIntelligence();
+            RunSmoothnessFitIntelligence();
+        }
+
+        private static void RunSmoothnessFitIntelligence()
+        {
+            int x = IntelligenceFactors.Length * InputAccuracies.Length * historyLenghts.Length * fitDegrees.Length;
+            int y = 1;
+
+            // Loop through all the parameters.
+            foreach (double intelligenceFactor in IntelligenceFactors)
+            {
+                foreach (double inputAccuracy in InputAccuracies)
+                {
+                    // Run for FitIntelligence
+                    foreach (int historyLength in historyLenghts)
+                    {
+                        foreach (int fitDegree in fitDegrees)
+                        {
+                            List<List<HistoryItem>> histories = new List<List<HistoryItem>>();
+
+                            for (int n = 0; n < numSims/5; n++)
+                            {
+                                Simulation sim = GenerateSimulationFitIntelligence(intelligenceFactor, inputAccuracy, historyLength, fitDegree, 1.0);
+                                sim.Run(verbose: false);
+
+                                histories.Add(sim.State.LocationHistory);
+                            }
+
+                            // Analyse
+                            double smoothnessError = ComputeAverageSmoothness(histories);
+
+                            // Report results:
+                            Console.WriteLine("({5}/{6}) IF={0}, IA={1}, HL={2}, FD={3}: smoothness={4}",
+                                intelligenceFactor.ToString("0.00"),
+                                inputAccuracy.ToString("0.00"),
+                                historyLength.ToString("##"),
+                                fitDegree,
+                                smoothnessError,
+                                y++,
+                                x
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private static double ComputeAverageSmoothness(List<List<HistoryItem>> histories)
+        {
+            var smoothnesses = from history in histories
+                                        select ComputeSmoothness(history);
+            return smoothnesses.Aggregate(0.0d, (l, r) => l + r) / histories.Count;
+        }
+
+        static double ComputeSmoothness(List<HistoryItem> history)
+        {
+            // for every point in [3, length-3], generate quadratic function for points [t - 3, t + 3].
+            // Then compute squared error for point.
+
+            double errSum = 0.0d;
+
+            for (int i = 3; i < history.Count - 3; i++)
+            {
+                var timeRange = new Range(i - 3, i + 4, 1);
+                var relevantPoints = history.GetRange(i - 3, 7);
+
+                var t = (from n in timeRange
+                    select n).ToArray();
+
+                var fitFuncX = Fitters.GeneratePolynomialFit(
+                                   timeRange,
+                                   (from point in relevantPoints
+                                    select point.Value.X).ToList(),
+                                   2);
+                var fitFuncY = Fitters.GeneratePolynomialFit(
+                    timeRange,
+                    (from point in relevantPoints
+                        select point.Value.Y).ToList(),
+                    2);
+
+                var errX = fitFuncX(i);
+                var errY = fitFuncY(i);
+
+                errSum += errX + errY; // Return summed error.
+            }
+
+            return errSum / history.Count;
         }
 
         /*
@@ -101,7 +191,7 @@ namespace UAV.Simulation
 		}
         */
 
-        private static void RunSimulationsForFitIntelligence()
+        private static void RunSimulationsForFitIntelligence(double distanceDeviation)
         {
             int x = IntelligenceFactors.Length * InputAccuracies.Length * historyLenghts.Length * fitDegrees.Length;
             int y = 1;
@@ -120,7 +210,7 @@ namespace UAV.Simulation
 
                             for (int n = 0; n < numSims; n++)
                             {
-                                Simulation sim = GenerateSimulationFitIntelligence(intelligenceFactor, inputAccuracy, historyLength, fitDegree);
+                                Simulation sim = GenerateSimulationFitIntelligence(intelligenceFactor, inputAccuracy, historyLength, fitDegree, distanceDeviation);
                                 sim.Run(verbose: false);
                                 timeToCompletions.Add(sim.CurrentEpoch);
                             }
@@ -149,6 +239,44 @@ namespace UAV.Simulation
                     }
                 }
             }
+        }
+
+        private static void RunSimulationsForAttractorIntelligence()
+        {
+            // Loop through all the parameters.
+            foreach (double intelligenceFactor in IntelligenceFactors)
+            {
+                foreach (double inputAccuraccy in InputAccuracies)
+                {
+                    List<double> timeToCompletions = new List<double>();
+
+                    // Run for NoIntelligence
+                    for (int n = 0; n < numSims; n++)
+                    {
+                        Simulation sim = GenerateSimulationAttractorIntelligence(intelligenceFactor, inputAccuraccy);
+                        sim.Run(verbose: false);
+                        timeToCompletions.Add(sim.CurrentEpoch);
+                    }
+
+                    // Analyse
+                    double avg = timeToCompletions.Aggregate(0.0d, (left, right) => left + right) / timeToCompletions.Count;
+                    double sd = (from ttc in timeToCompletions
+                                                    select Math.Pow(ttc - avg, 2)).Aggregate(0.0d, (left, right) => left + right);
+                    sd *= (1.0 / timeToCompletions.Count);
+                    sd = Math.Sqrt(sd);
+
+                    // Report results:
+                    Console.WriteLine("IF={0}, IA={1}: avg={2}, sd={3}, hits={4}, max={5}",
+                        intelligenceFactor.ToString("0.00"),
+                        inputAccuraccy.ToString("0.00"),
+                        avg.ToString("###.00").PadLeft(6),
+                        sd.ToString("##0.00").PadLeft(6),
+                        timeToCompletions.Count(ttc => ttc < 500),
+                        timeToCompletions.Aggregate(0.0d, (left, right) => left > right ? left : right)
+                    );
+                }
+            }
+
         }
 
         private static void RunSimulationsForNoIntelligence()
@@ -190,30 +318,39 @@ namespace UAV.Simulation
 
         private static Simulation GenerateSimulationNoIntelligence(double intelligenceFactor, double inputAccuracy)
         {
-            Simulation sim = GenerateBaseSimulation(intelligenceFactor, inputAccuracy);
+            Simulation sim = GenerateBaseSimulation(intelligenceFactor, inputAccuracy, 1.0);
 
             sim.Intelligence = new NoIngelligence();
 
             return sim;
         }
 
-        private static Simulation GenerateSimulationFitIntelligence(double intelligenceFactor, double inputAccuracy, int historyLength, int fitDegree)
+        private static Simulation GenerateSimulationFitIntelligence(double intelligenceFactor, double inputAccuracy, int historyLength, int fitDegree, double targetDev)
         {
-            Simulation sim = GenerateBaseSimulation(intelligenceFactor, inputAccuracy);
+            Simulation sim = GenerateBaseSimulation(intelligenceFactor, inputAccuracy, targetDev);
 
             sim.Intelligence = new FitIntelligence(historyLength, fitDegree);
 
             return sim;
         }
 
-        private static Simulation GenerateBaseSimulation(double IF, double inputAccuracy)
+        private static Simulation GenerateSimulationAttractorIntelligence(double intelligenceFactor, double inputAccuracy)
+        {
+            Simulation sim = GenerateBaseSimulation(intelligenceFactor, inputAccuracy, 1.0);
+
+            sim.Intelligence = new AttractorIntelligence();
+
+            return sim;
+        }
+
+        private static Simulation GenerateBaseSimulation(double IF, double inputAccuracy, double maxTargetDeviation = 0.5)
         {
             Simulation sim = new Simulation();
             sim.InputGenerator = new InputGenerator(inputAccuracy);
             sim.MaxEpochs = 500;
             sim.IntelligenceFactor = IF;
             sim.StartLocation = new Vector2D();
-            sim.MaxTargetDeviation = 0.5f;
+            sim.MaxTargetDeviation = maxTargetDeviation;
             sim.Targets = new List<Vector2D>() { new Vector2D(100, 100) };
 
             return sim;

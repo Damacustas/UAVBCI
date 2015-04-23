@@ -43,6 +43,7 @@
     <Compile Include="FitIntelligence.cs" />
     <Compile Include="InputGenerator.cs" />
     <Compile Include="HistoryItem.cs" />
+    <Compile Include="AttractorIntelligence.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,7 +1,6 @@
 package com.DroneSimulator;
 
 import java.awt.Dimension;
-
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -66,7 +65,7 @@ public class Simulation {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		connectBuffer();
-		//(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
+		(new Thread(new EpicBaasKlasse(screen, hdr, c))).start();
 
 		startExperiment();
 
@@ -147,7 +146,8 @@ public class Simulation {
 			screen.setState(Screen.TRIAL_BUSY);
 			screen.reset();
 			if (bufferConnected)
-				c.putEvent(new BufferEvent("TrialStart", "", -1));
+				//c.putEvent(new BufferEvent("TrialStart", "", -1));
+				c.putEvent(new BufferEvent("startPhase.cmd","testing", -1));
 			screen.showProgressBar();
 
 			sleep(2000);
@@ -155,7 +155,8 @@ public class Simulation {
 			System.out.println("Statechange at " + (System.currentTimeMillis() - starttime));
 			sleep(TRIAL_LENGTH - 2000);
 			if (bufferConnected)
-				c.putEvent(new BufferEvent("TrialEnd", "", -1));
+				//c.putEvent(new BufferEvent("TrialEnd", "", -1));
+				c.putEvent(new BufferEvent("testing", "end", -1));
 			if (screen.isHit()) {
 				hits++;
 			}
@@ -349,12 +350,18 @@ public class Simulation {
 	}
 
 	public static void sleep(long ms) {
-		try {
-			Thread.sleep(ms);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//		try {
+//			Thread.sleep(ms);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		long startTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() < (startTime + ms))
+		{
+		
 		}
+		
 	}
 
 }
