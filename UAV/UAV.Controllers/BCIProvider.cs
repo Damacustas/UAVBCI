@@ -25,14 +25,14 @@ namespace UAV.Controllers
                 try
                 {
                     Console.Write("Connecting to 'localhost:1972'...");
-                    clock.connect("localhost", 1972);
+                    clock.Connect("localhost", 1972);
                     Console.WriteLine(" done");
 
-                    if(clock.isConnected())
+                    if (clock.IsConnected)
                     {
                         Console.WriteLine("GETHEADER");
-                        hdr = clock.getHeader();
-                        lastEvent = hdr.nEvents;
+                        hdr = clock.GetHeader();
+                        lastEvent = hdr.NumEvents;
                     }
                     else
                     {
@@ -44,7 +44,7 @@ namespace UAV.Controllers
                     hdr = null;
                 }
 
-                if(hdr == null)
+                if (hdr == null)
                 {
                     Console.WriteLine("Couldn't read header. Waiting.");
                     Thread.Sleep(5000);
@@ -75,54 +75,55 @@ namespace UAV.Controllers
         /// </summary>
         private void RecvThread()
         {
-			while (true)
-			{
-				var sec = clock.waitForEvents(lastEvent, 5000);
-				if (sec.nEvents > lastEvent)
-				{
-					BufferEvent[] events = clock.getEvents(lastEvent, sec.nEvents - 1);
+            while (true)
+            {
+                var sec = clock.WaitForEvents(lastEvent, 5000);
+                if (sec.nEvents > lastEvent)
+                {
+                    BufferEvent[] events = clock.GetEvents(lastEvent, sec.nEvents - 1);
 
-					foreach (var evt in events)
-					{
+                    lastEvent = sec.nEvents;
 
-						string evttype = evt.getType().toString();
-						if (evttype == "keyboard")
-						{
-							string val = evt.getValue().toString();
+                    foreach (var evt in events)
+                    {
+                        string evttype = evt.Type.ToString();
+                        if (evttype == "keyboard")
+                        {
+                            string val = evt.Value.ToString();
 
-							switch (val)
-							{
-								case "w":
-									OnCommandReceived(new Vector2D(0, 1));
-									break;
+                            switch (val)
+                            {
+                                case "w":
+                                    OnCommandReceived(new Vector2D(0, 1));
+                                    break;
 
-								case "a":
-									OnCommandReceived(new Vector2D(-1, 0));
-									break;
+                                case "a":
+                                    OnCommandReceived(new Vector2D(-1, 0));
+                                    break;
 
-								case "s":
-									OnCommandReceived(new Vector2D(0, -1));
-									break;
+                                case "s":
+                                    OnCommandReceived(new Vector2D(0, -1));
+                                    break;
 
-								case "d":
-									OnCommandReceived(new Vector2D(1, 0));
-									break;
+                                case "d":
+                                    OnCommandReceived(new Vector2D(1, 0));
+                                    break;
 
-							}
+                            }
 
-							Console.WriteLine(">> " + evt);
-						}
-						else
-						{
-							Console.WriteLine("   " + evt);
-						}
-					}
-				}
-				else
-				{
-					Console.WriteLine("Timeout while waiting for events.");
-				}
-			}
+                            Console.WriteLine(">> " + evt);
+                        }
+                        else
+                        {
+                            Console.WriteLine("   " + evt);
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Timeout while waiting for events.");
+                }
+            }
         }
     }
 }

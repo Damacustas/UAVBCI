@@ -49,7 +49,7 @@
       <HintPath>..\..\Assemblies\AR.Drone.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="FieldTrip.Buffer">
-      <HintPath>..\..\Assemblies\FieldTrip.Buffer.dll</HintPath>
+      <HintPath>..\..\..\buffer_bci-csharp-improvements\dataAcq\buffer\csharp\bin\Debug\FieldTrip.Buffer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
