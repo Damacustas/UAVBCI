@@ -67,7 +67,7 @@ public class Simulation {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		connectBuffer();
-		t = new Thread(new BufferReader(screen, hdr, c));
+		t = new Thread(new BufferReader(screen));
 		t.start();
 
 		startExperiment();
@@ -119,7 +119,9 @@ public class Simulation {
 		this.dataOut = new BufferedWriter(new FileWriter(filename));
 		this.dataOut.write(headerLine);
 		this.dataOut.newLine();
-
+		
+		System.out.println("startEXP");
+		
 		int teller = 0;
 		hits = 0;
 		long starttime;
@@ -129,13 +131,21 @@ public class Simulation {
 			if (teller % longBreakTrials == 0 && teller != 0) {
 				screen.setState(Screen.TRIAL_BREAK);
 				if (bufferConnected)
+				{
+					System.out.println("Sending break.");
 					c.putEvent(new BufferEvent("Break", 30, -1));
+					System.out.println("Sent break!");
+				}
 				screen.startCountdown(30);
 
 			} else if (teller % shortBreakTrials == 0 && teller != 0) {
 				screen.setState(Screen.TRIAL_BREAK);
 				if (bufferConnected)
+				{
+					System.out.println("Sending break.");
 					c.putEvent(new BufferEvent("Break", 5, -1));
+					System.out.println("Sent break!");
+				}
 				screen.startCountdown(5);
 			}
 			
@@ -149,8 +159,12 @@ public class Simulation {
 			screen.setState(Screen.TRIAL_BUSY);
 			screen.reset();
 			if (bufferConnected)
+			{
+				System.out.println("Sending startPhase.cmd...");
 				//c.putEvent(new BufferEvent("TrialStart", "", -1));
 				c.putEvent(new BufferEvent("startPhase.cmd","testing", -1));
+				System.out.println("Sent startPhase.cmd!");
+			}
 			screen.showProgressBar();
 
 			sleep(2000);
@@ -158,8 +172,12 @@ public class Simulation {
 			System.out.println("Statechange at " + (System.currentTimeMillis() - starttime));
 			sleep(TRIAL_LENGTH - 2000);
 			if (bufferConnected)
+			{
+				System.out.println("Sending testing...");
 				//c.putEvent(new BufferEvent("TrialEnd", "", -1));
 				c.putEvent(new BufferEvent("testing", "end", -1));
+				System.out.println("Sent testing!");
+			}
 			if (screen.isHit()) {
 				hits++;
 			}
