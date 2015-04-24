@@ -10,11 +10,53 @@ public class BufferReader implements Runnable {
 	Header hdr;
 	BufferClientClock c;
 
-	public BufferReader(Screen s, Header hdr, BufferClientClock c) {
+	public BufferReader(Screen s) {
 		this.screen = s;
-		this.hdr = hdr;
-		this.c = c;
+		connectBuffer();
 
+	}
+	
+	private void connectBuffer() {
+		String hostname = "localhost";
+		int port = 1972;
+
+		c = new BufferClientClock();
+
+		hdr = null;
+		while (hdr == null) {
+			try {
+				System.out.println("Connecting to " + hostname + ":" + port);
+				c.connect(hostname, port);
+				// C.setAutoReconnect(true);
+				if (c.isConnected()) {
+					System.out.println("GETHEADER");
+					hdr = c.getHeader();
+				}
+			} catch (IOException e) {
+				hdr = null;
+			}
+			if (hdr == null) {
+				System.out.println("Invalid Header... waiting");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			//bufferConnected = true;
+			// Print stuff
+			System.out.println("#channels....: " + hdr.nChans);
+			System.out.println("#samples.....: " + hdr.nSamples);
+			System.out.println("#events......: " + hdr.nEvents);
+			System.out.println("Sampling Freq: " + hdr.fSample);
+			System.out.println("data type....: " + hdr.dataType);
+			for (int n = 0; n < hdr.nChans; n++) {
+				if (hdr.labels[n] != null) {
+					System.out.println("Ch. " + n + ": " + hdr.labels[n]);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -27,6 +69,7 @@ public class BufferReader implements Runnable {
 		boolean endExpt = false;
 		while (!endExpt) {
 			try {
+				System.out.println("Waiting for events...");
 				SamplesEventsCount sec = c.waitForEvents(nEvents, timeout); // Block
 																			// until
 																			// there
