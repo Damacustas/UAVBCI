@@ -58,13 +58,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\UAV.Control\UAV.Control.csproj">
+      <Project>{74d64aff-250b-4ea3-943b-8e38aaff3cfb}</Project>
+      <Name>UAV.Control</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UAV.Joystick\UAV.Joystick.csproj">
       <Project>{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}</Project>
       <Name>UAV.Joystick</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UAV.Control\UAV.Control.csproj">
-      <Project>{74D64AFF-250B-4EA3-943B-8E38AAFF3CFB}</Project>
-      <Name>UAV.Control</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

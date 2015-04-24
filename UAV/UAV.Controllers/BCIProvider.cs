@@ -78,11 +78,11 @@ namespace UAV.Controllers
             while (true)
             {
                 var sec = clock.WaitForEvents(lastEvent, 5000);
-                if (sec.nEvents > lastEvent)
+                if (sec.NumEvents > lastEvent)
                 {
-                    BufferEvent[] events = clock.GetEvents(lastEvent, sec.nEvents - 1);
+                    BufferEvent[] events = clock.GetEvents(lastEvent, sec.NumEvents - 1);
 
-                    lastEvent = sec.nEvents;
+                    lastEvent = sec.NumEvents;
 
                     foreach (var evt in events)
                     {

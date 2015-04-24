@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,6 +38,10 @@
     <Compile Include="BCIProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FieldTrip.Buffer">
+      <HintPath>..\..\..\buffer_bci-csharp-improvements\dataAcq\buffer\csharp\bin\Debug\FieldTrip.Buffer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
     <Reference Include="AR.Drone.Client">
       <HintPath>..\..\Assemblies\AR.Drone.Client.dll</HintPath>
@@ -47,9 +51,6 @@
     </Reference>
     <Reference Include="AR.Drone.Infrastructure">
       <HintPath>..\..\Assemblies\AR.Drone.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="FieldTrip.Buffer">
-      <HintPath>..\..\..\buffer_bci-csharp-improvements\dataAcq\buffer\csharp\bin\Debug\FieldTrip.Buffer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
