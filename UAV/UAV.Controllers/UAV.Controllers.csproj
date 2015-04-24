@@ -48,8 +48,8 @@
     <Reference Include="AR.Drone.Infrastructure">
       <HintPath>..\..\Assemblies\AR.Drone.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Buffer">
-      <HintPath>..\..\Assemblies\Buffer.dll</HintPath>
+    <Reference Include="FieldTrip.Buffer">
+      <HintPath>..\..\Assemblies\FieldTrip.Buffer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

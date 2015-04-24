@@ -75,51 +75,54 @@ namespace UAV.Controllers
         /// </summary>
         private void RecvThread()
         {
-            var sec = clock.waitForEvents(lastEvent, 5000);
-            if (sec.nEvents > lastEvent)
-            {
-                BufferEvent[] events = clock.getEvents(lastEvent, sec.nEvents - 1);
+			while (true)
+			{
+				var sec = clock.waitForEvents(lastEvent, 5000);
+				if (sec.nEvents > lastEvent)
+				{
+					BufferEvent[] events = clock.getEvents(lastEvent, sec.nEvents - 1);
 
-                foreach (var evt in events)
-                {
+					foreach (var evt in events)
+					{
 
-                    string evttype = evt.getType().toString();
-                    if (evttype == "keyboard")
-                    {
-                        string val = evt.getValue().toString();
+						string evttype = evt.getType().toString();
+						if (evttype == "keyboard")
+						{
+							string val = evt.getValue().toString();
 
-                        switch (val)
-                        {
-                            case "w":
-                                OnCommandReceived(new Vector2D(0, 1));
-                                break;
+							switch (val)
+							{
+								case "w":
+									OnCommandReceived(new Vector2D(0, 1));
+									break;
 
-                            case "a":
-                                OnCommandReceived(new Vector2D(-1, 0));
-                                break;
+								case "a":
+									OnCommandReceived(new Vector2D(-1, 0));
+									break;
 
-                            case "s":
-                                OnCommandReceived(new Vector2D(0, -1));
-                                break;
+								case "s":
+									OnCommandReceived(new Vector2D(0, -1));
+									break;
 
-                            case "d":
-                                OnCommandReceived(new Vector2D(1, 0));
-                                break;
+								case "d":
+									OnCommandReceived(new Vector2D(1, 0));
+									break;
 
-                        }
+							}
 
-                        Console.WriteLine(">> " + evt);
-                    }
-                    else
-                    {
-                        Console.WriteLine("   " + evt);
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Timeout while waiting for events.");
-            }
+							Console.WriteLine(">> " + evt);
+						}
+						else
+						{
+							Console.WriteLine("   " + evt);
+						}
+					}
+				}
+				else
+				{
+					Console.WriteLine("Timeout while waiting for events.");
+				}
+			}
         }
     }
 }
