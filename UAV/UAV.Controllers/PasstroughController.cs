@@ -2,15 +2,15 @@
 
 namespace UAV.Controllers
 {
-	public class PasstroughController : AbstractController
-	{
-		public ICommandProvider CommandProvider { get; set; }
+    public class PasstroughController : AbstractController
+    {
+        public ICommandProvider CommandProvider { get; set; }
 
-		public PasstroughController (ICommandProvider commandProvider)
-		{
-			CommandProvider = commandProvider;
-			CommandProvider.CommandReceived += HandleCommandReceived;
-		}
+        public PasstroughController(ICommandProvider commandProvider)
+        {
+            CommandProvider = commandProvider;
+            CommandProvider.CommandReceived += HandleCommandReceived;
+        }
 
         public override void StartController()
         {
@@ -19,13 +19,13 @@ namespace UAV.Controllers
             base.StartController();
         }
 
-        void HandleCommandReceived (object sender, CommandEventArgs e)
-		{
-			SendFlightCommand (
-				roll: 0.0f,
-				gaz: 0.0f
-			);
-		}
-	}
+        void HandleCommandReceived(object sender, CommandEventArgs e)
+        {
+            SendFlightCommand(
+                roll: (float)e.Command.X,
+                gaz: (float)e.Command.Y
+            );
+        }
+    }
 }
 

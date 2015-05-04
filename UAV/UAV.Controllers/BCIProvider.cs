@@ -87,31 +87,27 @@ namespace UAV.Controllers
                     foreach (var evt in events)
                     {
                         string evttype = evt.Type.ToString();
-                        if (evttype == "keyboard")
+                        if (evttype == "classifier.prediction")
                         {
-                            string val = evt.Value.ToString();
-
-                            switch (val)
+                            try
                             {
-                                case "w":
-                                    OnCommandReceived(new Vector2D(0, 1));
-                                    break;
+                                double val = double.Parse(evt.Value.ToString());
 
-                                case "a":
-                                    OnCommandReceived(new Vector2D(-1, 0));
-                                    break;
+                                Console.WriteLine(">> " + val);
 
-                                case "s":
-                                    OnCommandReceived(new Vector2D(0, -1));
-                                    break;
-
-                                case "d":
-                                    OnCommandReceived(new Vector2D(1, 0));
-                                    break;
-
+                                if (val > 0)
+                                {
+                                    OnCommandReceived(new Vector2D(0, 0.2));
+                                }
+                                else
+                                {
+                                    OnCommandReceived(new Vector2D(0, -0.2));
+                                }
                             }
-
-                            Console.WriteLine(">> " + evt);
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Couldn't convert '{0}' to double.", evt.Value);
+                            }
                         }
                         else
                         {
