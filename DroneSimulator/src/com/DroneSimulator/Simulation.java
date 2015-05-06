@@ -9,9 +9,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
+	private static final int SHORT_BREAK_TIME = 5;
+
+	private static final int LONG_BREAK_TIME = 30;
+
 	public static final int TRIAL_LENGTH = 5000;
 
 	// These represent the constant values of the simulation.
@@ -122,34 +127,36 @@ public class Simulation {
 		
 		System.out.println("startEXP");
 		
-		int teller = 0;
+		int trialcounter = 0;
 		hits = 0;
 		long starttime;
 		long endtime;
-		while (teller < totalTrials) {
+		screen.setState(Screen.States.TRIAL_BREAK);
+		screen.startCountdown(LONG_BREAK_TIME);
+		while (trialcounter < totalTrials) {
 			
-			if (teller % longBreakTrials == 0 && teller != 0) {
+			if (trialcounter % longBreakTrials == 0 && trialcounter != 0) {
 				screen.setState(Screen.States.TRIAL_BREAK);
 				if (bufferConnected)
 				{
 					System.out.println("Sending break.");
-					c.putEvent(new BufferEvent("Break", 30, -1));
+					c.putEvent(new BufferEvent("Break", LONG_BREAK_TIME, -1));
 					System.out.println("Sent break!");
 				}
-				screen.startCountdown(30);
+				screen.startCountdown(LONG_BREAK_TIME);
 
-			} else if (teller % shortBreakTrials == 0 && teller != 0) {
+			} else if (trialcounter % shortBreakTrials == 0 && trialcounter != 0) {
 				screen.setState(Screen.States.TRIAL_BREAK);
 				if (bufferConnected)
 				{
 					System.out.println("Sending break.");
-					c.putEvent(new BufferEvent("Break", 5, -1));
+					c.putEvent(new BufferEvent("Break", SHORT_BREAK_TIME, -1));
 					System.out.println("Sent break!");
 				}
-				screen.startCountdown(5);
+				screen.startCountdown(SHORT_BREAK_TIME);
 			}
 			
-			if (teller == 0) {
+			if (trialcounter == 0) {
 				screen.setCurrentTrial(generateInitial());
 			}
 			screen.setState(Screen.States.TRIAL_EMPTY);
@@ -162,7 +169,7 @@ public class Simulation {
 			{
 				System.out.println("Sending startPhase.cmd...");
 				//c.putEvent(new BufferEvent("TrialStart", "", -1));
-				c.putEvent(new BufferEvent("startPhase.cmd","testing", -1));
+				c.putEvent(new BufferEvent("startPhase.cmd","testing", trialcounter));
 				System.out.println("Sent startPhase.cmd!");
 			}
 			screen.showProgressBar();
@@ -185,9 +192,9 @@ public class Simulation {
 			System.out.println("Trial duration: " + (endtime - starttime));
 			
 			screen.setCurrentTrial(generateNext());
-			System.out.println("Trial completed: " + teller);
+			System.out.println("Trial completed: " + trialcounter);
 			submitResult();
-			teller++;
+			trialcounter++;
 			
 		}
 		screen.setState(Screen.States.TRIAL_END);

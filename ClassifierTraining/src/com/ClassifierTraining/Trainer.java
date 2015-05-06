@@ -48,6 +48,7 @@ public class Trainer {
 		Iterator<String> it = cues.iterator();
 		int trialcounter = 0;
 		String next;
+		screen.setState(Screen.States.TRIAL_BREAK);
 		screen.startCountdown(LONG_BREAK_TIME);
 		// Loop through all trials (and do stuff)
 		while (it.hasNext()) {
