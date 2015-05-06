@@ -107,7 +107,14 @@ public class BufferReader implements Runnable {
 						}
 						else if (evttype.equalsIgnoreCase("classifier.prediction"))
 						{
-							System.err.println("Found prediction event!!!!!!!!!");
+							if ((Float.parseFloat(evt.getValue().toString()) > 0))
+							{
+								screen.upKey();
+							} else if ((Float.parseFloat(evt.getValue().toString()) < 0))
+							{
+								screen.downKey();
+							}
+
 						}
 						else
 						{
