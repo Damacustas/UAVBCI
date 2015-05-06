@@ -13,6 +13,8 @@ import javax.swing.Timer;
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Trainer {
+	private static final int LONG_BREAK_TIME = 30;
+	private static final int SHORT_BREAK_TIME = 10;
 	//
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 40;
@@ -46,10 +48,11 @@ public class Trainer {
 		Iterator<String> it = cues.iterator();
 		int trialcounter = 0;
 		String next;
+		screen.startCountdown(LONG_BREAK_TIME);
 		// Loop through all trials (and do stuff)
 		while (it.hasNext()) {
 			next = it.next();
-			System.out.println("Now doing: " + next);
+			//System.out.println("Now doing: " + next);
 			screen.setState(Screen.States.TRIAL_START);
 			// TODO change events?
 			c.putEvent(new BufferEvent("Start", "", -1));
@@ -58,7 +61,7 @@ public class Trainer {
 			sleep(1000);
 			screen.setCue(next);
 			screen.setState(Screen.States.TRIAL_CUE);
-			c.putEvent(new BufferEvent("Cue", next, -1));
+			c.putEvent(new BufferEvent("Cue", next, trialcounter));
 
 			// start "classifying phase" (data being collected) after 2 seconds
 			// (total)
@@ -72,18 +75,17 @@ public class Trainer {
 
 			// break every 40 trials (30s)
 			if (++trialcounter % longBreakTrials == 0) {
-				System.out.printf(" Breaktime! (%d seconds)", 30);
+				System.out.printf(" Breaktime! (%d seconds)", LONG_BREAK_TIME);
 				screen.setState(Screen.States.TRIAL_BREAK);
-				// c.putEvent(new BufferEvent("Break", 30, -1));
-				screen.startCountdown(30);
+				c.putEvent(new BufferEvent("Break", LONG_BREAK_TIME, -1));
+				screen.startCountdown(LONG_BREAK_TIME);
 
 				// small break every 5
 			} else if (trialcounter % shortBreakTrials == 0) {
-				System.out.println(" Breaktime! (5 seconds)");
-
+				System.out.printf(" Breaktime! (%d seconds)", SHORT_BREAK_TIME);
 				screen.setState(Screen.States.TRIAL_BREAK);
 				// c.putEvent(new BufferEvent("Break", 5, -1));
-				screen.startCountdown(5);
+				screen.startCountdown(SHORT_BREAK_TIME);
 			}
 			sleep(randomBreakTime());
 		}
@@ -160,7 +162,7 @@ public class Trainer {
 	 */
 	private long randomBreakTime() {
 		Random rand = new Random();
-		return rand.nextInt(2000) + 500;
+		return rand.nextInt(2000) + 1500;
 	}
 
 	private ArrayList<String> addCues() {

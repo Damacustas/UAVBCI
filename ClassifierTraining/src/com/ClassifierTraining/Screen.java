@@ -19,6 +19,7 @@ import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class Screen extends JPanel implements KeyListener{
+	private static final int BREAK_RESET_TIME = 3;
 	// Size settings
 	private static final int CROSS_SIZE = 50;
 	private static final int CUE_ICON_HEIGHT = 100;
@@ -186,7 +187,7 @@ public class Screen extends JPanel implements KeyListener{
 	 */
 	public void spaceKey() {
 		if (state == States.TRIAL_BREAK) {
-			breakTimeLeft = 2;
+			breakTimeLeft = BREAK_RESET_TIME;
 			System.out.println("Space pressed");
 		}
 	}
