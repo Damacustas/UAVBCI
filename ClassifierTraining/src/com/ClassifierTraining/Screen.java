@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -27,7 +28,7 @@ public class Screen extends JPanel implements KeyListener{
 
 	// States
 	public static enum States {
-		TRIAL_EMPTY, TRIAL_START, TRIAL_CUE, TRIAL_BREAK, TRIAL_CLASSIFYING
+		TRIAL_EMPTY, TRIAL_START, TRIAL_CUE, TRIAL_BREAK, TRIAL_CLASSIFYING, TRIAL_END
 	}
 //	public static final int TRIAL_EMPTY = 0;
 //	public static final int TRIAL_START = 1;
@@ -98,7 +99,22 @@ public class Screen extends JPanel implements KeyListener{
 		} else if (state == States.TRIAL_BREAK) {
 			cueLabel.setVisible(false);
 			drawCountdown(g);
+		}else if (state == States.TRIAL_END) {
+			drawEnd(g);
 		}
+	}
+
+	private void drawEnd(Graphics g) {
+		Graphics2D graphics2D = (Graphics2D) g;
+		graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		Font font = new Font(null, Font.PLAIN, 100);
+		graphics2D.setFont(font);
+		String tekst = "That's all folks!";
+		int stringWidth = (int) graphics2D.getFontMetrics(font)
+				.getStringBounds(tekst, g).getWidth();
+		graphics2D.drawString(tekst, dim.width / 2 - stringWidth / 2,
+				dim.height / 2);
 	}
 
 	private void drawCountdown(Graphics g) {
