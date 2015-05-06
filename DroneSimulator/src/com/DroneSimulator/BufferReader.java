@@ -105,7 +105,7 @@ public class BufferReader implements Runnable {
 							case "d": screen.rightKey(); System.out.println("pressed D");break;
 							}
 						}
-						else if (evttype.equalsIgnoreCase("classifier.prediction"))
+						else if (evttype.equalsIgnoreCase("classifier.prediction") && screen.getState() == Screen.States.TRIAL_CLASSIFYING)
 						{
 							if ((Float.parseFloat(evt.getValue().toString()) > 0))
 							{
