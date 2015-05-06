@@ -96,7 +96,7 @@ public class BufferReader implements Runnable {
 						// only process if it's an event of a type we care about
 						// only process if trial is busy and type is classifier.prediction 
 						//else if (evttype.equals("classifier.prediction") && screen.getState() == Screen.TRIAL_CLASSIFYING) {
-						else if (evttype.equals("keyboard") && screen.getState() == Screen.TRIAL_CLASSIFYING) {	
+						else if (evttype.equals("keyboard") && screen.getState() == Screen.States.TRIAL_CLASSIFYING) {	
 							switch(evt.getValue().toString())
 							{
 							case "w": screen.upKey(); System.out.println("pressed W");break;

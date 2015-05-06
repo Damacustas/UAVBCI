@@ -129,7 +129,7 @@ public class Simulation {
 		while (teller < totalTrials) {
 			
 			if (teller % longBreakTrials == 0 && teller != 0) {
-				screen.setState(Screen.TRIAL_BREAK);
+				screen.setState(Screen.States.TRIAL_BREAK);
 				if (bufferConnected)
 				{
 					System.out.println("Sending break.");
@@ -139,7 +139,7 @@ public class Simulation {
 				screen.startCountdown(30);
 
 			} else if (teller % shortBreakTrials == 0 && teller != 0) {
-				screen.setState(Screen.TRIAL_BREAK);
+				screen.setState(Screen.States.TRIAL_BREAK);
 				if (bufferConnected)
 				{
 					System.out.println("Sending break.");
@@ -152,11 +152,11 @@ public class Simulation {
 			if (teller == 0) {
 				screen.setCurrentTrial(generateInitial());
 			}
-			screen.setState(Screen.TRIAL_EMPTY);
+			screen.setState(Screen.States.TRIAL_EMPTY);
 
 			sleep(randomBreakTime());
 			starttime = System.currentTimeMillis();
-			screen.setState(Screen.TRIAL_BUSY);
+			screen.setState(Screen.States.TRIAL_BUSY);
 			screen.reset();
 			if (bufferConnected)
 			{
@@ -168,7 +168,7 @@ public class Simulation {
 			screen.showProgressBar();
 
 			sleep(2000);
-			screen.setState(Screen.TRIAL_CLASSIFYING);
+			screen.setState(Screen.States.TRIAL_CLASSIFYING);
 			System.out.println("Statechange at " + (System.currentTimeMillis() - starttime));
 			sleep(TRIAL_LENGTH - 2000);
 			if (bufferConnected)
@@ -190,7 +190,7 @@ public class Simulation {
 			teller++;
 			
 		}
-		screen.setState(Screen.TRIAL_END);
+		screen.setState(Screen.States.TRIAL_END);
 		// TODO change (because deprecated and unsafe)
 		t.stop();
 		this.dataOut.close();

@@ -46,16 +46,21 @@ public class Screen extends JPanel {
 	private int cursorX, cursorY;
 	public static final int STEPSIZE = 100;
 
-	private int state = Screen.TRIAL_EMPTY;
+	private States state = Screen.States.TRIAL_EMPTY;
 
 	// The timer for the progressbar
 	private Timer timer;
+	
+	// States
+	public static enum States {
+		TRIAL_BUSY, TRIAL_BREAK, TRIAL_EMPTY, TRIAL_END, TRIAL_CLASSIFYING
+	}
 
-	public static final int TRIAL_BUSY = 0;
-	public static final int TRIAL_BREAK = 1;
-	public static final int TRIAL_EMPTY = 2;
-	public static final int TRIAL_END = 3;
-	public static final int TRIAL_CLASSIFYING = 4;
+//	public static final int TRIAL_BUSY = 0;
+//	public static final int TRIAL_BREAK = 1;
+//	public static final int TRIAL_EMPTY = 2;
+//	public static final int TRIAL_END = 3;
+//	public static final int TRIAL_CLASSIFYING = 4;
 
 	private ArrayList<TrialResults> results = new ArrayList<TrialResults>();
 	// private JLabel countdownLabel = new JLabel();
@@ -164,22 +169,22 @@ public class Screen extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		if (state == Screen.TRIAL_BUSY || state == Screen.TRIAL_CLASSIFYING) {
+		if (state == Screen.States.TRIAL_BUSY || state == Screen.States.TRIAL_CLASSIFYING) {
 			int height = (int) currentTrial.getTargetHeight();
 			int width = (int) currentTrial.getTargetWidth();
 
-			if (state == Screen.TRIAL_BUSY)
+			if (state == Screen.States.TRIAL_BUSY)
 				g.setColor(Color.RED);
-			else if (state == Screen.TRIAL_CLASSIFYING)
+			else if (state == Screen.States.TRIAL_CLASSIFYING)
 				g.setColor(Color.GREEN);
 
 			g.fillRect(dim.width / 2 - width / 2, dim.height / 2 - height / 2,
 					width, height);
 			g.setColor(Color.BLACK);
 			g.fillOval(cursorX, cursorY, DRONE_SIZE, DRONE_SIZE);
-		} else if (state == Screen.TRIAL_BREAK) {
+		} else if (state == Screen.States.TRIAL_BREAK) {
 			drawCountdown(g);
-		} else if (state == Screen.TRIAL_END) {
+		} else if (state == Screen.States.TRIAL_END) {
 			drawEnd(g);
 		}
 
@@ -302,11 +307,11 @@ public class Screen extends JPanel {
 		this.repaint();
 	}
 
-	public void setState(int state) {
+	public void setState(States state) {
 		this.state = state;
 	}
 
-	public int getState() {
+	public States getState() {
 		return state;
 	}
 
@@ -345,7 +350,7 @@ public class Screen extends JPanel {
 	}
 
 	public void spaceKey() {
-		if (state == TRIAL_BREAK) {
+		if (state == Screen.States.TRIAL_BREAK) {
 			breakTimeLeft = 2;
 			System.out.println("Space pressed");
 		}
