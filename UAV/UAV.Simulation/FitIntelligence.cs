@@ -72,7 +72,7 @@ namespace UAV.Simulation
             if (double.IsNaN(ret.Y))
                 ret.Y = 0.0;
 
-            return ret;
+            return ret.GetNormalized();
         }
 
         #endregion

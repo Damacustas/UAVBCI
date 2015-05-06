@@ -8,6 +8,8 @@ namespace UAV.Controllers
 	{
 		event EventHandler<CommandEventArgs> CommandReceived;
 		Vector2D LastCommand { get; }
+
+        void Initialize();
 	}
 }
 

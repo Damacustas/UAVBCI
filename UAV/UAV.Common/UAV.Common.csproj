@@ -33,5 +33,6 @@
     <Compile Include="MiscExtensions.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="RangeEnumerator.cs" />
+    <Compile Include="MathTools.cs" />
   </ItemGroup>
 </Project>

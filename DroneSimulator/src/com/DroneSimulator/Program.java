@@ -79,11 +79,11 @@ public class Program {
 		{
 			// Create some objects, set some values.
 			Simulation sim = new Simulation(scrn);
-			sim.setDevianceX(devianceX);
-			sim.setDevianceY(devianceY);
-			sim.setDuration(duration);
-			sim.setInitialTargetHeight(initialHeight);
-			sim.setInitialTargetWidth(initialWidth);
+//			sim.setDevianceX(devianceX);
+//			sim.setDevianceY(devianceY);
+//			sim.setDuration(duration);
+//			sim.setInitialTargetHeight(initialHeight);
+//			sim.setInitialTargetWidth(initialWidth);
 		}
 		catch(IOException ex)
 		{

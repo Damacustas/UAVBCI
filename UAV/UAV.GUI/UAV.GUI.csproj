@@ -7,8 +7,8 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>UAV.GUI</RootNamespace>
     <AssemblyName>UAV.GUI</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <StartupObject>UAV.GUI.MainClass</StartupObject>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,13 +58,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\UAV.Joystick\UAV.Joystick.csproj">
-      <Project>{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}</Project>
-      <Name>UAV.Joystick</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UAV.Control\UAV.Control.csproj">
       <Project>{74D64AFF-250B-4EA3-943B-8E38AAFF3CFB}</Project>
       <Name>UAV.Control</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UAV.Joystick\UAV.Joystick.csproj">
+      <Project>{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}</Project>
+      <Name>UAV.Joystick</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

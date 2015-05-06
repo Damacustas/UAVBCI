@@ -28,7 +28,7 @@ import javax.swing.*;
 public class Screen extends JPanel {
 
 	private static final int DRONE_SIZE = 10;
-	private static final int TIMER_DELAY = 50;
+	private static final int TIMER_DELAY = 15;
 	// The frame that contains the display.
 	private JFrame frame;
 	private JProgressBar progressBar = null;
@@ -46,15 +46,21 @@ public class Screen extends JPanel {
 	private int cursorX, cursorY;
 	public static final int STEPSIZE = 100;
 
-	private int state = Screen.TRIAL_EMPTY;
+	private States state = Screen.States.TRIAL_EMPTY;
 
 	// The timer for the progressbar
 	private Timer timer;
+	
+	// States
+	public static enum States {
+		TRIAL_BUSY, TRIAL_BREAK, TRIAL_EMPTY, TRIAL_END, TRIAL_CLASSIFYING
+	}
 
-	public static final int TRIAL_BUSY = 0;
-	public static final int TRIAL_BREAK = 1;
-	public static final int TRIAL_EMPTY = 2;
-	public static final int TRIAL_END = 3;
+//	public static final int TRIAL_BUSY = 0;
+//	public static final int TRIAL_BREAK = 1;
+//	public static final int TRIAL_EMPTY = 2;
+//	public static final int TRIAL_END = 3;
+//	public static final int TRIAL_CLASSIFYING = 4;
 
 	private ArrayList<TrialResults> results = new ArrayList<TrialResults>();
 	// private JLabel countdownLabel = new JLabel();
@@ -87,19 +93,32 @@ public class Screen extends JPanel {
 		progressBar.setPreferredSize(new Dimension(50, 150));
 		// progressBar.setValue(1);
 		// progressBar.setStringPainted(true);
-		progressBar.setVisible(false);
+		progressBar.setVisible(true);
 		progressBar.setBackground(Color.BLACK);
 		this.add(progressBar);
 
 		// Initialize timer for progress bar
 
 		timer = new Timer(TIMER_DELAY, new ActionListener() {
+			long starttime = System.currentTimeMillis();
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int value = progressBar.getValue() + TIMER_DELAY;
-				if (value > progressBar.getMaximum()) {
-					// System.out.println(value);
+				long value;
+				if (progressBar.getValue() == 0) {
+					starttime = System.currentTimeMillis();
+					value = 1;
+				} else {
+					value = (System.currentTimeMillis() - starttime);
+				}
+
+				// int value = progressBar.getValue() + TIMER_DELAY;
+
+				//System.out.println(value);
+				if (value >= progressBar.getMaximum()) {
+					System.out.println("Time elapsed since start of trial: "
+							+ (System.currentTimeMillis() - starttime));
+
 					value = progressBar.getMaximum();
 					timer.stop();
 
@@ -107,7 +126,8 @@ public class Screen extends JPanel {
 					// reset();
 
 				}
-				progressBar.setValue(value);
+
+				progressBar.setValue((int) value);
 				// System.out.println(value);
 				repaint();
 
@@ -149,20 +169,22 @@ public class Screen extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 
-		if (state == Screen.TRIAL_BUSY) {
+		if (state == Screen.States.TRIAL_BUSY || state == Screen.States.TRIAL_CLASSIFYING) {
 			int height = (int) currentTrial.getTargetHeight();
 			int width = (int) currentTrial.getTargetWidth();
 
-			g.setColor(Color.RED);
+			if (state == Screen.States.TRIAL_BUSY)
+				g.setColor(Color.RED);
+			else if (state == Screen.States.TRIAL_CLASSIFYING)
+				g.setColor(Color.GREEN);
+
 			g.fillRect(dim.width / 2 - width / 2, dim.height / 2 - height / 2,
 					width, height);
 			g.setColor(Color.BLACK);
 			g.fillOval(cursorX, cursorY, DRONE_SIZE, DRONE_SIZE);
-		}
-		else if (state == Screen.TRIAL_BREAK)
-		{
+		} else if (state == Screen.States.TRIAL_BREAK) {
 			drawCountdown(g);
-		} else if (state == Screen.TRIAL_END) {
+		} else if (state == Screen.States.TRIAL_END) {
 			drawEnd(g);
 		}
 
@@ -177,8 +199,8 @@ public class Screen extends JPanel {
 		String tekst = "That's all folks!";
 		int stringWidth = (int) graphics2D.getFontMetrics(font)
 				.getStringBounds(tekst, g).getWidth();
-		graphics2D.drawString(tekst, dim.width / 2
-				- stringWidth / 2, dim.height / 2);
+		graphics2D.drawString(tekst, dim.width / 2 - stringWidth / 2,
+				dim.height / 2);
 
 	}
 
@@ -285,8 +307,12 @@ public class Screen extends JPanel {
 		this.repaint();
 	}
 
-	public void setState(int state) {
+	public void setState(States state) {
 		this.state = state;
+	}
+
+	public States getState() {
+		return state;
 	}
 
 	/**
@@ -295,13 +321,13 @@ public class Screen extends JPanel {
 	 * @return true if hit, otherwise false.
 	 */
 	public boolean isHit() {
-		return (cursorY+(DRONE_SIZE/2)) <= (dim.getHeight() / 2 + currentTrial
+		return (cursorY + (DRONE_SIZE / 2)) <= (dim.getHeight() / 2 + currentTrial
 				.getTargetHeight() / 2)
-				&& (cursorY+(DRONE_SIZE/2)) >= (dim.getHeight() / 2 - currentTrial
+				&& (cursorY + (DRONE_SIZE / 2)) >= (dim.getHeight() / 2 - currentTrial
 						.getTargetHeight() / 2)
-				&& (cursorX+(DRONE_SIZE/2)) <= (dim.getWidth() / 2 + currentTrial
+				&& (cursorX + (DRONE_SIZE / 2)) <= (dim.getWidth() / 2 + currentTrial
 						.getTargetWidth() / 2)
-				&& (cursorX+(DRONE_SIZE/2)) >= (dim.getWidth() / 2 - currentTrial
+				&& (cursorX + (DRONE_SIZE / 2)) >= (dim.getWidth() / 2 - currentTrial
 						.getTargetWidth() / 2);
 	}
 
@@ -309,7 +335,7 @@ public class Screen extends JPanel {
 	public void reset() {
 		cursorX = (int) currentTrial.getStartX(); // Adjust Coordinates
 		cursorY = (int) currentTrial.getStartY(); //
-		timer.stop();
+		// timer.stop();
 		progressBar.setValue(0);
 		timer.start();
 	}
@@ -324,7 +350,7 @@ public class Screen extends JPanel {
 	}
 
 	public void spaceKey() {
-		if (state == TRIAL_BREAK) {
+		if (state == Screen.States.TRIAL_BREAK) {
 			breakTimeLeft = 2;
 			System.out.println("Space pressed");
 		}

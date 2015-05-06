@@ -3,52 +3,54 @@ using AR.Drone.Client;
 
 namespace UAV.Controllers
 {
-	public abstract class AbstractController
-	{
-		public DroneClient Drone { get; set; }
-		public ControllerState State { get; private set; }
+    public abstract class AbstractController
+    {
+        public DroneClient Drone { get; set; }
 
-		protected AbstractController ()
-		{
-		}
+        public ControllerState State { get; private set; }
 
-		public void StartController()
-		{
-			State = ControllerState.Control;
-			Drone.Takeoff ();
-		}
+        protected AbstractController()
+        {
+        }
 
-		public void StopController()
-		{
-			State = ControllerState.Hover;
-			Drone.Land ();
-		}
+        public virtual void StartController()
+        {
+            State = ControllerState.Control;
+            Drone.Takeoff();
+        }
 
-		public void EnterHoverState()
-		{
-			State = ControllerState.Hover;
-			Drone.Hover ();
-		}
+        public virtual void StopController()
+        {
+            State = ControllerState.Hover;
+            Drone.Land();
+        }
 
-		public void LeaveHoverState()
-		{
-			State = ControllerState.Control;
-		}
+        public void EnterHoverState()
+        {
+            State = ControllerState.Hover;
+            Drone.Hover();
+        }
 
-		protected void SendFlightCommand(float roll, float gaz)
-		{
-			if (State == ControllerState.Control)
-			{
-				Drone.Progress (AR.Drone.Client.Command.FlightMode.Progressive, roll, 0.0f, 0.0f, gaz);
-			}
-		}
+        public void LeaveHoverState()
+        {
+            State = ControllerState.Control;
+        }
+
+        protected void SendFlightCommand(float roll, float gaz)
+        {
+            if (State == ControllerState.Control)
+            {
+                Drone.Progress(AR.Drone.Client.Command.FlightMode.Progressive, roll, 0.0f, 0.0f, gaz);
+                Console.WriteLine("Progressing...");
+            }
+        }
 
 
-		public enum ControllerState
-		{
-			Hover,
-			Control
-		}
-	}
+        public enum ControllerState
+        {
+            Hover,
+            Control
+        }
+    }
 }
 

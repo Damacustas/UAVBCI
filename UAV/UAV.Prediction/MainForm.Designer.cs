@@ -56,8 +56,8 @@
 
         }
 
-        private OxyPlot.WindowsForms.PlotView plotView;
-
         #endregion
+
+        public OxyPlot.WindowsForms.PlotView plotView;
     }
 }

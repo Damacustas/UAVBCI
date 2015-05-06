@@ -34,7 +34,11 @@ namespace UAV.Common
 		public Vector2D GetNormalized()
 		{
 			double len = Math.Sqrt (Math.Pow (X, 2) + Math.Pow (Y, 2));
-			return new Vector2D (X / len, Y / len);
+
+            if (len != 0.0d)
+                return new Vector2D(X / len, Y / len);
+            else
+                return new Vector2D(0, 0);
 		}
 
         public override string ToString()

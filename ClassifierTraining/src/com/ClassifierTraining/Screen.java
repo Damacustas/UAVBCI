@@ -7,10 +7,10 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,21 +19,26 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class Screen extends JPanel {
+public class Screen extends JPanel implements KeyListener{
+	private static final int BREAK_RESET_TIME = 3;
 	// Size settings
 	private static final int CROSS_SIZE = 50;
 	private static final int CUE_ICON_HEIGHT = 100;
 	private static final int CUE_ICON_WIDTH = 100;
 
 	// States
-	public static final int TRIAL_EMPTY = 0;
-	public static final int TRIAL_START = 1;
-	public static final int TRIAL_CUE = 2;
-	public static final int TRIAL_BREAK = 3;
+	public static enum States {
+		TRIAL_EMPTY, TRIAL_START, TRIAL_CUE, TRIAL_BREAK, TRIAL_CLASSIFYING, TRIAL_END
+	}
+//	public static final int TRIAL_EMPTY = 0;
+//	public static final int TRIAL_START = 1;
+//	public static final int TRIAL_CUE = 2;
+//	public static final int TRIAL_BREAK = 3;
+//	public static final int TRIAL_CLASSIFYING = 4;
 
 	private JFrame frame;
 	private Dimension dim = null;
-	private int state = 0;
+	private States state = States.TRIAL_EMPTY;
 	private String cue;
 	private int breakTimeLeft;
 	private JLabel countdownLabel = new JLabel();
@@ -48,6 +53,8 @@ public class Screen extends JPanel {
 		frame.setVisible(true);
 		this.setBackground(Color.WHITE);
 		this.setLayout(new GridBagLayout());
+		//this.setFocusable(true);
+		frame.addKeyListener(this);
 
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -80,19 +87,34 @@ public class Screen extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		cueLabel.setVisible(false);
-		if (state == TRIAL_START) {
+		if (state == States.TRIAL_START) {
 			cueLabel.setVisible(false);
 			drawFixationCross(g);
 			// playBeep();
-		} else if (state == TRIAL_CUE) {
+		} else if (state == States.TRIAL_CUE || state == States.TRIAL_CLASSIFYING) {
 			// drawFixationCross(g);
 			cueLabel.setVisible(true);
 			drawCueImage(g, cue);
 			
-		} else if (state == TRIAL_BREAK) {
+		} else if (state == States.TRIAL_BREAK) {
 			cueLabel.setVisible(false);
 			drawCountdown(g);
+		}else if (state == States.TRIAL_END) {
+			drawEnd(g);
 		}
+	}
+
+	private void drawEnd(Graphics g) {
+		Graphics2D graphics2D = (Graphics2D) g;
+		graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		Font font = new Font(null, Font.PLAIN, 100);
+		graphics2D.setFont(font);
+		String tekst = "That's all folks!";
+		int stringWidth = (int) graphics2D.getFontMetrics(font)
+				.getStringBounds(tekst, g).getWidth();
+		graphics2D.drawString(tekst, dim.width / 2 - stringWidth / 2,
+				dim.height / 2);
 	}
 
 	private void drawCountdown(Graphics g) {
@@ -129,7 +151,7 @@ public class Screen extends JPanel {
 		
 	}
 
-	public void setState(int state) {
+	public void setState(States state) {
 		this.state = state;
 		// should probably post a bufferevent or sometihng
 		repaint();
@@ -180,9 +202,28 @@ public class Screen extends JPanel {
 	 * Handles spacebar presses
 	 */
 	public void spaceKey() {
-		if (state == TRIAL_BREAK) {
-			breakTimeLeft = 2;
+		if (state == States.TRIAL_BREAK) {
+			breakTimeLeft = BREAK_RESET_TIME;
 			System.out.println("Space pressed");
 		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(arg0.getKeyCode());
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+		
 	}
 }
