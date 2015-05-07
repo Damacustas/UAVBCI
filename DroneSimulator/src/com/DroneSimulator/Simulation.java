@@ -13,10 +13,10 @@ import java.util.Random;
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
+	public static final int BUFFER_PORT = 1972;
+	public static final String BUFFER_HOSTNAME = "localhost";
 	private static final int SHORT_BREAK_TIME = 5;
-
 	private static final int LONG_BREAK_TIME = 30;
-
 	public static final int TRIAL_LENGTH = 5000;
 
 	// These represent the constant values of the simulation.
@@ -80,8 +80,8 @@ public class Simulation {
 	}
 
 	private void connectBuffer() {
-		String hostname = "localhost";
-		int port = 1972;
+		String hostname = BUFFER_HOSTNAME;
+		int port = BUFFER_PORT;
 
 		c = new BufferClientClock();
 

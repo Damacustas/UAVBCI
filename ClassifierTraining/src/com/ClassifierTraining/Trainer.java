@@ -13,6 +13,8 @@ import javax.swing.Timer;
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Trainer {
+	private static final int BUFFER_PORT = 1972;
+	private static final String BUFFER_HOSTNAME = "localhost";
 	private static final int LONG_BREAK_TIME = 30;
 	private static final int SHORT_BREAK_TIME = 10;
 	//
@@ -37,8 +39,8 @@ public class Trainer {
 	}
 
 	public void startClassifierTraining() throws IOException {
-		String hostname = "localhost";
-		int port = 1972;
+		String hostname = BUFFER_HOSTNAME;
+		int port = BUFFER_PORT;
 		BufferClientClock c = new BufferClientClock();
 
 		// try to connect to bufferclientclock and retrieve header

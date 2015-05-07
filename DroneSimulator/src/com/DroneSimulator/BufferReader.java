@@ -17,8 +17,8 @@ public class BufferReader implements Runnable {
 	}
 	
 	private void connectBuffer() {
-		String hostname = "localhost";
-		int port = 1972;
+		String hostname = Simulation.BUFFER_HOSTNAME;
+		int port = Simulation.BUFFER_PORT;
 
 		c = new BufferClientClock();
 
