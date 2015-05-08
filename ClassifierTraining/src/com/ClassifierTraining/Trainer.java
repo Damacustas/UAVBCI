@@ -20,7 +20,7 @@ public class Trainer {
 	//
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 40;
-	private int totalTrials = 10;
+	private int totalTrials = 80;
 	private String[] classes = new String[2];
 
 	private ArrayList<String> cues = new ArrayList<String>();
@@ -54,6 +54,7 @@ public class Trainer {
 		screen.startCountdown(LONG_BREAK_TIME);
 		// Loop through all trials (and do stuff)
 		while (it.hasNext()) {
+			c.putEvent(new BufferEvent("Trial", trialcounter, -1));
 			next = it.next();
 			//System.out.println("Now doing: " + next);
 			screen.setState(Screen.States.TRIAL_START);
@@ -64,7 +65,7 @@ public class Trainer {
 			sleep(1000);
 			screen.setCue(next);
 			screen.setState(Screen.States.TRIAL_CUE);
-			c.putEvent(new BufferEvent("Cue", next, trialcounter));
+			c.putEvent(new BufferEvent("Cue", next, -1));
 
 			// start "classifying phase" (data being collected) after 2 seconds
 			// (total)
