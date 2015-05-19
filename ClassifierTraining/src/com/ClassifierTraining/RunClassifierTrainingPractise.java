@@ -10,9 +10,9 @@ public class RunClassifierTrainingPractise {
 		String[] classes = {"music", "house"};
 		Trainer tr = new Trainer(s, classes);
 		
-		tr.setTotalTrials(20);
-		tr.setLongBreakTrials(2);
-		tr.setShortBreakTrials(1);
+		tr.setTotalTrials(10);
+		tr.setLongBreakTrials(5);
+		tr.setShortBreakTrials(10);
 		try {
 			tr.startClassifierTraining();
 		} catch (Exception e) {

@@ -208,6 +208,10 @@ public class Screen extends JPanel implements KeyListener{
 		}
 	}
 
+	public void setTitle(String title)
+	{
+		frame.setTitle(title);
+	}
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub

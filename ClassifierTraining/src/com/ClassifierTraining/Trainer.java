@@ -14,7 +14,7 @@ import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Trainer {
 	private static final int BUFFER_PORT = 1972;
-	private static final String BUFFER_HOSTNAME = "localhost";
+	private static final String BUFFER_HOSTNAME = "131.174.106.81";
 	private static final int LONG_BREAK_TIME = 30;
 	private static final int SHORT_BREAK_TIME = 10;
 	//
@@ -83,6 +83,7 @@ public class Trainer {
 				screen.setState(Screen.States.TRIAL_BREAK);
 				c.putEvent(new BufferEvent("Break", LONG_BREAK_TIME, -1));
 				screen.startCountdown(LONG_BREAK_TIME);
+				screen.setTitle("Progress: " + trialcounter);
 
 				// small break every 5
 			} else if (trialcounter % shortBreakTrials == 0) {
@@ -90,6 +91,8 @@ public class Trainer {
 				screen.setState(Screen.States.TRIAL_BREAK);
 				// c.putEvent(new BufferEvent("Break", 5, -1));
 				screen.startCountdown(SHORT_BREAK_TIME);
+				screen.setTitle("Progress: " + trialcounter);
+			
 			}
 			sleep(randomBreakTime());
 		}

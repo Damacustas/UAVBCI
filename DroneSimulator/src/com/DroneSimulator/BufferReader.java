@@ -9,6 +9,7 @@ public class BufferReader implements Runnable {
 	private Screen screen;
 	Header hdr;
 	BufferClientClock c;
+	private final int THRESHOLD = 2;
 
 	public BufferReader(Screen s) {
 		this.screen = s;
@@ -107,13 +108,15 @@ public class BufferReader implements Runnable {
 						}
 						else if (evttype.equalsIgnoreCase("classifier.prediction") && screen.getState() == Screen.States.TRIAL_CLASSIFYING)
 						{
+							if(Math.abs(Float.parseFloat(evt.getValue().toString())) > THRESHOLD)
+									{
 							if ((Float.parseFloat(evt.getValue().toString()) > 0))
 							{
 								screen.upKey();
 							} else if ((Float.parseFloat(evt.getValue().toString()) < 0))
 							{
 								screen.downKey();
-							}
+							}}
 
 						}
 						else

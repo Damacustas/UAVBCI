@@ -14,7 +14,7 @@ import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
 	public static final int BUFFER_PORT = 1972;
-	public static final String BUFFER_HOSTNAME = "localhost";
+	public static final String BUFFER_HOSTNAME = "131.174.106.81";
 	private static final int SHORT_BREAK_TIME = 5;
 	private static final int LONG_BREAK_TIME = 30;
 	public static final int TRIAL_LENGTH = 5000;
@@ -44,7 +44,7 @@ public class Simulation {
 
 	private int shortBreakTrials = 5;
 	private int longBreakTrials = 10;
-	private double totalTrials = 10;
+	private double totalTrials = 40;
 
 	private int cursorDistance = 4 * Screen.STEPSIZE;
 	private int minTargetSize = Screen.STEPSIZE;
@@ -224,7 +224,8 @@ public class Simulation {
 												// run
 		TrialParameters last = new TrialParameters();
 		double angle = random.nextDouble() * 360;
-		last.setStartX(dim.width / 2 + cursorDistance * Math.cos(angle));
+		last.setStartX(dim.width / 2 );
+		//+ cursorDistance * Math.cos(angle)
 		last.setStartY(dim.height / 2 + cursorDistance * Math.sin(angle));
 		last.setTargetWidth(initialTargetWidth);
 		last.setTargetHeight(initialTargetHeight);
@@ -265,7 +266,8 @@ public class Simulation {
 		// Create the new simulation run object.
 		TrialParameters run = new TrialParameters();
 		double angle = random.nextDouble() * 360;
-		run.setStartX(dim.width / 2 + cursorDistance * Math.cos(angle));
+		run.setStartX(dim.width / 2 );
+		//+ cursorDistance * Math.cos(angle)
 		run.setStartY(dim.height / 2 + cursorDistance * Math.sin(angle));
 		run.setTargetWidth(newWidth);
 		run.setTargetHeight(newHeight);
