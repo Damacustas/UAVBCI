@@ -55,6 +55,8 @@ public class Screen extends JPanel {
 	public static enum States {
 		TRIAL_BUSY, TRIAL_BREAK, TRIAL_EMPTY, TRIAL_END, TRIAL_CLASSIFYING
 	}
+	
+	
 
 //	public static final int TRIAL_BUSY = 0;
 //	public static final int TRIAL_BREAK = 1;
@@ -95,7 +97,8 @@ public class Screen extends JPanel {
 		// progressBar.setStringPainted(true);
 		progressBar.setVisible(true);
 		progressBar.setBackground(Color.BLACK);
-		this.add(progressBar);
+		this.add(progressBar);		
+
 
 		// Initialize timer for progress bar
 
@@ -132,6 +135,8 @@ public class Screen extends JPanel {
 				repaint();
 
 			}
+			
+			
 
 		});
 
@@ -155,6 +160,9 @@ public class Screen extends JPanel {
 		am.put("Right", new KeyAction("Right", this));
 		am.put("Left", new KeyAction("Left", this));
 		am.put("Space", new KeyAction("Space", this));
+		
+		// Joystick stuff
+		
 	}
 
 	public void setCurrentTrial(TrialParameters currentTrial) {

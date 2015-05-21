@@ -61,6 +61,7 @@ public class Simulation {
 	private boolean bufferConnected = false;
 	
 	private Thread t;
+	private Thread t2;
 
 	public Simulation(Screen s) throws IOException {
 
@@ -74,6 +75,11 @@ public class Simulation {
 		connectBuffer();
 		t = new Thread(new BufferReader(screen));
 		t.start();
+		
+		t2 = new Thread(new JoystickHandler());
+		t2.start();
+		
+		
 
 		startExperiment();
 

@@ -16,7 +16,7 @@ public class BufferReader implements Runnable {
 		connectBuffer();
 
 	}
-	
+
 	private void connectBuffer() {
 		String hostname = Simulation.BUFFER_HOSTNAME;
 		int port = Simulation.BUFFER_PORT;
@@ -45,7 +45,7 @@ public class BufferReader implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			//bufferConnected = true;
+			// bufferConnected = true;
 			// Print stuff
 			System.out.println("#channels....: " + hdr.nChans);
 			System.out.println("#samples.....: " + hdr.nSamples);
@@ -95,32 +95,59 @@ public class BufferReader implements Runnable {
 							endExpt = true;
 						}
 						// only process if it's an event of a type we care about
-						// only process if trial is busy and type is classifier.prediction 
-						//else if (evttype.equals("classifier.prediction") && screen.getState() == Screen.TRIAL_CLASSIFYING) {
-						else if (evttype.equals("keyboard") && screen.getState() == Screen.States.TRIAL_CLASSIFYING) {	
-							switch(evt.getValue().toString())
-							{
-							case "w": screen.upKey(); System.out.println("pressed W");break;
-							case "s": screen.downKey();System.out.println("pressed S"); break;
-							case "a": screen.leftKey(); System.out.println("pressed A");break;
-							case "d": screen.rightKey(); System.out.println("pressed D");break;
-							}
-						}
-						else if (evttype.equalsIgnoreCase("classifier.prediction") && screen.getState() == Screen.States.TRIAL_CLASSIFYING)
-						{
-							if(Math.abs(Float.parseFloat(evt.getValue().toString())) > THRESHOLD)
-									{
-							if ((Float.parseFloat(evt.getValue().toString()) > 0))
-							{
+						// only process if trial is busy and type is
+						// classifier.prediction
+						// else if (evttype.equals("classifier.prediction") &&
+						// screen.getState() == Screen.TRIAL_CLASSIFYING) {
+						else if (evttype.equals("keyboard")
+								&& screen.getState() == Screen.States.TRIAL_CLASSIFYING) {
+							switch (evt.getValue().toString()) {
+							case "w":
 								screen.upKey();
-							} else if ((Float.parseFloat(evt.getValue().toString()) < 0))
-							{
+								System.out.println("pressed W");
+								break;
+							case "s":
 								screen.downKey();
-							}}
+								System.out.println("pressed S");
+								break;
+							case "a":
+								screen.leftKey();
+								System.out.println("pressed A");
+								break;
+							case "d":
+								screen.rightKey();
+								System.out.println("pressed D");
+								break;
+							}
+						} else if (evttype
+								.equalsIgnoreCase("classifier.prediction")
+								&& screen.getState() == Screen.States.TRIAL_CLASSIFYING) {
+							if (Math.abs(Float.parseFloat(evt.getValue()
+									.toString())) > THRESHOLD) {
+								if ((Float
+										.parseFloat(evt.getValue().toString()) > 0)) {
+									screen.upKey();
+								} else if ((Float.parseFloat(evt.getValue()
+										.toString()) < 0)) {
+									screen.downKey();
+								}
+							}
 
-						}
-						else
-						{
+						} else if (evttype
+								.equalsIgnoreCase("classifier.prediction")
+								&& screen.getState() == Screen.States.TRIAL_CLASSIFYING) {
+							if (Math.abs(Float.parseFloat(evt.getValue()
+									.toString())) > 0.2) {
+								if ((Float
+										.parseFloat(evt.getValue().toString()) > 0)) {
+									screen.rightKey();
+								} else if ((Float.parseFloat(evt.getValue()
+										.toString()) < 0)) {
+									screen.leftKey();
+								}
+							}
+
+						} else {
 							System.out.println("Event: " + evt.toString());
 						}
 
@@ -132,12 +159,12 @@ public class BufferReader implements Runnable {
 				System.err.println("Error in " + this.getClass().getName());
 				e.printStackTrace();
 			}
-//			try {
-//				//Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			// try {
+			// //Thread.sleep(1000);
+			// } catch (InterruptedException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
 		}
 	}
 }
