@@ -134,7 +134,7 @@ public class BufferReader implements Runnable {
 							}
 
 						} else if (evttype
-								.equalsIgnoreCase("classifier.prediction")
+								.equalsIgnoreCase("Joystick")
 								&& screen.getState() == Screen.States.TRIAL_CLASSIFYING) {
 							if (Math.abs(Float.parseFloat(evt.getValue()
 									.toString())) > 0.2) {

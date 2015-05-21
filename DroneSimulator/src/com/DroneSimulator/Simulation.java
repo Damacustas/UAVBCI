@@ -5,16 +5,20 @@ import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Random;
+
 
 
 import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
 	public static final int BUFFER_PORT = 1972;
-	public static final String BUFFER_HOSTNAME = "131.174.106.81";
+//	public static final String BUFFER_HOSTNAME = "131.174.106.81";
+	public static final String BUFFER_HOSTNAME = "localhost";
 	private static final int SHORT_BREAK_TIME = 5;
 	private static final int LONG_BREAK_TIME = 30;
 	public static final int TRIAL_LENGTH = 5000;
@@ -38,7 +42,9 @@ public class Simulation {
 	private Screen screen;
 
 	private BufferedWriter dataOut;
-	private static String headerLine = "isHit,timeRequired,startX,startY,targetWidth,targetHeight,score";
+	private static String headerLine = "isHit,timeRequired,startX,startY,targetWidth,targetHeight,score, droneY";
+	private ArrayList<Integer> dronePositionsY= new ArrayList<Integer>();
+	private ArrayList<Integer> dronePositionsX= new ArrayList<Integer>();
 
 	// private TrialParameters last = null;
 
@@ -141,6 +147,7 @@ public class Simulation {
 		screen.startCountdown(LONG_BREAK_TIME);
 		while (trialcounter < totalTrials) {
 			
+			
 			if (trialcounter % longBreakTrials == 0 && trialcounter != 0) {
 				screen.setState(Screen.States.TRIAL_BREAK);
 				if (bufferConnected)
@@ -199,6 +206,7 @@ public class Simulation {
 			
 			screen.setCurrentTrial(generateNext());
 			System.out.println("Trial completed: " + trialcounter);
+			dronePositionsY = screen.getDronePositionsY();
 			submitResult();
 			trialcounter++;
 			
@@ -306,6 +314,14 @@ public class Simulation {
 					.getTargetHeight()));
 			dataOut.write(",");
 			dataOut.write(Double.toString(score));
+			
+			Iterator it = dronePositionsY.iterator();
+			while(it.hasNext())
+			{
+				
+				dataOut.write(",");
+				dataOut.write(it.next().toString());
+			}
 			dataOut.newLine();
 			dataOut.flush();
 		} catch (IOException ex) {

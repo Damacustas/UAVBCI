@@ -56,13 +56,9 @@ public class Screen extends JPanel {
 		TRIAL_BUSY, TRIAL_BREAK, TRIAL_EMPTY, TRIAL_END, TRIAL_CLASSIFYING
 	}
 	
-	
-
-//	public static final int TRIAL_BUSY = 0;
-//	public static final int TRIAL_BREAK = 1;
-//	public static final int TRIAL_EMPTY = 2;
-//	public static final int TRIAL_END = 3;
-//	public static final int TRIAL_CLASSIFYING = 4;
+	//save drone positions for later use
+	private ArrayList<Integer> dronePositionsY= new  ArrayList<Integer>();
+	private ArrayList<Integer> dronePositionsX= new  ArrayList<Integer>();
 
 	private ArrayList<TrialResults> results = new ArrayList<TrialResults>();
 	// private JLabel countdownLabel = new JLabel();
@@ -283,6 +279,7 @@ public class Screen extends JPanel {
 	public void upKey() {
 		cursorY -= STEPSIZE;
 		cursorY = (cursorY < 0) ? 0 : cursorY;
+		dronePositionsY.add(cursorY);
 		this.repaint();
 	}
 
@@ -293,6 +290,7 @@ public class Screen extends JPanel {
 		cursorY += STEPSIZE;
 		cursorY = (int) ((cursorY > (dim.getHeight() - 70)) ? (dim.getHeight() - 70)
 				: cursorY);
+		dronePositionsY.add(cursorY);
 		this.repaint();
 	}
 
@@ -362,6 +360,10 @@ public class Screen extends JPanel {
 			breakTimeLeft = 2;
 			System.out.println("Space pressed");
 		}
+	}
+
+	public ArrayList<Integer> getDronePositionsY() {
+		return dronePositionsY;
 	}
 
 	// public void showCountdown() {
