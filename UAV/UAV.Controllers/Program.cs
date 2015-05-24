@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Threading;
 using AR.Drone.Client;
+using System.Collections.Generic;
+using AR.Drone.Data;
 
 namespace UAV.Controllers
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static void Main(string[] rawargs)
         {
+            var args = new List<string>(rawargs);
 			
-            if (args.Length == 0 || args[0] == "--unshared")
+            if (args.Contains("--unshared"))
             {
                 Console.Write("Connecting to drone... ");
                 DroneClient drone = new DroneClient();
@@ -18,18 +21,28 @@ namespace UAV.Controllers
                 drone.FlatTrim();
                 Console.WriteLine("done.");
 
-                BCIProvider provider = new BCIProvider();
-                PasstroughController controller = new PasstroughController(provider);
+                if (args.Contains("--enable-video"))
+                {
+                    StartVideo(drone);
+                }
+
+                var provider = new BCIProvider();
+                var controller = new PasstroughController(provider);
                 controller.Drone = drone;
                 controller.StartController();
                 while (true)
                     Thread.Yield();
             }
-            else if (args[0] == "--shared")
+            else if (args.Contains("--shared"))
             {
                 // TODO: Implement.
+
+//                if (args.Contains("--enable-video"))
+//                {
+//                    StartVideo(drone);
+//                }
             }
-            else if (args[0] == "--help")
+            else if (args.Contains("--help"))
             {
                 Console.WriteLine("Options:");
                 Console.WriteLine("\t--help\tShows this.");
@@ -40,6 +53,14 @@ namespace UAV.Controllers
             {
                 Console.WriteLine("Run with --help for options.");
             }
+        }
+
+        static void StartVideo(DroneClient client)
+        {
+            var sender = new VideoPacketSender();
+            sender.Start();
+
+            client.VideoPacketAcquired += sender.EnqueuePacket;
         }
     }
 }

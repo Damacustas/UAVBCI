@@ -28,4 +28,33 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="MainForm.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="VideoHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="AR.Drone.Infrastructure">
+      <HintPath>..\..\Assemblies\AR.Drone.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="AR.Drone.Video">
+      <HintPath>..\..\Assemblies\AR.Drone.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="AR.Drone.Data">
+      <HintPath>..\..\Assemblies\AR.Drone.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System" />
+  </ItemGroup>
 </Project>

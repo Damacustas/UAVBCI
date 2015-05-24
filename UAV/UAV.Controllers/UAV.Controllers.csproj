@@ -37,9 +37,9 @@
     <Compile Include="CombinationController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="BCIProvider.cs" />
+    <Compile Include="VideoPacketSender.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
     <Reference Include="AR.Drone.Client">
       <HintPath>..\..\Assemblies\AR.Drone.Client.dll</HintPath>
@@ -50,8 +50,9 @@
     <Reference Include="AR.Drone.Infrastructure">
       <HintPath>..\..\Assemblies\AR.Drone.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="FieldTrip.Buffer">
-      <HintPath>..\..\..\buffer_bci-csharp-improvements\dataAcq\buffer\csharp\bin\Debug\FieldTrip.Buffer.dll</HintPath>
+      <HintPath>..\..\Assemblies\FieldTrip.Buffer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
