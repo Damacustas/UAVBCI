@@ -11,8 +11,8 @@ using System.Windows.Forms;
 
 namespace UAV.Simulation
 {
-	class MainClass
-	{
+    class MainClass
+    {
         static int passed, total, numLen;
         static DateTime start, prev;
         static readonly int numSims = 500;
@@ -20,41 +20,88 @@ namespace UAV.Simulation
 
         // Different parameters
         static double[] IntelligenceFactors = { 0.25, 0.50, 0.75 };
-        static double[] InputAccuracies = {0.5, 0.6, 0.7};
+        static double[] InputAccuracies = { 0.5, 0.6, 0.7 };
         static int[] historyLenghts = { 5, 10, 15 };
-        static int[] fitDegrees = {1, 2, 3 };
+        static int[] fitDegrees = { 1, 2, 3 };
 
         [STAThread]
-		public static void Main (string[] args)
+        public static void Main(string[] args)
         {
             //RunSimulationsForNoIntelligence();
-            RunSimulationsForFitIntelligence(1.0);
+            //RunSimulationsForFitIntelligence(1.0);
             //RunSimulationsForAttractorIntelligence();
             //RunSmoothnessFitIntelligence();
 
-//            var model = new PlotModel();
-//            model.Title = "Path on X-axis over time.";
-//            model.LegendPosition = LegendPosition.LeftTop;
-//
-//            List<Simulation> sims = new List<Simulation>();
-//            for(int i = 0; i < 5; i++)
-//            {
-//                var sim = GenerateSimulationFitIntelligence(0.5, 0.6, 10, 2, 2);
-//                sim.Run(verbose: false);
-//                sims.Add(sim);
-//
-//                var linePlot = new LineSeries("Fit Simulation " + (i + 1));
-//                linePlot.Points.AddRange(
-//                    from p in sim.State.LocationHistory select new DataPoint(p.Epoch, p.Value.X)
-//                    );
-//                model.Series.Add(linePlot);
-//            }
-//
-//            MainForm form = new MainForm();
-//            form.plotView.Model = model;
-//            form.plotView.InvalidatePlot(true);
-//
-//            Application.Run(form);
+            var model = new PlotModel();
+            model.Title = "Path on X-axis over time.";
+            model.LegendPosition = LegendPosition.LeftTop;
+
+            int n = 50;
+
+            // Attractor simulations
+            var attrSims = new List<Simulation>();
+            for (int i = 0; i < n; i++)
+            {
+                var sim = GenerateSimulationAttractorIntelligence(0.5, 0.6);
+                sim.Run(verbose: false);
+                attrSims.Add(sim);
+            }
+            var attrPlot = new LineSeries(string.Format("Averaged attractor simulation (n={0})", n));
+            CreatePlot(attrPlot, attrSims);
+            model.Series.Add(attrPlot);
+
+            // input simulations
+            var inputSims = new List<Simulation>();
+            for (int i = 0; i < n; i++)
+            {
+                var sim = GenerateSimulationNoIntelligence(0.5, 0.6);
+                sim.Run(verbose: false);
+                inputSims.Add(sim);
+            }
+            var inputPlot = new LineSeries(string.Format("Averaged no intelligence simulation (n={0})", n));
+            CreatePlot(inputPlot, inputSims);
+            model.Series.Add(inputPlot);
+
+            // Fit simulations.
+            for (int hl = 5; hl < 25; hl += 5)
+            {
+                List<Simulation> fitSims = new List<Simulation>();
+                for (int i = 0; i < n; i++)
+                {
+                    var sim = GenerateSimulationFitIntelligence(0.5, 0.6, hl, 2, 2);
+                    sim.Run(verbose: false);
+                    fitSims.Add(sim);
+                }
+                var fitPlot = new LineSeries(string.Format("Averaged fit simulation hl={1} (n={0})", n, hl));
+                CreatePlot(fitPlot, fitSims);
+                model.Series.Add(fitPlot);
+            }
+
+            MainForm form = new MainForm();
+            form.plotView.Model = model;
+            form.plotView.InvalidatePlot(true);
+
+            Application.Run(form);
+        }
+
+        private static void CreatePlot(LineSeries plot, List<Simulation> sims)
+        {
+            int len = int.MaxValue;
+            foreach (var s in sims)
+            {
+                if (s.State.LocationHistory.Count < len)
+                    len = s.State.LocationHistory.Count;
+            }
+
+            for (int i = 0; i < len; i++)
+            {
+                var avg = 0.0d;
+                foreach (var s in sims)
+                    avg += s.State.LocationHistory[i].Value.X;
+                avg /= sims.Count;
+
+                plot.Points.Add(new DataPoint(sims[0].State.LocationHistory[i].Epoch, avg));
+            }
         }
 
         private static void RunSmoothnessFitIntelligence()
@@ -74,7 +121,7 @@ namespace UAV.Simulation
                         {
                             List<List<HistoryItem>> histories = new List<List<HistoryItem>>();
 
-                            for (int n = 0; n < numSims/5; n++)
+                            for (int n = 0; n < numSims / 5; n++)
                             {
                                 Simulation sim = GenerateSimulationFitIntelligence(intelligenceFactor, inputAccuracy, historyLength, fitDegree, 1.0);
                                 sim.Run(verbose: false);
@@ -122,18 +169,18 @@ namespace UAV.Simulation
                 var relevantPoints = history.GetRange(i - 3, 7);
 
                 var t = (from n in timeRange
-                    select n).ToArray();
+                                     select n).ToArray();
 
                 var fitFuncX = Fitters.GeneratePolynomialFit(
                                    timeRange,
                                    (from point in relevantPoints
-                                    select point.Value.X).ToList(),
+                                                   select point.Value.X).ToList(),
                                    2);
                 var fitFuncY = Fitters.GeneratePolynomialFit(
-                    timeRange,
-                    (from point in relevantPoints
-                        select point.Value.Y).ToList(),
-                    2);
+                                   timeRange,
+                                   (from point in relevantPoints
+                                                   select point.Value.Y).ToList(),
+                                   2);
 
                 var errX = fitFuncX(i);
                 var errY = fitFuncY(i);
@@ -246,7 +293,7 @@ namespace UAV.Simulation
                             // Analyse
                             double avg = timeToCompletions.Aggregate(0.0d, (left, right) => left + right) / timeToCompletions.Count;
                             double sd = (from ttc in timeToCompletions
-                                select Math.Pow(ttc - avg, 2)).Aggregate(0.0d, (left, right) => left + right);
+                                                              select Math.Pow(ttc - avg, 2)).Aggregate(0.0d, (left, right) => left + right);
                             sd *= (1.0 / timeToCompletions.Count);
                             sd = Math.Sqrt(sd);
 
@@ -289,7 +336,7 @@ namespace UAV.Simulation
                     // Analyse
                     double avg = timeToCompletions.Aggregate(0.0d, (left, right) => left + right) / timeToCompletions.Count;
                     double sd = (from ttc in timeToCompletions
-                                                    select Math.Pow(ttc - avg, 2)).Aggregate(0.0d, (left, right) => left + right);
+                                                select Math.Pow(ttc - avg, 2)).Aggregate(0.0d, (left, right) => left + right);
                     sd *= (1.0 / timeToCompletions.Count);
                     sd = Math.Sqrt(sd);
 
@@ -384,83 +431,83 @@ namespace UAV.Simulation
             return sim;
         }
 
-//
-//        private static void PrintProgress()
-//        {
-//            // Progress report.
-//            passed++;
-//            if (passed % 25 == 0)
-//            {
-//                var now = DateTime.UtcNow;
-//
-//                double msLeft = (now - start).TotalMilliseconds;
-//                msLeft /= (double)passed;
-//                msLeft *= (total - passed);
-//
-//                Console.WriteLine("{0}/{1} ({2}%), delta: {3} ms, total: {4}, esimated time left: {5}",
-//                    passed.ToString().PadLeft(numLen),
-//                    total,
-//                    (((double)passed/(double)total)*100).ToString("##.0"),
-//                    (now - prev).TotalMilliseconds.ToString("####.0"),
-//                    (now - start).ToString(@"hh\:mm\:ss"),
-//                    new TimeSpan(0, 0, 0, 0, (int)msLeft).ToString(@"hh\:mm\:ss")
-//                );
-//
-//                prev = now;
-//            }
-//        }
-//
-//        /// <summary>
-//        /// Writes the simulation results to a file.
-//        /// </summary>
-//        /// <param name="sim">The simulation to write.</param>
-//        /// <param name="n">The n-th simulation under the same simulation parameters.</param>
-//        private static void WriteSimulationResults(Simulation sim, int n)
-//        {
-//            /*
-//            string[] strings =
-//                {
-//                    string.Format("noise_{0}", sim.InputGenerator.NoiseRatio),
-//                    string.Format("intelligenceFactor_{0}", sim.IntelligenceFactor),
-//                    sim.Intelligence.IntelligenceName
-//                };
-//
-//            var json = JsonConvert.SerializeObject(sim);
-//            var filename = string.Join("-", strings.Concat(new string[] {(n+1).ToString()})) + ".json";
-//            //var dir = EnsureDirectory(new string[] { "Output" }.Concat(strings).ToArray());
-//            EnsureDirectory("Output");
-//
-//            var p = Path.Combine("Output", filename);
-//            p = Path.GetFullPath(p);
-//            using (StreamWriter writer = new StreamWriter(File.OpenWrite(p)))
-//            {
-//                writer.Write(json);
-//                writer.Close();
-//            }
-//            */
-//            Console.WriteLine(JsonConvert.SerializeObject(sim));
-//        }
-//
-//        /// <summary>
-//        /// Ensures the directory exists.
-//        /// </summary>
-//        /// <returns>The directory.</returns>
-//        /// <param name="path">Path.</param>
-//        private static string EnsureDirectory(params string[] path)
-//        {
-//            string fullpath = AppDomain.CurrentDomain.BaseDirectory;
-//
-//            foreach (string p in path)
-//            {
-//                fullpath = Path.Combine(fullpath, p);
-//
-//                if (!Directory.Exists(fullpath))
-//                {
-//                    Directory.CreateDirectory(fullpath);
-//                }
-//            }
-//
-//            return fullpath;
-//        }
-	}
+        //
+        //        private static void PrintProgress()
+        //        {
+        //            // Progress report.
+        //            passed++;
+        //            if (passed % 25 == 0)
+        //            {
+        //                var now = DateTime.UtcNow;
+        //
+        //                double msLeft = (now - start).TotalMilliseconds;
+        //                msLeft /= (double)passed;
+        //                msLeft *= (total - passed);
+        //
+        //                Console.WriteLine("{0}/{1} ({2}%), delta: {3} ms, total: {4}, esimated time left: {5}",
+        //                    passed.ToString().PadLeft(numLen),
+        //                    total,
+        //                    (((double)passed/(double)total)*100).ToString("##.0"),
+        //                    (now - prev).TotalMilliseconds.ToString("####.0"),
+        //                    (now - start).ToString(@"hh\:mm\:ss"),
+        //                    new TimeSpan(0, 0, 0, 0, (int)msLeft).ToString(@"hh\:mm\:ss")
+        //                );
+        //
+        //                prev = now;
+        //            }
+        //        }
+        //
+        //        /// <summary>
+        //        /// Writes the simulation results to a file.
+        //        /// </summary>
+        //        /// <param name="sim">The simulation to write.</param>
+        //        /// <param name="n">The n-th simulation under the same simulation parameters.</param>
+        //        private static void WriteSimulationResults(Simulation sim, int n)
+        //        {
+        //            /*
+        //            string[] strings =
+        //                {
+        //                    string.Format("noise_{0}", sim.InputGenerator.NoiseRatio),
+        //                    string.Format("intelligenceFactor_{0}", sim.IntelligenceFactor),
+        //                    sim.Intelligence.IntelligenceName
+        //                };
+        //
+        //            var json = JsonConvert.SerializeObject(sim);
+        //            var filename = string.Join("-", strings.Concat(new string[] {(n+1).ToString()})) + ".json";
+        //            //var dir = EnsureDirectory(new string[] { "Output" }.Concat(strings).ToArray());
+        //            EnsureDirectory("Output");
+        //
+        //            var p = Path.Combine("Output", filename);
+        //            p = Path.GetFullPath(p);
+        //            using (StreamWriter writer = new StreamWriter(File.OpenWrite(p)))
+        //            {
+        //                writer.Write(json);
+        //                writer.Close();
+        //            }
+        //            */
+        //            Console.WriteLine(JsonConvert.SerializeObject(sim));
+        //        }
+        //
+        //        /// <summary>
+        //        /// Ensures the directory exists.
+        //        /// </summary>
+        //        /// <returns>The directory.</returns>
+        //        /// <param name="path">Path.</param>
+        //        private static string EnsureDirectory(params string[] path)
+        //        {
+        //            string fullpath = AppDomain.CurrentDomain.BaseDirectory;
+        //
+        //            foreach (string p in path)
+        //            {
+        //                fullpath = Path.Combine(fullpath, p);
+        //
+        //                if (!Directory.Exists(fullpath))
+        //                {
+        //                    Directory.CreateDirectory(fullpath);
+        //                }
+        //            }
+        //
+        //            return fullpath;
+        //        }
+    }
 }
