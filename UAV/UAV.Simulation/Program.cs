@@ -20,7 +20,7 @@ namespace UAV.Simulation
 
         // Different parameters
         static double[] IntelligenceFactors = { 0.25, 0.50, 0.75 };
-        static double[] InputAccuracies = { 0.5, 0.6, 0.7 };
+        static double[] InputAccuracies = { 0.7, 0.8, 0.9 };
         static int[] historyLenghts = { 5, 10, 15 };
         static int[] fitDegrees = { 1, 2, 3 };
 
@@ -28,7 +28,7 @@ namespace UAV.Simulation
         public static void Main(string[] args)
         {
             //RunSimulationsForNoIntelligence();
-            //RunSimulationsForFitIntelligence(1.0);
+            //RunSimulationsForFitIntelligence(2.0);
             //RunSimulationsForAttractorIntelligence();
             //RunSmoothnessFitIntelligence();
 
@@ -68,11 +68,11 @@ namespace UAV.Simulation
                 List<Simulation> fitSims = new List<Simulation>();
                 for (int i = 0; i < n; i++)
                 {
-                    var sim = GenerateSimulationFitIntelligence(0.5, 0.6, hl, 2, 2);
+                    var sim = GenerateSimulationFitIntelligence(0.5, 0.6, hl, 1, 2);
                     sim.Run(verbose: false);
                     fitSims.Add(sim);
                 }
-                var fitPlot = new LineSeries(string.Format("Averaged fit simulation hl={1} (n={0})", n, hl));
+                var fitPlot = new LineSeries(string.Format("Averaged fit simulation fd=1 hl={1} (n={0})", n, hl));
                 CreatePlot(fitPlot, fitSims);
                 model.Series.Add(fitPlot);
             }
