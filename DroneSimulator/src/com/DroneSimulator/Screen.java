@@ -302,6 +302,7 @@ public class Screen extends JPanel {
 		cursorX = (int) ((cursorX > (dim.getWidth() - 10)) ? (dim.getWidth() - 10)
 				: cursorX);
 		this.repaint();
+		dronePositionsX.add(cursorX);
 	}
 
 	/**
@@ -311,6 +312,7 @@ public class Screen extends JPanel {
 		cursorX -= STEPSIZE;
 		cursorX = (cursorX < 0) ? 0 : cursorX;
 		this.repaint();
+		dronePositionsX.add(cursorX);
 	}
 
 	public void setState(States state) {
@@ -362,8 +364,20 @@ public class Screen extends JPanel {
 		}
 	}
 
+	public void resetDronePos() {
+		// TODO Auto-generated method stub
+		dronePositionsY = new ArrayList<Integer>();
+		dronePositionsX = new ArrayList<Integer>();
+		
+	}
+
 	public ArrayList<Integer> getDronePositionsY() {
 		return dronePositionsY;
+	}
+
+	public ArrayList<Integer> getDronePositionsX() {
+		// TODO Auto-generated method stub
+		return dronePositionsX;
 	}
 
 	// public void showCountdown() {
