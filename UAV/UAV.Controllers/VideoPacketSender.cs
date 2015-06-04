@@ -10,6 +10,7 @@ using System;
 using AR.Drone.Video;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Diagnostics;
 
 namespace UAV.Controllers
 {
@@ -44,7 +45,9 @@ namespace UAV.Controllers
             videoDecoder = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnFrameDecoded);
             videoDecoder.UnhandledException += (delegate(object arg1, Exception arg2)
             {
-                int i = 0;
+					Console.WriteLine(arg2);
+					Console.WriteLine(arg2.StackTrace);
+					Process.GetCurrentProcess().Kill();
             });
             videoDecoder.Start();
 
