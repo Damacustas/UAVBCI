@@ -40,8 +40,12 @@ namespace UAV.Controllers
             Stop();
 
 
-            // innitialize video packet decoder.
+            // initialize video packet decoder.
             videoDecoder = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnFrameDecoded);
+            videoDecoder.UnhandledException += (delegate(object arg1, Exception arg2)
+            {
+                int i = 0;
+            });
             videoDecoder.Start();
 
             running = true;
@@ -58,7 +62,7 @@ namespace UAV.Controllers
 
         void OnFrameDecoded(VideoFrame frame)
         {
-            if (frame.Number == lastFrameNumber)
+            if (frame == null || frame.Number == lastFrameNumber)
                 return;
             
             lastFrameNumber = frame.Number;
