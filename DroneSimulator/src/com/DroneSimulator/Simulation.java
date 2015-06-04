@@ -17,8 +17,8 @@ import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
 	public static final int BUFFER_PORT = 1972;
-//	public static final String BUFFER_HOSTNAME = "131.174.106.81";
-	public static final String BUFFER_HOSTNAME = "localhost";
+	public static final String BUFFER_HOSTNAME = "131.174.106.81";
+//	public static final String BUFFER_HOSTNAME = "localhost";
 	private static final int SHORT_BREAK_TIME = 5;
 	private static final int LONG_BREAK_TIME = 30;
 	public static final int TRIAL_LENGTH = 5000;
@@ -42,15 +42,16 @@ public class Simulation {
 	private Screen screen;
 
 	private BufferedWriter dataOut;
+	private BufferedWriter dataOut2;
 	private static String headerLine = "isHit,timeRequired,startX,startY,targetWidth,targetHeight,score, droneY";
 	private ArrayList<Integer> dronePositionsY= new ArrayList<Integer>();
 	private ArrayList<Integer> dronePositionsX= new ArrayList<Integer>();
 
 	// private TrialParameters last = null;
 
-	private int shortBreakTrials = 5;
-	private int longBreakTrials = 10;
-	private double totalTrials = 40;
+	private int shortBreakTrials = 7;
+	private int longBreakTrials = 20;
+	private double totalTrials = 20;
 
 	private int cursorDistance = 4 * Screen.STEPSIZE;
 	private int minTargetSize = Screen.STEPSIZE;
@@ -133,8 +134,15 @@ public class Simulation {
 		Date dt = Calendar.getInstance().getTime();
 		String filename = dt.getHours() + "-" + dt.getMinutes() + "-"
 				+ dt.getSeconds() + ".csv";
-		this.dataOut = new BufferedWriter(new FileWriter(filename));
+		this.dataOut = new BufferedWriter(new FileWriter("D:/UAVBCI/CSV output/" + filename));
 		this.dataOut.write(headerLine);
+		this.dataOut.newLine();
+		
+		String filename2 = "XY" +dt.getHours() + "-" + dt.getMinutes() + "-"
+				+ dt.getSeconds() + ".csv";
+		
+		this.dataOut2 = new BufferedWriter(new FileWriter("D:/UAVBCI/CSV output/" + filename2));
+		//this.dataOut.write(headerLine);
 		this.dataOut.newLine();
 		
 		System.out.println("startEXP");
@@ -207,6 +215,8 @@ public class Simulation {
 			screen.setCurrentTrial(generateNext());
 			System.out.println("Trial completed: " + trialcounter);
 			dronePositionsY = screen.getDronePositionsY();
+			dronePositionsX = screen.getDronePositionsX();
+			
 			submitResult();
 			trialcounter++;
 			
@@ -215,6 +225,7 @@ public class Simulation {
 		// TODO change (because deprecated and unsafe)
 		t.stop();
 		this.dataOut.close();
+		this.dataOut2.close();
 
 		printResults();
 	}
@@ -280,8 +291,8 @@ public class Simulation {
 		// Create the new simulation run object.
 		TrialParameters run = new TrialParameters();
 		double angle = random.nextDouble() * 360;
-		run.setStartX(dim.width / 2 );
-		//+ cursorDistance * Math.cos(angle)
+		run.setStartX(dim.width / 2 + cursorDistance * Math.cos(angle));
+		//+ 
 		run.setStartY(dim.height / 2 + cursorDistance * Math.sin(angle));
 		run.setTargetWidth(newWidth);
 		run.setTargetHeight(newHeight);
@@ -294,8 +305,9 @@ public class Simulation {
 	 * @param run
 	 *            The run to save.
 	 * @return
+	 * @throws IOException 
 	 */
-	public void reportSimulationResults(TrialResults run) {
+	public void reportSimulationResults(TrialResults run) throws IOException {
 		try {
 			dataOut.write(run.isHit() ? "true" : "false");
 			dataOut.write(",");
@@ -315,18 +327,41 @@ public class Simulation {
 			dataOut.write(",");
 			dataOut.write(Double.toString(score));
 			
-			Iterator it = dronePositionsY.iterator();
-			while(it.hasNext())
-			{
-				
-				dataOut.write(",");
-				dataOut.write(it.next().toString());
-			}
-			dataOut.newLine();
+
 			dataOut.flush();
 		} catch (IOException ex) {
 			// TODO: Handle
 		}
+		
+		Iterator<Integer> itY = dronePositionsY.iterator();
+		Iterator<Integer> itX = dronePositionsX.iterator();
+		dataOut2.write(Double.toString(run.getSimulationDetails()
+				.getStartY()));
+		try {
+			while(itY.hasNext())
+			{
+				
+				dataOut2.write(",");
+				dataOut2.write(itY.next().toString());
+			}
+			dataOut2.newLine();
+			dataOut2.write(Double.toString(run.getSimulationDetails()
+					.getStartX()));
+			while(itX.hasNext())
+			{
+				
+				dataOut2.write(",");
+				dataOut2.write(itX.next().toString());
+			}
+			
+			screen.resetDronePos();
+			
+			dataOut2.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void submitResult() {
@@ -334,7 +369,12 @@ public class Simulation {
 		result.setHit(screen.isHit());
 		// result.setTimeRequired(1337); // TODO: change
 		result.setSimulationDetails(screen.getCurrentTrial());
-		reportSimulationResults(result);
+		try {
+			reportSimulationResults(result);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// TODO put in loop: simulation.reportSimulationResults(result);
 	}
 
