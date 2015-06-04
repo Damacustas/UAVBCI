@@ -27,7 +27,7 @@ namespace UAV.Vision
             videoDecoder.UnhandledException += VideoDecoder_UnhandledException;
             videoDecoder.Start();
 
-            videoClient = new TcpClient("127.0.0.1", 1994);
+            videoClient = new TcpClient("145.116.156.243", 1994);
             new Thread(VideoRecvLoop).Start();
 
             videoTimer.Enabled = true;
@@ -77,6 +77,7 @@ namespace UAV.Vision
 
             while (true)
             {
+				try{
                 // Read packet size.
                 var szbuf = new byte[4];
                 int read = stream.Read(szbuf, 0, 4);
@@ -103,9 +104,13 @@ namespace UAV.Vision
                 // Read data.
                 read = (int)memstream.Length;
                 var buff = new byte[4096];
-                while ((read += stream.Read(buff, 9, 4096)) < total_size)
+                while (true)
                 {
-                    memstream.Write(buff, 0, read);
+					int just_read = stream.Read (buff, 0, 4096);
+                    memstream.Write(buff, 0, just_read);
+					read += just_read;
+					if (read >= total_size)
+						break;
                 }
 
                 // Copy back data we don't need.
@@ -132,8 +137,13 @@ namespace UAV.Vision
                     Data = videodata
                 };
 
+				Console.WriteLine ("OnVideoPacketAqcuired()");
                 // Submit packet.
-                OnVideoPacketAqcuired(packet);
+					OnVideoPacketAqcuired(packet);
+				}
+				catch(Exception)
+				{
+				}
             }
         }
     }
