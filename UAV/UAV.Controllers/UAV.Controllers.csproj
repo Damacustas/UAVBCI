@@ -39,6 +39,7 @@
     <Compile Include="BCIProvider.cs" />
     <Compile Include="VideoPacketSender.cs" />
     <Compile Include="JoystickController.cs" />
+    <Compile Include="VideoHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />
@@ -55,6 +56,10 @@
     <Reference Include="FieldTrip.Buffer">
       <HintPath>..\..\Assemblies\FieldTrip.Buffer.dll</HintPath>
     </Reference>
+    <Reference Include="AR.Drone.Video">
+      <HintPath>..\..\Assemblies\AR.Drone.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UAV.Prediction\UAV.Prediction.csproj">

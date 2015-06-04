@@ -7,6 +7,9 @@ using System.Collections.Concurrent;
 using AR.Drone.Data;
 using System.IO;
 using System;
+using AR.Drone.Video;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace UAV.Controllers
 {
@@ -14,9 +17,13 @@ namespace UAV.Controllers
     {
         Thread sendthread;
         bool running;
-        readonly ConcurrentQueue<VideoPacket> packetQueue;
+        readonly ConcurrentQueue<byte[]> packetQueue;
         readonly List<TcpClient> clients;
         TcpListener server;
+        VideoPacketDecoderWorker videoDecoder;
+
+        uint lastFrameNumber = 0;
+        Bitmap bitmap;
 
         public VideoPacketSender()
         {
@@ -32,11 +39,43 @@ namespace UAV.Controllers
         {
             Stop();
 
+
+            // innitialize video packet decoder.
+            videoDecoder = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnFrameDecoded);
+            videoDecoder.Start();
+
             running = true;
             sendthread = new Thread(MainLoop);
             sendthread.Start();
 
             new Thread(ListenLoop).Start();
+        }
+
+        public void EnqueuePacket(VideoPacket packet)
+        {
+            videoDecoder.EnqueuePacket(packet);
+        }
+
+        void OnFrameDecoded(VideoFrame frame)
+        {
+            if (frame.Number == lastFrameNumber)
+                return;
+            
+            lastFrameNumber = frame.Number;
+
+            // If we already have a bitmap, update it, else, create new one.
+            if (bitmap == null)
+                bitmap = VideoHelper.CreateBitmap(ref frame);
+            else
+                VideoHelper.UpdateBitmap(ref bitmap, ref frame);
+
+            // Write frame to stream.
+            using (var stream = new MemoryStream())
+            {
+                bitmap.Save(stream, ImageFormat.Png);
+                var data = stream.ToArray();
+                packetQueue.Enqueue(data);
+            }
         }
 
         public void Stop()
@@ -57,12 +96,6 @@ namespace UAV.Controllers
             }
         }
 
-        public void EnqueuePacket(VideoPacket packet)
-        {
-            //Console.WriteLine("Got packet.");
-            packetQueue.Enqueue(packet);
-        }
-
         void ListenLoop()
         {
             server.Start();
@@ -79,28 +112,30 @@ namespace UAV.Controllers
         {
             while (running)
             {
-                VideoPacket packet;
+                byte[] packet;
                 if (packetQueue.TryDequeue(out packet))
                 {
                     //Console.WriteLine("Dequeued packet.");
 
-                    var stream = new MemoryStream();
-                    using (var writer = new BinaryWriter(stream))
-                    {
-                        writer.Write(packet.Data.Length + 8 + 4 + 2 + 2 + 4);
-                        writer.Write(packet.Timestamp); // 8
-                        writer.Write(packet.FrameNumber); // 4
-                        writer.Write(packet.Height); // 2
-                        writer.Write(packet.Width); // 2
-                        writer.Write((int)packet.FrameType); // 4
-                        writer.Write(packet.Data); // rest
-                    }
-
-                    byte[] data = stream.ToArray();
+//                    var stream = new MemoryStream();
+//                    using (var writer = new BinaryWriter(stream))
+//                    {
+//                        writer.Write(packet.Data.Length + 8 + 4 + 2 + 2 + 4);
+//                        writer.Write(packet.Timestamp); // 8
+//                        writer.Write(packet.FrameNumber); // 4
+//                        writer.Write(packet.Height); // 2
+//                        writer.Write(packet.Width); // 2
+//                        writer.Write((int)packet.FrameType); // 4
+//                        writer.Write(packet.Data); // rest
+//                    }
+//
+//                    byte[] data = stream.ToArray();
 
                     foreach (var client in clients)
                     {
-                        client.GetStream().Write(data, 0, data.Length);
+                        byte[] len = BitConverter.GetBytes((int)packet.Length);
+                        client.GetStream().Write(len, 0, len.Length);
+                        client.GetStream().Write(packet, 0, packet.Length);
                     }
 
                     //Console.WriteLine("Packet sent. :D");
