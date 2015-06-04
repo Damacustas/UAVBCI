@@ -101,7 +101,7 @@ namespace UAV.Vision
 //                Array.Copy(databuf, 8 + 4 + 2 + 2 + 4, videodata, 0, total_size - 8 - 4 - 2 - 2 - 4);
 
                 // Read data.
-                read = memstream.Length;
+                read = (int)memstream.Length;
                 var buff = new byte[4096];
                 while ((read += stream.Read(buff, 9, 4096)) < total_size)
                 {
