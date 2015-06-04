@@ -9,7 +9,7 @@ public class BufferReader implements Runnable {
 	private Screen screen;
 	Header hdr;
 	BufferClientClock c;
-	private final int THRESHOLD = 2;
+	private final int THRESHOLD = 0;
 
 	public BufferReader(Screen s) {
 		this.screen = s;
@@ -128,7 +128,7 @@ public class BufferReader implements Runnable {
 										.parseFloat(evt.getValue().toString()) > 0)) {
 									screen.upKey();
 								} else if ((Float.parseFloat(evt.getValue()
-										.toString()) < 0)) {
+										.toString()) <= 0)) {
 									screen.downKey();
 								}
 							}
