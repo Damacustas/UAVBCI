@@ -75,6 +75,7 @@ namespace UAV.Controllers
                 bitmap.Save(stream, ImageFormat.Png);
                 var data = stream.ToArray();
                 packetQueue.Enqueue(data);
+                Console.WriteLine("Enqueued frame {0} for sending.", frame.Number);
             }
         }
 

@@ -12,11 +12,8 @@ namespace UAV.Vision
     public partial class MainForm : Form
     {
         // Video related members.
-        private uint frameNumber;
-        private Image frameBitmap;
-        private VideoPacketDecoderWorker videoDecoder;
-        private VideoFrame frame;
-        private TcpClient videoClient;
+        Image frameBitmap;
+        TcpClient videoClient;
 
         public MainForm()
         {
@@ -75,8 +72,9 @@ namespace UAV.Vision
                     // Load image.
                     using (var imgstream = new MemoryStream(databuf))
                     {
-                        Image bmp = Bitmap.FromStream(imgstream);
-                        this.frameBitmap = bmp;
+                        Image bmp = Image.FromStream(imgstream);
+                        frameBitmap = bmp;
+                        Console.WriteLine("Received image ({0}x{1}) at {2}.", bmp.Width, bmp.Height, DateTime.UtcNow.Second);
                     }
 
                 }
