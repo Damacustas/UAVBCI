@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 
 using AR.Drone.Data;
 using System.IO;
+using System;
 
 namespace UAV.Controllers
 {
@@ -58,6 +59,7 @@ namespace UAV.Controllers
 
         public void EnqueuePacket(VideoPacket packet)
         {
+            //Console.WriteLine("Got packet.");
             packetQueue.Enqueue(packet);
         }
 
@@ -69,6 +71,7 @@ namespace UAV.Controllers
             {
                 var client = server.AcceptTcpClient();
                 clients.Add(client);
+                Console.WriteLine("Client connected.");
             }
         }
 
@@ -79,6 +82,8 @@ namespace UAV.Controllers
                 VideoPacket packet;
                 if (packetQueue.TryDequeue(out packet))
                 {
+                    //Console.WriteLine("Dequeued packet.");
+
                     var stream = new MemoryStream();
                     using (var writer = new BinaryWriter(stream))
                     {
@@ -97,6 +102,8 @@ namespace UAV.Controllers
                     {
                         client.GetStream().Write(data, 0, data.Length);
                     }
+
+                    //Console.WriteLine("Packet sent. :D");
                 }
             }
         }

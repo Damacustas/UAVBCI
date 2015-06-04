@@ -11,8 +11,26 @@ namespace UAV.Controllers
         public static void Main(string[] rawargs)
         {
             var args = new List<string>(rawargs);
+
+            Console.WriteLine("Started with args: " + string.Join(" ", rawargs));
 			
-            if (args.Contains("--unshared"))
+            if (args.Contains("--no-control"))
+            {
+                Console.Write("Connecting to drone... ");
+                DroneClient drone = new DroneClient();
+                drone.Start();
+                Thread.Sleep(2000);
+                Console.WriteLine("done.");
+
+                if (args.Contains("--enable-video"))
+                {
+                    StartVideo(drone);
+                }
+
+                while (true)
+                    Thread.Yield();
+            }
+            else if (args.Contains("--unshared"))
             {
                 Console.Write("Connecting to drone... ");
                 DroneClient drone = new DroneClient();
@@ -26,7 +44,20 @@ namespace UAV.Controllers
                     StartVideo(drone);
                 }
 
-                var provider = new BCIProvider();
+                ICommandProvider provider = null;
+                if (args.Contains("--joystick"))
+                {
+                }
+                else if (args.Contains("--bci"))
+                {
+                    provider = new BCIProvider();
+                }
+                else
+                {
+                    Console.WriteLine("Did not specify command source.");
+                    return;
+                }
+
                 var controller = new PasstroughController(provider);
                 controller.Drone = drone;
                 controller.StartController();
@@ -57,10 +88,14 @@ namespace UAV.Controllers
 
         static void StartVideo(DroneClient client)
         {
+            Console.Write("Starting video...");
             var sender = new VideoPacketSender();
             sender.Start();
+            Console.WriteLine("done.");
 
+            Console.Write("Connecting VideoPacketAcquired event...");
             client.VideoPacketAcquired += sender.EnqueuePacket;
+            Console.WriteLine("done.");
         }
     }
 }

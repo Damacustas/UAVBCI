@@ -73,6 +73,7 @@ namespace UAV.Vision
         void VideoRecvLoop()
         {
             var stream = videoClient.GetStream();
+            var memstream = new MemoryStream();
 
             while (true)
             {
@@ -85,15 +86,36 @@ namespace UAV.Vision
 
                 int total_size = BitConverter.ToInt32(szbuf, 0);
 
-                // Read total_size bytes.
-                read = 0;
-                var databuf = new byte[total_size];
-                var to_read_left = total_size;
+//                // Read total_size bytes.
+//                read = 0;
+//                var databuf = new byte[total_size];
+//                var to_read_left = total_size;
+//
+//                while ((read += stream.Read(databuf, read, to_read_left < 4096 ? to_read_left : 4096)) < total_size)
+//                {
+//                    to_read_left -= read;
+//                }
+//
+//                // Extract video data.
+//                var videodata = new byte[total_size - 8 - 4 - 2 - 2 - 4];
+//                Array.Copy(databuf, 8 + 4 + 2 + 2 + 4, videodata, 0, total_size - 8 - 4 - 2 - 2 - 4);
 
-                while ((read += stream.Read(databuf, read, to_read_left < 4096 ? to_read_left : 4096)) < total_size)
+                // Read data.
+                read = memstream.Length;
+                var buff = new byte[4096];
+                while ((read += stream.Read(buff, 9, 4096)) < total_size)
                 {
-                    to_read_left -= read;
+                    memstream.Write(buff, 0, read);
                 }
+
+                // Copy back data we don't need.
+                var buff_bytes = memstream.ToArray();
+                memstream = new MemoryStream();
+                memstream.Write(buff_bytes, total_size, buff_bytes.Length - total_size);
+
+                // Save data we're gonna use.
+                var databuf = new byte[total_size];
+                Array.Copy(buff_bytes, databuf, total_size);
 
                 // Extract video data.
                 var videodata = new byte[total_size - 8 - 4 - 2 - 2 - 4];

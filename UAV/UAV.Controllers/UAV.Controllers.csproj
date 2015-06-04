@@ -18,7 +18,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <Commandlineparameters>--unshared</Commandlineparameters>
+    <Commandlineparameters>--no-control --enable-video</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -38,6 +38,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="BCIProvider.cs" />
     <Compile Include="VideoPacketSender.cs" />
+    <Compile Include="JoystickController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />
@@ -63,6 +64,10 @@
     <ProjectReference Include="..\UAV.Common\UAV.Common.csproj">
       <Project>{DDDD04FD-28DC-4B39-8449-9FD5A4CD34DB}</Project>
       <Name>UAV.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UAV.Joystick\UAV.Joystick.csproj">
+      <Project>{50B6C6E5-0EB5-40D9-985E-2A48EF06AC7B}</Project>
+      <Name>UAV.Joystick</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
