@@ -19,7 +19,7 @@ namespace UAV.Vision
         {
             InitializeComponent();
 
-            videoClient = new TcpClient("145.116.176.142", 1994);
+            videoClient = new TcpClient("145.116.165.243", 1994);
             new Thread(VideoRecvLoop).Start();
 
             videoTimer.Enabled = true;
