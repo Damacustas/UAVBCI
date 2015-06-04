@@ -27,7 +27,7 @@ namespace UAV.Controllers
 
         public VideoPacketSender()
         {
-            packetQueue = new ConcurrentQueue<VideoPacket>();
+            packetQueue = new ConcurrentQueue<byte[]>();
             clients = new List<TcpClient>();
             server = new TcpListener(
                 IPAddress.Parse("0.0.0.0"),

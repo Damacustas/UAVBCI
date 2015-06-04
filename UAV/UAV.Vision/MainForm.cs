@@ -13,7 +13,7 @@ namespace UAV.Vision
     {
         // Video related members.
         private uint frameNumber;
-        private Bitmap frameBitmap;
+        private Image frameBitmap;
         private VideoPacketDecoderWorker videoDecoder;
         private VideoFrame frame;
         private TcpClient videoClient;
@@ -73,9 +73,9 @@ namespace UAV.Vision
                     Array.Copy(buff_bytes, databuf, total_size);
 
                     // Load image.
-                    using(var stream = new MemoryStream(databuf))
+                    using (var imgstream = new MemoryStream(databuf))
                     {
-                        Bitmap bmp = Bitmap.FromStream(stream);
+                        Image bmp = Bitmap.FromStream(imgstream);
                         this.frameBitmap = bmp;
                     }
 
