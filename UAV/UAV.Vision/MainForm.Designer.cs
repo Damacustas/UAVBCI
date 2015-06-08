@@ -76,6 +76,7 @@ namespace UAV.Vision
             this.Controls.Add(this.splitContainer1);
             this.Name = "MainForm2";
             this.Text = "MainForm2";
+            this.FormClosing += Form_Closing;
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);

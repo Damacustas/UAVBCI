@@ -42,9 +42,10 @@ namespace UAV.Controllers
 
             // initialize video packet decoder.
             videoDecoder = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnFrameDecoded);
-            videoDecoder.UnhandledException += (delegate(object arg1, Exception arg2)
+            videoDecoder.UnhandledException += (delegate(object sender, Exception ex)
             {
-                int i = 0;
+                Console.WriteLine(ex.InnerException.Message);
+                Console.WriteLine(ex.InnerException.StackTrace);
             });
             videoDecoder.Start();
 
@@ -63,6 +64,9 @@ namespace UAV.Controllers
         void OnFrameDecoded(VideoFrame frame)
         {
             if (frame == null || frame.Number == lastFrameNumber)
+                return;
+
+            if (frame.Number % 3 != 0)
                 return;
             
             lastFrameNumber = frame.Number;
@@ -108,8 +112,11 @@ namespace UAV.Controllers
             while (running)
             {
                 var client = server.AcceptTcpClient();
-                clients.Add(client);
-                Console.WriteLine("Client connected.");
+                lock (clients)
+                {
+                    clients.Add(client);
+                }
+                Console.WriteLine("Client connected from {0}.", client.Client.RemoteEndPoint);
             }
         }
 
@@ -120,7 +127,9 @@ namespace UAV.Controllers
                 byte[] packet;
                 if (packetQueue.TryDequeue(out packet))
                 {
-                    //Console.WriteLine("Dequeued packet.");
+                    if (clients.Count > 0)
+                    {
+                        //Console.WriteLine("Dequeued packet.");
 
 //                    var stream = new MemoryStream();
 //                    using (var writer = new BinaryWriter(stream))
@@ -136,14 +145,23 @@ namespace UAV.Controllers
 //
 //                    byte[] data = stream.ToArray();
 
-                    foreach (var client in clients)
-                    {
-                        byte[] len = BitConverter.GetBytes((int)packet.Length);
-                        client.GetStream().Write(len, 0, len.Length);
-                        client.GetStream().Write(packet, 0, packet.Length);
-                    }
+                        foreach (var client in clients)
+                        {
+                            try
+                            {
+                                byte[] len = BitConverter.GetBytes((int)packet.Length);
+                                client.GetStream().Write(len, 0, len.Length);
+                                client.GetStream().Write(packet, 0, packet.Length);
+                            }
+                            catch (Exception)
+                            {
+                                client.Close();
+                                clients.Remove(client);
+                            }
+                        }
 
-                    //Console.WriteLine("Packet sent. :D");
+                        //Console.WriteLine("Packet sent. :D");
+                    }
                 }
             }
         }
