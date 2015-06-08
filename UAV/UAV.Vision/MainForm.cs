@@ -33,8 +33,7 @@ namespace UAV.Vision
             videoDecoder = new VideoPacketDecoderWorker(PixelFormat.BGR24, true, OnFrameDecoded);
             videoDecoder.UnhandledException += (delegate(object sender, Exception ex)
             {
-                Console.WriteLine(ex.InnerException.Message);
-                Console.WriteLine(ex.InnerException.StackTrace);
+					Console.WriteLine(ex);
                 Process.GetCurrentProcess().Kill();
             });
             videoDecoder.Start();
@@ -64,14 +63,15 @@ namespace UAV.Vision
 
         void VideoTimer_Tick(object sender, EventArgs e)
         {
-            videoPictureBox.Image = frameBitmap;
+			if (frameBitmap != null) {
+				videoPictureBox.Image = frameBitmap.Clone () as Image;
 
-            if (DateTime.UtcNow - last >= new TimeSpan(0, 0, 1)) // if time passed is >= 1 sec.
-            {
-                Console.WriteLine("Bitrate: {0} MB/s", (double)bytes / (1024.0 * 1024));
-                last = DateTime.UtcNow;
-                bytes = 0;
-            }
+				if (DateTime.UtcNow - last >= new TimeSpan (0, 0, 1)) { // if time passed is >= 1 sec.
+					Console.WriteLine ("Bitrate: {0} MB/s", (double)bytes / (1024.0 * 1024));
+					last = DateTime.UtcNow;
+					bytes = 0;
+				}
+			}
         }
 
         void Form_Closing(object sender, EventArgs e)

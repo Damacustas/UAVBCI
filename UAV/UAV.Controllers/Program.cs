@@ -10,7 +10,8 @@ namespace UAV.Controllers
 {
     public class Program
     {
-        BufferClientClock bci_client;
+		static BufferClientClock bci_client;
+		static int lastEvent = 0;
 
         public static void Main(string[] rawargs)
         {
@@ -50,7 +51,6 @@ namespace UAV.Controllers
 
                 ConnectBufferBCI();
 
-                int lastEvent = 0;
                 bool flying = false;
 
                 while (true)
@@ -79,7 +79,7 @@ namespace UAV.Controllers
                                 else
                                 {
                                     double val = double.Parse(evt.Value.ToString());
-                                    drone.Progress(FlightMode.Progressive, pitch: val * 0.3);
+									drone.Progress(FlightMode.Progressive, pitch: (float)val * 0.3f);
                                 }
                             }
                         }
@@ -153,7 +153,7 @@ namespace UAV.Controllers
             {
                 try
                 {
-                    Console.Write("Connecting to 'localhost:1972'...");
+                    Console.Write("Connecting to '145.116.156.243:1972'...");
                     bci_client.Connect("localhost", 1972);
                     Console.WriteLine(" done");
 

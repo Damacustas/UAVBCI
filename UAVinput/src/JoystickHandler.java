@@ -100,8 +100,6 @@ public class JoystickHandler implements Runnable {
 			}
 			
 		}
-		
-
 	}
 
 }

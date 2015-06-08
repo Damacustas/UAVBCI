@@ -18,8 +18,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <Commandlineparameters>145.116.156.243</Commandlineparameters>
     <PlatformTarget>x64</PlatformTarget>
-    <Commandlineparameters>145.116.176.192</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
