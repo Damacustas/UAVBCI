@@ -60,6 +60,7 @@ namespace UAV.Controllers
 
         public void EnqueuePacket(VideoPacket packet)
         {
+            Console.WriteLine("recv'd packet.");
             videoDecoder.EnqueuePacket(packet);
         }
 

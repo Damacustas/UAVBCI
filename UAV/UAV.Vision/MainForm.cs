@@ -26,7 +26,7 @@ namespace UAV.Vision
             bytes = 0;
             running = true;
 
-            videoClient = new TcpClient("localhost", 1994);
+            videoClient = new TcpClient(Environment.GetCommandLineArgs()[1], 1994);
             new Thread(VideoRecvLoop).Start();
 
             videoTimer.Enabled = true;
