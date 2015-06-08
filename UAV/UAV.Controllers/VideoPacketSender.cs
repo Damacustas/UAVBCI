@@ -82,7 +82,7 @@ namespace UAV.Controllers
             // Write frame to stream.
             using (var stream = new MemoryStream())
             {
-                bitmap.Save(stream, ImageFormat.Png);
+                bitmap.Save(stream, ImageFormat.Jpeg);
                 var data = stream.ToArray();
                 packetQueue.Enqueue(data);
                 Console.WriteLine("Enqueued frame {0} for sending.", frame.Number);
