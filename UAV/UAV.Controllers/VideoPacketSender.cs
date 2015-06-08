@@ -10,6 +10,7 @@ using System;
 using AR.Drone.Video;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Diagnostics;
 
 namespace UAV.Controllers
 {
@@ -46,6 +47,7 @@ namespace UAV.Controllers
             {
                 Console.WriteLine(ex.InnerException.Message);
                 Console.WriteLine(ex.InnerException.StackTrace);
+                Process.GetCurrentProcess().Kill();
             });
             videoDecoder.Start();
 
