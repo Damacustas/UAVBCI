@@ -29,7 +29,7 @@ namespace UAV.Controllers
 
         public VideoPacketSender()
         {
-            packetQueue = new ConcurrentQueue<byte[]>();
+            packetQueue = new ConcurrentQueue<VideoPacket>();
             clients = new List<TcpClient>();
             server = new TcpListener(
                 IPAddress.Parse("0.0.0.0"),
@@ -61,8 +61,16 @@ namespace UAV.Controllers
 
         public void EnqueuePacket(VideoPacket packet)
         {
-            Console.WriteLine("recv'd packet.");
+            //Console.WriteLine("recv'd packet.");
             //videoDecoder.EnqueuePacket(packet);
+
+            //if (packet.FrameNumber % 200 != 0)
+            //    return;
+            //Console.WriteLine("Sent 200 frames.");
+
+//            if (packet.FrameNumber % 3 != 0)
+//                return;
+
             packetQueue.Enqueue(packet);
         }
 
@@ -132,6 +140,7 @@ namespace UAV.Controllers
                 VideoPacket packet;
                 if (packetQueue.TryDequeue(out packet))
                 {
+                    //Console.WriteLine("Dequeued");
                     if (clients.Count > 0)
                     {
                         //Console.WriteLine("Dequeued packet.");
@@ -152,6 +161,7 @@ namespace UAV.Controllers
 
                         foreach (var client in clients)
                         {
+                            var client_stream = client.GetStream();
 //                            try
 //                            {
 //                                byte[] len = BitConverter.GetBytes((int)packet.Length);
@@ -165,29 +175,41 @@ namespace UAV.Controllers
 //                            }
                             using (var stream = new MemoryStream(packet.Data.Length + 8 + 4 + 2 + 2 + 4))
                             {
-                                // Write members
                                 byte[] temp;
+
+                                // Write members
                                 temp = BitConverter.GetBytes(packet.Timestamp);
-                                stream.Write(temp, 0, temp.Length);
+                                stream.Write(temp, 0, 8);
 
                                 temp = BitConverter.GetBytes(packet.FrameNumber);
-                                stream.Write(temp, 0, temp.Length);
+                                stream.Write(temp, 0, 4);
 
                                 temp = BitConverter.GetBytes(packet.Height);
-                                stream.Write(temp, 0, temp.Length);
+                                stream.Write(temp, 0, 2);
 
                                 temp = BitConverter.GetBytes(packet.Width);
-                                stream.Write(temp, 0, temp.Length);
+                                stream.Write(temp, 0, 2);
 
                                 temp = BitConverter.GetBytes((int)packet.FrameType);
-                                stream.Write(temp, 0, temp.Length);
+                                stream.Write(temp, 0, 4);
 
                                 // Write video data.
                                 stream.Write(packet.Data, 0, packet.Data.Length);
 
-                                // Transmit.
-                                byte[] data = stream.ToArray();
-                                client.GetStream().Write(data, 0, data.Length);
+                                // Extract data to send.
+                                var data = stream.ToArray();
+                                if (data.Length != packet.Data.Length + 8 + 4 + 2 + 2 + 4)
+                                    Debugger.Break();
+
+                                // Write total length.
+                                temp = BitConverter.GetBytes((int)data.Length);
+                                client_stream.Write(temp, 0, 4);
+
+                                // Transmit data.
+                                client_stream.Write(data, 0, data.Length);
+
+                                //Console.WriteLine("total_size={0}", data.Length);
+                                //Console.WriteLine("{0}: {1} bytes", packet.FrameNumber, packet.Data.Length);
                             }
                         }
 

@@ -104,7 +104,7 @@ namespace UAV.Controllers
                                     OnCommandReceived(new Vector2D(0, -0.2));
                                 }
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
                                 Console.WriteLine("Couldn't convert '{0}' to double.", evt.Value);
                             }

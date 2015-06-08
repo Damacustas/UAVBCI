@@ -19,7 +19,7 @@ namespace UAV.Vision
         int bytes;
         bool running;
         VideoPacketDecoderWorker videoDecoder;
-        uint lastFrameNumber = 0;
+        uint lastFrameNumber;
 
         public MainForm()
         {
@@ -30,7 +30,7 @@ namespace UAV.Vision
             running = true;
 
             // initialize video packet decoder.
-            videoDecoder = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnFrameDecoded);
+            videoDecoder = new VideoPacketDecoderWorker(PixelFormat.BGR24, true, OnFrameDecoded);
             videoDecoder.UnhandledException += (delegate(object sender, Exception ex)
             {
                 Console.WriteLine(ex.InnerException.Message);
@@ -48,10 +48,9 @@ namespace UAV.Vision
 
         void OnFrameDecoded(VideoFrame frame)
         {
-            if (frame == null || frame.Number == lastFrameNumber)
-                return;
+            //Console.WriteLine("On frame decoded.");
 
-            if (frame.Number % 3 != 0)
+            if (frame == null || frame.Number == lastFrameNumber)
                 return;
 
             lastFrameNumber = frame.Number;
@@ -90,28 +89,28 @@ namespace UAV.Vision
                 {
                     // Read packet size.
                     var szbuf = ReadBytes(stream, 4);
-
                     int total_size = BitConverter.ToInt32(szbuf, 0);
-                    //Console.WriteLine("Read {0} bytes", total_size);
-                    bytes += total_size + 4;
+                    //Console.WriteLine("total_size={0}", total_size);
+                    bytes += total_size;
 
                     // Read data.
                     var databuf = ReadBytes(stream, total_size);
                     var packet = ConvertVideoPacket(databuf);
 
-                    // Load image.
-                    using (var imgstream = new MemoryStream(databuf))
-                    {
-                        Image bmp = Image.FromStream(imgstream);
-                        frameBitmap = bmp;
-                        //Console.WriteLine("Received image ({0}x{1}) at {2}.", bmp.Width, bmp.Height, DateTime.UtcNow.Second);
-                    }
+                    videoDecoder.EnqueuePacket(packet);
+
+//                    // Load image.
+//                    using (var imgstream = new MemoryStream(databuf))
+//                    {
+//                        Image bmp = Image.FromStream(imgstream);
+//                        frameBitmap = bmp;
+//                        //Console.WriteLine("Received image ({0}x{1}) at {2}.", bmp.Width, bmp.Height, DateTime.UtcNow.Second);
+//                    }
 
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
-                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
@@ -132,18 +131,19 @@ namespace UAV.Vision
             return buffer;
         }
 
-        byte[] ConvertVideoPacket(byte[] data)
+        VideoPacket ConvertVideoPacket(byte[] data)
         {
             long timestamp = BitConverter.ToInt64(data, 0);
             uint framenumber = BitConverter.ToUInt32(data, 8);
             ushort height = BitConverter.ToUInt16(data, 8 + 4);
-            ushort width = BitConverter.ToUInt16(data, 0, 8 + 4 + 2);
-            VideoFrameType ft = BitConverter.ToInt32(data, 8 + 4 + 2 + 2);
+            ushort width = BitConverter.ToUInt16(data, 8 + 4 + 2);
+            VideoFrameType ft = (VideoFrameType)BitConverter.ToInt32(data, 8 + 4 + 2 + 2);
 
-            var viddata = new byte[data.Length - 8 + 4 + 2 + 2 + 4];
-            Array.Copy(data, viddata, viddata.Length);
+            var viddata = new byte[data.Length - (8 + 4 + 2 + 2 + 4)];
+            Array.Copy(data, 8 + 4 + 2 + 2 + 4, viddata, 0, viddata.Length);
 
-            var packet = new VideoPacket()
+
+            var packet = new VideoPacket
             {
                 Timestamp = timestamp,
                 FrameNumber = framenumber,
@@ -152,8 +152,9 @@ namespace UAV.Vision
                 FrameType = ft,
                 Data = viddata
             };
+            //Console.WriteLine("{0}: {1} viddata bytes.", packet.FrameNumber, packet.Data.Length);
 
-            videoDecoder.EnqueuePacket(packet);
+            return packet;
         }
     }
 }
