@@ -165,7 +165,7 @@ namespace UAV.Controllers
             {
                 try
                 {
-                    Console.Write("Connecting to '145.116.156.243:1972'...");
+                    Console.Write("Connecting to '192.168.0.109:1972'...");
                     bci_client.Connect("192.168.0.109", 1972);
                     Console.WriteLine(" done");
 
