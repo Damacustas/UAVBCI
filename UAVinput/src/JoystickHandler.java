@@ -33,7 +33,7 @@ public class JoystickHandler implements Runnable {
 			{
 				joystick = ca[i];
 				x_axis = joystick.getComponent(Component.Identifier.Axis.X);
-				landButton = joystick.getComponent(Component.Identifier.Button._0);
+				landButton = joystick.getComponent(Component.Identifier.Button.TRIGGER);
 			}
 		}		
 	}
@@ -82,7 +82,7 @@ public class JoystickHandler implements Runnable {
 			try {
 				c.putEvent(new BufferEvent("Joystick", x_axis.getPollData(), -1 ));
 				//System.out.println(x_axis.getPollData());
-				System.out.println(landButton.getPollData());
+				//System.out.println(landButton.getPollData());
 				if (landButton.getPollData() == 1.0)
 				{
 					c.putEvent(new BufferEvent("Joystick", "Button0", -1));

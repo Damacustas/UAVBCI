@@ -5,16 +5,18 @@ using System.Collections.Generic;
 using AR.Drone.Data;
 using FieldTrip.Buffer;
 using AR.Drone.Client.Command;
+using AR.Drone.Client.Configuration;
 
 namespace UAV.Controllers
 {
     public class Program
     {
-		static BufferClientClock bci_client;
-		static int lastEvent = 0;
+        static BufferClientClock bci_client;
+        static int lastEvent = 0;
 
         public static void Main(string[] rawargs)
         {
+
             var args = new List<string>(rawargs);
 
             Console.WriteLine("Started with args: " + string.Join(" ", rawargs));
@@ -40,7 +42,7 @@ namespace UAV.Controllers
                 Console.Write("Connecting to drone... ");
                 DroneClient drone = new DroneClient();
                 drone.Start();
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
                 drone.FlatTrim();
                 Console.WriteLine("done.");
 
@@ -66,20 +68,30 @@ namespace UAV.Controllers
                         {
                             string evttype = evt.Type.ToString();
 
+                            Console.WriteLine("{0}: {1}", evttype, evt.Value);
+
                             if (evttype == "Joystick")
                             {
                                 if (evt.Value.ToString() == "Button0")
                                 {
                                     if (flying)
-                                        drone.Land();
+                                    {
+                                        Console.WriteLine("landing...");
+                                        //drone.Land();
+                                    }
                                     else
-                                        drone.Takeoff();
+                                    {
+                                        Console.WriteLine("taking off...");
+                                        //drone.Takeoff();
+                                    }
+                                    
                                     flying = !flying;
                                 }
                                 else
                                 {
+                                    //drone.Send(animation_progressing);
                                     double val = double.Parse(evt.Value.ToString());
-									drone.Progress(FlightMode.Progressive, pitch: (float)val * 0.3f);
+                                    //drone.Progress(FlightMode.Progressive, pitch: (float)val * 0.3f);
                                 }
                             }
                         }
@@ -154,7 +166,7 @@ namespace UAV.Controllers
                 try
                 {
                     Console.Write("Connecting to '145.116.156.243:1972'...");
-                    bci_client.Connect("localhost", 1972);
+                    bci_client.Connect("192.168.0.109", 1972);
                     Console.WriteLine(" done");
 
                     if (bci_client.IsConnected)
