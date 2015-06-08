@@ -90,7 +90,6 @@ namespace UAV.Vision
                     // Read packet size.
                     var szbuf = ReadBytes(stream, 4);
                     int total_size = BitConverter.ToInt32(szbuf, 0);
-                    //Console.WriteLine("total_size={0}", total_size);
                     bytes += total_size;
 
                     // Read data.
@@ -98,14 +97,6 @@ namespace UAV.Vision
                     var packet = ConvertVideoPacket(databuf);
 
                     videoDecoder.EnqueuePacket(packet);
-
-//                    // Load image.
-//                    using (var imgstream = new MemoryStream(databuf))
-//                    {
-//                        Image bmp = Image.FromStream(imgstream);
-//                        frameBitmap = bmp;
-//                        //Console.WriteLine("Received image ({0}x{1}) at {2}.", bmp.Width, bmp.Height, DateTime.UtcNow.Second);
-//                    }
 
                 }
                 catch (Exception ex)
@@ -152,7 +143,6 @@ namespace UAV.Vision
                 FrameType = ft,
                 Data = viddata
             };
-            //Console.WriteLine("{0}: {1} viddata bytes.", packet.FrameNumber, packet.Data.Length);
 
             return packet;
         }
