@@ -6,17 +6,20 @@ using AR.Drone.Data;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 namespace UAV.Vision
 {
     public partial class MainForm : Form
     {
         // Video related members.
-        Image frameBitmap;
+        Bitmap frameBitmap;
         TcpClient videoClient;
         DateTime last;
         int bytes;
         bool running;
+        VideoPacketDecoderWorker videoDecoder;
+        uint lastFrameNumber = 0;
 
         public MainForm()
         {
@@ -26,10 +29,38 @@ namespace UAV.Vision
             bytes = 0;
             running = true;
 
+            // initialize video packet decoder.
+            videoDecoder = new VideoPacketDecoderWorker(AR.Drone.Video.PixelFormat.BGR24, true, OnFrameDecoded);
+            videoDecoder.UnhandledException += (delegate(object sender, Exception ex)
+            {
+                Console.WriteLine(ex.InnerException.Message);
+                Console.WriteLine(ex.InnerException.StackTrace);
+                Process.GetCurrentProcess().Kill();
+            });
+            videoDecoder.Start();
+
             videoClient = new TcpClient(Environment.GetCommandLineArgs()[1], 1994);
             new Thread(VideoRecvLoop).Start();
 
             videoTimer.Enabled = true;
+        }
+
+
+        void OnFrameDecoded(VideoFrame frame)
+        {
+            if (frame == null || frame.Number == lastFrameNumber)
+                return;
+
+            if (frame.Number % 3 != 0)
+                return;
+
+            lastFrameNumber = frame.Number;
+
+            // If we already have a bitmap, update it, else, create new one.
+            if (frameBitmap == null)
+                frameBitmap = VideoHelper.CreateBitmap(ref frame);
+            else
+                VideoHelper.UpdateBitmap(ref frameBitmap, ref frame);
         }
 
         void VideoTimer_Tick(object sender, EventArgs e)
@@ -66,6 +97,7 @@ namespace UAV.Vision
 
                     // Read data.
                     var databuf = ReadBytes(stream, total_size);
+                    var packet = ConvertVideoPacket(databuf);
 
                     // Load image.
                     using (var imgstream = new MemoryStream(databuf))
@@ -98,6 +130,30 @@ namespace UAV.Vision
             }
 
             return buffer;
+        }
+
+        byte[] ConvertVideoPacket(byte[] data)
+        {
+            long timestamp = BitConverter.ToInt64(data, 0);
+            uint framenumber = BitConverter.ToUInt32(data, 8);
+            ushort height = BitConverter.ToUInt16(data, 8 + 4);
+            ushort width = BitConverter.ToUInt16(data, 0, 8 + 4 + 2);
+            VideoFrameType ft = BitConverter.ToInt32(data, 8 + 4 + 2 + 2);
+
+            var viddata = new byte[data.Length - 8 + 4 + 2 + 2 + 4];
+            Array.Copy(data, viddata, viddata.Length);
+
+            var packet = new VideoPacket()
+            {
+                Timestamp = timestamp,
+                FrameNumber = framenumber,
+                Height = height,
+                Width = width,
+                FrameType = ft,
+                Data = viddata
+            };
+
+            videoDecoder.EnqueuePacket(packet);
         }
     }
 }
