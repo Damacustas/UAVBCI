@@ -1,0 +1,8 @@
+Bij drone:
+3. Start controller
+
+Bij BCI:
+1. Start buffer
+2. start data acq
+4. start joystick
+5. start vision

@@ -13,6 +13,7 @@ namespace UAV.Controllers
     {
         static BufferClientClock bci_client;
         static int lastEvent = 0;
+        static string lastMovement = "0";
 
         public static void Main(string[] rawargs)
         {
@@ -70,6 +71,18 @@ namespace UAV.Controllers
 
                             Console.WriteLine("{0}: {1}", evttype, evt.Value);
 
+                            if (evttype == "classifier.prediction")
+                            {
+                                double val = double.Parse(evt.Value.ToString());
+                                if (val > 0)
+                                {
+                                    drone.Progress(FlightMode.Progressive, pitch: 0.1f);
+                                }
+                                else if (val < 0)
+                                {
+                                    drone.Progress(FlightMode.Progressive, pitch: -0.1f);
+                                }
+                            }
                             if (evttype == "Joystick")
                             {
                                 if (evt.Value.ToString() == "Button0")
@@ -77,29 +90,41 @@ namespace UAV.Controllers
                                     if (flying)
                                     {
                                         Console.WriteLine("landing...");
-                                        //drone.Land();
+                                        drone.Land();
+                                    
                                     }
                                     else
                                     {
                                         Console.WriteLine("taking off...");
-                                        //drone.Takeoff();
+                                        drone.ResetEmergency();
+                                        drone.Takeoff();
                                     }
                                     
                                     flying = !flying;
                                 }
-                                else
-                                {
-                                    //drone.Send(animation_progressing);
-                                    double val = double.Parse(evt.Value.ToString());
-                                    //drone.Progress(FlightMode.Progressive, pitch: (float)val * 0.3f);
-                                }
+//                                else
+//                                {
+//                                    if (evt.Value.ToString() == "0" && lastMovement != "0")
+//                                    {
+//                                        drone.Hover();
+//                                    }
+//                                    else
+//                                    {
+//                                        double val = double.Parse(evt.Value.ToString());
+//                                        drone.Progress(FlightMode.Progressive, pitch: (float)val * 0.3f);
+//                                    }
+//
+//                                    lastMovement = evt.Value.ToString();
+//                                }
+                                                
+                            }
+                            else
+                            {
+                                Console.WriteLine("Timeout while waiting for events.");
                             }
                         }
                     }
-                    else
-                    {
-                        Console.WriteLine("Timeout while waiting for events.");
-                    }
+
                 }
 
 //                ICommandProvider provider = null;
@@ -144,6 +169,7 @@ namespace UAV.Controllers
             }
         }
 
+
         static void StartVideo(DroneClient client)
         {
             Console.Write("Starting video...");
@@ -166,7 +192,7 @@ namespace UAV.Controllers
                 try
                 {
                     Console.Write("Connecting to '145.116.156.243:1972'...");
-                    bci_client.Connect("192.168.0.109", 1972);
+                    bci_client.Connect("131.174.106.81", 1972);
                     Console.WriteLine(" done");
 
                     if (bci_client.IsConnected)
