@@ -6,6 +6,7 @@ using AR.Drone.Data;
 using FieldTrip.Buffer;
 using AR.Drone.Client.Command;
 using AR.Drone.Client.Configuration;
+using UAV.Joystick;
 
 namespace UAV.Controllers
 {
@@ -14,138 +15,215 @@ namespace UAV.Controllers
         static BufferClientClock bci_client;
         static int lastEvent = 0;
         static string lastMovement = "0";
+        static DroneClient drone;
+        static List<string> args;
+        static bool flying;
 
         public static void Main(string[] rawargs)
         {
-
-            var args = new List<string>(rawargs);
+            args = new List<string>(rawargs);
 
             Console.WriteLine("Started with args: " + string.Join(" ", rawargs));
 			
             if (args.Contains("--no-control"))
             {
-                Console.Write("Connecting to drone... ");
-                DroneClient drone = new DroneClient();
-                drone.Start();
-                Thread.Sleep(2000);
-                Console.WriteLine("done.");
-
-                if (args.Contains("--enable-video"))
-                {
-                    StartVideo(drone);
-                }
+                ConnectToDrone();
 
                 while (true)
                     Thread.Yield();
             }
             else if (args.Contains("--unshared"))
             {
-                Console.Write("Connecting to drone... ");
-                DroneClient drone = new DroneClient();
-                drone.Start();
-                Thread.Sleep(500);
-                drone.FlatTrim();
-                Console.WriteLine("done.");
+                ConnectToDrone();
+                //ConnectBufferBCI();
+                double targetHeight = 1.0f;
 
-                if (args.Contains("--enable-video"))
+                JoystickDevice js = new JoystickDevice();
+                js.Initialize("/dev/input/js0");
+                js.InputReceived += (sender, e) =>
                 {
-                    StartVideo(drone);
-                }
-
-                ConnectBufferBCI();
-
-                bool flying = false;
-
-                while (true)
-                {
-                    var sec = bci_client.WaitForEvents(lastEvent, 5000);
-                    if (sec.NumEvents > lastEvent)
+                    if (e.IsButtonEvent && e.IsPressed)
                     {
-                        BufferEvent[] events = bci_client.GetEvents(lastEvent, sec.NumEvents - 1);
-
-                        lastEvent = sec.NumEvents;
-
-                        foreach (var evt in events)
+                        if (e.Button == 0)
                         {
-                            string evttype = evt.Type.ToString();
+                            flying = false;
+                        }
+                        else if (e.Button == 9)
+                        {
+                            targetHeight += 0.1;
+                        }
+                        else if (e.Button == 10)
+                        {
+                            targetHeight -= 0.1;
+                        }
 
-                            Console.WriteLine("{0}: {1}", evttype, evt.Value);
+                    }
+                };
 
-                            if (evttype == "classifier.prediction")
-                            {
-                                double val = double.Parse(evt.Value.ToString());
-                                if (val > 0)
-                                {
-                                    drone.Progress(FlightMode.Progressive, pitch: 0.1f);
-                                }
-                                else if (val < 0)
-                                {
-                                    drone.Progress(FlightMode.Progressive, pitch: -0.1f);
-                                }
-                            }
-                            if (evttype == "Joystick")
-                            {
-                                if (evt.Value.ToString() == "Button0")
-                                {
-                                    if (flying)
-                                    {
-                                        Console.WriteLine("landing...");
-                                        drone.Land();
-                                    
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("taking off...");
-                                        drone.ResetEmergency();
-                                        drone.Takeoff();
-                                    }
-                                    
-                                    flying = !flying;
-                                }
-//                                else
-//                                {
-//                                    if (evt.Value.ToString() == "0" && lastMovement != "0")
-//                                    {
-//                                        drone.Hover();
-//                                    }
-//                                    else
-//                                    {
-//                                        double val = double.Parse(evt.Value.ToString());
-//                                        drone.Progress(FlightMode.Progressive, pitch: (float)val * 0.3f);
-//                                    }
-//
-//                                    lastMovement = evt.Value.ToString();
-//                                }
-                                                
-                            }
-                            else
-                            {
-                                Console.WriteLine("Timeout while waiting for events.");
-                            }
+                double pitch = -0.1, gaz = 0.0, roll = 0.0;
+                flying = true;
+                drone.NavigationDataAcquired += data =>
+                {
+                    Console.WriteLine("X: {0}, Y: {1}, Z: {2}", data.Velocity.X.ToString("0.00").PadLeft(5), data.Velocity.Y.ToString("0.00").PadLeft(5), data.Velocity.Z.ToString("0.00").PadLeft(5));
+                    if (data.Velocity.X > 1.05)
+                    {
+                        pitch = -Math.Abs(data.Pitch) * 1.10;
+                        if (pitch > -0.1)
+                        {
+                            pitch = -0.1;
+                        }
+                    }
+                    else if (data.Velocity.X < 0.95)
+                    {
+                        pitch = -Math.Abs(data.Pitch) * 1.10;
+                        if (pitch > -0.1)
+                        {
+                            pitch = -0.1;
                         }
                     }
 
-                }
+                    if (data.Altitude >= targetHeight + 0.15)
+                    {
+                        gaz = -Math.Min(drone.NavigationData.Altitude - targetHeight, 1.0f);
+                    }
+                    else if (data.Altitude <= targetHeight - 0.15)
+                    {
+                        gaz = Math.Min(targetHeight - drone.NavigationData.Altitude, 1.0f);
+                    }
 
-//                ICommandProvider provider = null;
-//                if (args.Contains("--joystick"))
+                    drone.Progress(FlightMode.Progressive, pitch: (float)pitch, gaz: (float)gaz);
+                };
+
+                drone.Takeoff();
+                drone.Progress(FlightMode.Progressive, pitch: 0.2f);
+
+                while (flying)
+                {
+                    js.ProcessEvents();
+                }
+                drone.Land();
+                js.Deinitialize();
+                drone.Stop();
+
+//                flying = true;
+//                var fly_thread = new Thread(
+//                                     () =>
+//                    {
+//                        var velocityMaintainer = new VelocityMaintainer();
+//                        velocityMaintainer.TargetVelocity = new Velocity{ Forward = -5.0f, Left = 0.0f, TurnLeft = 0.0f };
+//                        velocityMaintainer.MaxDeviance = 1;
+//                        drone.Takeoff();
+//                        while (flying)
+//                        {
+//                            var cmd = velocityMaintainer.ComputeBehavior(drone);
+//                            drone.Progress(FlightMode.Progressive, cmd.Roll, cmd.Pitch, cmd.Yaw, cmd.Gaz);
+//                            Thread.Sleep(500);
+//                        }
+//                        drone.Land();
+//                        Console.WriteLine("Done with flying.");
+//                        return;
+//                    }
+//                                 );
+//                fly_thread.Start();
+//
+//                while (flying)
+//                    js.ProcessEvents();
+//                fly_thread.Join();
+//                js.Deinitialize();
+//                drone.Stop();
+//                Console.WriteLine("done.");
+
+//
+//                while (true)
 //                {
-//                }
-//                else if (args.Contains("--bci"))
-//                {
-//                    provider = new BCIProvider();
-//                }
-//                else
-//                {
-//                    Console.WriteLine("Did not specify command source.");
-//                    return;
+//                    var sec = bci_client.WaitForEvents(lastEvent, 5000);
+//                    if (sec.NumEvents > lastEvent)
+//                    {
+//                        BufferEvent[] events = bci_client.GetEvents(lastEvent, sec.NumEvents - 1);
+//
+//                        lastEvent = sec.NumEvents;
+//
+//                        foreach (var evt in events)
+//                        {
+//                            string evttype = evt.Type.ToString();
+//
+//                            Console.WriteLine("{0}: {1}", evttype, evt.Value);
+//
+//                            if (evttype == "classifier.prediction")
+//                            {
+//                                double val = double.Parse(evt.Value.ToString());
+//                                if (val > 0)
+//                                {
+//                                    drone.Progress(FlightMode.Progressive, pitch: 0.1f);
+//                                }
+//                                else if (val < 0)
+//                                {
+//                                    drone.Progress(FlightMode.Progressive, pitch: -0.1f);
+//                                }
+//                            }
+//                            if (evttype == "Joystick")
+//                            {
+//                                if (evt.Value.ToString() == "Button0")
+//                                {
+//                                    if (flying)
+//                                    {
+//                                        Console.WriteLine("landing...");
+//                                        drone.Land();
+//                                    
+//                                    }
+//                                    else
+//                                    {
+//                                        Console.WriteLine("taking off...");
+//                                        drone.ResetEmergency();
+//                                        drone.Takeoff();
+//                                    }
+//                                    
+//                                    flying = !flying;
+//                                }
+////                                else
+////                                {
+////                                    if (evt.Value.ToString() == "0" && lastMovement != "0")
+////                                    {
+////                                        drone.Hover();
+////                                    }
+////                                    else
+////                                    {
+////                                        double val = double.Parse(evt.Value.ToString());
+////                                        drone.Progress(FlightMode.Progressive, pitch: (float)val * 0.3f);
+////                                    }
+////
+////                                    lastMovement = evt.Value.ToString();
+////                                }
+//                                                
+//                            }
+//                            else
+//                            {
+//                                Console.WriteLine("Timeout while waiting for events.");
+//                            }
+//                        }
+//                    }
+//
 //                }
 //
-//                var controller = new PasstroughController(provider);
-//                controller.Drone = drone;
-//                controller.StartController();
-//                while (true)
-//                    Thread.Yield();
+////                ICommandProvider provider = null;
+////                if (args.Contains("--joystick"))
+////                {
+////                }
+////                else if (args.Contains("--bci"))
+////                {
+////                    provider = new BCIProvider();
+////                }
+////                else
+////                {
+////                    Console.WriteLine("Did not specify command source.");
+////                    return;
+////                }
+////
+////                var controller = new PasstroughController(provider);
+////                controller.Drone = drone;
+////                controller.StartController();
+////                while (true)
+////                    Thread.Yield();
             }
             else if (args.Contains("--shared"))
             {
@@ -180,6 +258,22 @@ namespace UAV.Controllers
             Console.Write("Connecting VideoPacketAcquired event...");
             client.VideoPacketAcquired += sender.EnqueuePacket;
             Console.WriteLine("done.");
+        }
+
+        static void ConnectToDrone()
+        {
+            Console.Write("Connecting to drone... ");
+            drone = new DroneClient();
+            drone.Start();
+            Thread.Sleep(2000);
+            Console.WriteLine("done.");
+            drone.ResetEmergency();
+            drone.FlatTrim();
+
+            if (args.Contains("--enable-video"))
+            {
+                StartVideo(drone);
+            }
         }
 
         static void ConnectBufferBCI()
