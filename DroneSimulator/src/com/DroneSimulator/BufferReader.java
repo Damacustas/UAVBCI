@@ -8,42 +8,48 @@ public class BufferReader implements Runnable {
 
 	private Screen screen;
 	Header hdr;
-	BufferClientClock c;
+	BufferClientClock client;
 	private final int THRESHOLD = 0;
-
-	public BufferReader(Screen s) {
+private String clsfr_event_name;
+	
+	public BufferReader(Screen s, String clsfr_event_name) {
 		this.screen = s;
+		this.clsfr_event_name = clsfr_event_name;
 		connectBuffer();
-
 	}
 
 	private void connectBuffer() {
 		String hostname = Simulation.BUFFER_HOSTNAME;
 		int port = Simulation.BUFFER_PORT;
 
-		c = new BufferClientClock();
+		client = new BufferClientClock();
 
 		hdr = null;
 		while (hdr == null) {
 			try {
 				System.out.println("Connecting to " + hostname + ":" + port);
-				c.connect(hostname, port);
+				client.connect(hostname, port);
 				// C.setAutoReconnect(true);
-				if (c.isConnected()) {
-					System.out.println("GETHEADER");
-					hdr = c.getHeader();
+				if (client.isConnected()) {
+					System.out.print("GETHEADER");
+					hdr = client.getHeader();
 				}
 			} catch (IOException e) {
 				hdr = null;
 			}
 			if (hdr == null) {
-				System.out.println("Invalid Header... waiting");
+				System.out.println(" failed.");
+				System.out.println("Waiting...");
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+			else
+			{
+				System.out.println(" Succes!");
 			}
 			// bufferConnected = true;
 			// Print stuff
@@ -71,7 +77,7 @@ public class BufferReader implements Runnable {
 		while (!endExpt) {
 			try {
 				System.out.println("Waiting for events...");
-				SamplesEventsCount sec = c.waitForEvents(nEvents, timeout); // Block
+				SamplesEventsCount sec = client.waitForEvents(nEvents, timeout); // Block
 																			// until
 																			// there
 																			// are
@@ -79,7 +85,7 @@ public class BufferReader implements Runnable {
 																			// events
 				if (sec.nEvents > nEvents) {
 					// get the new events
-					BufferEvent[] evs = c.getEvents(nEvents, sec.nEvents - 1);
+					BufferEvent[] evs = client.getEvents(nEvents, sec.nEvents - 1);
 					nEvents = sec.nEvents;// update record of which events we've
 											// seen
 					// filter for ones we want
@@ -119,8 +125,7 @@ public class BufferReader implements Runnable {
 								System.out.println("pressed D");
 								break;
 							}
-						} else if (evttype
-								.equalsIgnoreCase("classifier.prediction")
+						} else if ((evttype.equalsIgnoreCase(clsfr_event_name))
 								&& screen.getState() == Screen.States.TRIAL_CLASSIFYING) {
 							if (Math.abs(Float.parseFloat(evt.getValue()
 									.toString())) > THRESHOLD) {

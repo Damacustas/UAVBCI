@@ -80,7 +80,8 @@ public class Simulation {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		connectBuffer();
-		t = new Thread(new BufferReader(screen));
+		//t = new Thread(new BufferReader(screen, "classifier.prediction"));
+		t = new Thread(new BufferReader(screen, "shrdcontrol.prediction"));
 		t.start();
 		
 		t2 = new Thread(new JoystickHandler());
