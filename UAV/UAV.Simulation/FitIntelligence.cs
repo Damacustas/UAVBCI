@@ -47,7 +47,7 @@ namespace UAV.Simulation
 
             // Fit a function on input for x-axis.
             Func<double, double> funcX = 
-                Fitters.GeneratePolynomialFit(
+                Fitters.GeneratePolynomialFitFunction(
                     ts,
                     (from l in worldState.InputHistory.TakeLast(HistoryLength)
                         select l.Value.X).ToList(),
@@ -56,7 +56,7 @@ namespace UAV.Simulation
 
             // Fit a function on input fo y-axis.
             Func<double, double> funcY = 
-                Fitters.GeneratePolynomialFit(
+                Fitters.GeneratePolynomialFitFunction(
                     ts,
                     (from l in worldState.InputHistory.TakeLast(HistoryLength)
                         select l.Value.Y).ToList(),

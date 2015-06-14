@@ -171,12 +171,12 @@ namespace UAV.Simulation
                 var t = (from n in timeRange
                                      select n).ToArray();
 
-                var fitFuncX = Fitters.GeneratePolynomialFit(
+                var fitFuncX = Fitters.GeneratePolynomialFitFunction(
                                    timeRange,
                                    (from point in relevantPoints
                                                    select point.Value.X).ToList(),
                                    2);
-                var fitFuncY = Fitters.GeneratePolynomialFit(
+                var fitFuncY = Fitters.GeneratePolynomialFitFunction(
                                    timeRange,
                                    (from point in relevantPoints
                                                    select point.Value.Y).ToList(),

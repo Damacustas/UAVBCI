@@ -214,10 +214,12 @@ namespace UAV.Controllers
 
                                         flying = !flying;
                                     }
-                                    else if (raw_val == "Button12")
-                                    {
-                                        running = false;
-                                    }
+                                }
+
+                                // exit
+                                else if (evttype == "exit")
+                                {
+                                    running = false;
                                 }
                             }
                         }

@@ -5,8 +5,8 @@ using UAV.Common;
 
 namespace UAV.Prediction
 {
-	public class Fitters
-	{
+    public class Fitters
+    {
         /// <summary>
         /// Creates a polynomial function delegate from the given t and y values. 
         /// </summary>
@@ -63,7 +63,7 @@ namespace UAV.Prediction
 
             // Generate values for A.
             List<double> l = new List<double>();
-            for (int i = 0; i < (n*2)+1; i++)
+            for (int i = 0; i < (n * 2) + 1; i++)
             {
                 var v = MathTools.Sum(MathTools.Pow(ts, i));
                 l.Add(v);
@@ -97,7 +97,7 @@ namespace UAV.Prediction
 
         [Obsolete]
         public static Matrix<double> FitQuadraticCoefficients(IReadOnlyCollection<double> t, IReadOnlyCollection<double> y)
-		{
+        {
             return FitPolynomialCoefficients(t, y, 2);
         }
 
