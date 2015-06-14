@@ -23,7 +23,7 @@ namespace UAV.GUI
         // Controll related members.
         private JoystickDevice joystick;
         private HeightMaintainer heightMaintainer;
-        private VelocityMaintainer velocityMaintainer;
+        //private VelocityMaintainer velocityMaintainer;
         private CompositeFlightController controller;
 
         public MainForm()
@@ -39,7 +39,7 @@ namespace UAV.GUI
             drone = new DroneClient();
             drone.VideoPacketAcquired += OnVideoPacketAqcuired;
             drone.Start();
-			drone.ResetEmergency();
+            drone.ResetEmergency();
             drone.FlatTrim();
 
             
@@ -47,7 +47,7 @@ namespace UAV.GUI
             controller.Client = drone;
             controller.Start();
 
-			/*
+            /*
             // Initialize joystick.
             joystick = new JoystickDevice();
             joystick.InputReceived += Joystick_InputReceived;
@@ -95,11 +95,11 @@ namespace UAV.GUI
             {
                 drone.Land();
             }
-            else if(e.Button == 9 && e.IsPressed) // Throttle-10 button
+            else if (e.Button == 9 && e.IsPressed) // Throttle-10 button
             {
                 heightMaintainer.TargetHeight += 0.25f; // meter
             }
-            else if(e.Button == 10 && e.IsPressed) // Throttle-11 button
+            else if (e.Button == 10 && e.IsPressed) // Throttle-11 button
             {
                 heightMaintainer.TargetHeight -= 0.25f; // meter
             }
@@ -145,17 +145,17 @@ namespace UAV.GUI
         private void MainForm2_KeyUp(object sender, KeyEventArgs e)
         {
             // If escape is pressed, quit the application.
-			if (e.KeyCode == Keys.Escape)
-			{
-				drone.Land();
-				drone.Stop();
+            if (e.KeyCode == Keys.Escape)
+            {
+                drone.Land();
+                drone.Stop();
 
-				Application.Exit();
-			}
-			else if (e.KeyCode == Keys.Space)
-			{
-				drone.Land();
-			}
+                Application.Exit();
+            }
+            else if (e.KeyCode == Keys.Space)
+            {
+                drone.Land();
+            }
         }
     }
 }

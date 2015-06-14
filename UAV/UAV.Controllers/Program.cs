@@ -45,6 +45,10 @@ namespace UAV.Controllers
                 {
                     FlyDroneBuffer("classifier.prediction");
                 }
+                else
+                {
+                    Console.WriteLine("Unknown input source.");
+                }
             }
             else if (args.Contains("--shared"))
             {
@@ -64,6 +68,7 @@ namespace UAV.Controllers
             }
         }
 
+
         static void StartVideo(DroneClient client)
         {
             Console.Write("Starting video...");
@@ -76,6 +81,7 @@ namespace UAV.Controllers
             Console.WriteLine("done.");
         }
 
+
         static void ConnectDrone()
         {
             Console.WriteLine("Connecting to drone... ");
@@ -83,6 +89,8 @@ namespace UAV.Controllers
             drone.Start();
             Thread.Sleep(2000);
             Console.WriteLine("Done connecting to drone...");
+            drone.ResetEmergency();
+            drone.FlatTrim();
 
             if (args.Contains("--enable-video"))
             {
