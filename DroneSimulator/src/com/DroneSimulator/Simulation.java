@@ -51,7 +51,7 @@ public class Simulation {
 
 	private int shortBreakTrials = 7;
 	private int longBreakTrials = 20;
-	private double totalTrials = 20;
+	private double totalTrials = 10;
 
 	private int cursorDistance = 4 * Screen.STEPSIZE;
 	private int minTargetSize = Screen.STEPSIZE;
@@ -271,24 +271,40 @@ public class Simulation {
 		}
 		System.out.println(lastWidth);
 		// Calculate new size based on the Weighted Up-Down method.
+		
 		double newWidth, newHeight;
-		if (screen.isHit() && lastWidth > minTargetSize
-				&& lastHeight > minTargetSize) {
+		if (screen.isHit()){
 			newWidth = lastWidth - sizeDecrease;
 			newHeight = lastHeight - sizeDecrease;
-		} else if (screen.isHit()
-				&& lastWidth <= (minTargetSize + sizeDecrease)
-				&& lastHeight <= (minTargetSize + sizeDecrease)) {
+			if(newWidth < minTargetSize	&& newHeight < minTargetSize){
+				newWidth = minTargetSize;
+				newHeight = minTargetSize;
+			}
+		} 
+		else{
+			newWidth = lastWidth + (sizeIncrease * (1 - (hits / totalTrials)));
+			newHeight = lastHeight + (sizeIncrease * (1 - (hits / totalTrials)));
+			if(newWidth > cursorDistance && newHeight > cursorDistance)
+			{
+				newWidth = cursorDistance;
+				newHeight = cursorDistance;
+			}
+		}
+		
+		/*double newWidth, newHeight;
+		if (screen.isHit() && lastWidth > minTargetSize	&& lastHeight > minTargetSize) {
+			newWidth = lastWidth - sizeDecrease;
+			newHeight = lastHeight - sizeDecrease;
+		} else if (screen.isHit() && lastWidth <= (minTargetSize + sizeDecrease) && lastHeight <= (minTargetSize + sizeDecrease)) {
 			newWidth = minTargetSize;
 			newHeight = minTargetSize;
 		} else if (lastWidth <= cursorDistance && lastHeight <= cursorDistance) {
 			newWidth = lastWidth + (sizeIncrease * (1 - (hits / totalTrials)));
-			newHeight = lastHeight
-					+ (sizeIncrease * (1 - (hits / totalTrials)));
+			newHeight = lastHeight + (sizeIncrease * (1 - (hits / totalTrials)));
 		} else {
 			newWidth = cursorDistance;
 			newHeight = cursorDistance;
-		}
+		}*/
 		// Create the new simulation run object.
 		TrialParameters run = new TrialParameters();
 		double angle = random.nextDouble() * 360;
