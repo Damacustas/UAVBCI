@@ -85,12 +85,12 @@ namespace UAV.SharedControll
             else if (needGoUp && !goingUp)
             {
                 // What to do when need to go up, but going down?
-                //bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
+                bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
             }
             else if (!needGoUp && goingUp)
             {
                 // What if need to go down, but going up?
-                //bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
+                bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
             }
         }
 
