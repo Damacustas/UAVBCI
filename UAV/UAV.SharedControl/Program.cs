@@ -18,6 +18,7 @@ namespace UAV.SharedControll
 
         static bool isLSF, isABA;
         static double targetHeight;
+        static double currentHeight;
 
         public static void Main(string[] args)
         {
@@ -70,10 +71,32 @@ namespace UAV.SharedControll
 
         static void ApplyABA(string predVal)
         {
+            var needGoUp = currentHeight > targetHeight; // Should the drone go upwards?
+            var goingUp = predVal > 0; // Is the drone going upwards?
+
+            if (needGoUp && goingUp)
+            {
+                bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 2, -1));
+            }
+            else if (!needGoUp && !goingUp)
+            {
+                bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", -2, -1));
+            }
+            else if (needGoUp && !goingUp)
+            {
+                // What to do when need to go up, but going down?
+                //bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
+            }
+            else if (!needGoUp && goingUp)
+            {
+                // What if need to go down, but going up?
+                //bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
+            }
         }
 
         static void UpdateABA(string altitude)
         {
+            currentHeight = altitude;
         }
 
         static void ApplyLSF(string predVal)

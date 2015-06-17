@@ -136,6 +136,12 @@ private String clsfr_event_name;
 										.toString()) <= 0)) {
 									screen.downKey();
 								}
+								
+								int height = screen.getSimulationHeight();
+								int altitude = screen.getCursorY();
+								int alt = height - altitude;
+								
+								client.putEvent(new BufferEvent("drone.altitude", (float)alt, -1));
 							}
 
 						} else if (evttype

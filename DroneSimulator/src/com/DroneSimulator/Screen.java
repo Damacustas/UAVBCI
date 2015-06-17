@@ -379,6 +379,21 @@ public class Screen extends JPanel {
 		// TODO Auto-generated method stub
 		return dronePositionsX;
 	}
+	
+	public int getCursorX()
+	{
+		return cursorX;
+	}
+	
+	public int getCursorY()
+	{
+		return cursorY;
+	}
+	
+	public int getSimulationHeight()
+	{
+		return dim.height;
+	}
 
 	// public void showCountdown() {
 	// countdownLabel.setVisible(true);
