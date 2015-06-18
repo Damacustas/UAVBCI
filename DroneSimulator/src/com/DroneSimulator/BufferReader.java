@@ -125,16 +125,29 @@ private String clsfr_event_name;
 								System.out.println("pressed D");
 								break;
 							}
+						} else if((evttype.equalsIgnoreCase("response")) && 
+								screen.getState() == Screen.States.TRIAL_CLASSIFYING)
+						{
+							int val = Integer.parseInt(evt.getValue().toString());
+							if(val == 132)
+							{
+								screen.leftKey();
+							}
+							else if(val == 128){
+								screen.rightKey();
+							}
+						
 						} else if ((evttype.equalsIgnoreCase(clsfr_event_name))
 								&& screen.getState() == Screen.States.TRIAL_CLASSIFYING) {
-							if (Math.abs(Float.parseFloat(evt.getValue()
-									.toString())) > THRESHOLD) {
-								if ((Float
-										.parseFloat(evt.getValue().toString()) > 0)) {
+							float val = Float.parseFloat(evt.getValue().toString());
+							if (Math.abs(val) > THRESHOLD) {
+								if (val > 0) {
 									screen.upKey();
-								} else if ((Float.parseFloat(evt.getValue()
-										.toString()) <= 0)) {
+								} else if (val < 0) {
 									screen.downKey();
+								}
+								else{
+									// Do nothing.
 								}
 								
 								int height = screen.getSimulationHeight();

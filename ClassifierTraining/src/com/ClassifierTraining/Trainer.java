@@ -14,7 +14,7 @@ import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Trainer {
 	private static final int BUFFER_PORT = 1972;
-	private static final String BUFFER_HOSTNAME = "131.174.106.81";
+	private static final String BUFFER_HOSTNAME = "131.174.106.82";
 	private static final int LONG_BREAK_TIME = 30;
 	private static final int SHORT_BREAK_TIME = 10;
 	//

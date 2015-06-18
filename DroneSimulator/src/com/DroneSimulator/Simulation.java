@@ -17,7 +17,8 @@ import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
 	public static final int BUFFER_PORT = 1972;
-	public static final String BUFFER_HOSTNAME = "131.174.106.81";
+	public static final String BUFFER_HOSTNAME = "131.174.106.82"; //3
+	//public static final String BUFFER_HOSTNAME = "131.174.106.81"; //2
 //	public static final String BUFFER_HOSTNAME = "localhost";
 	private static final int SHORT_BREAK_TIME = 5;
 	private static final int LONG_BREAK_TIME = 30;
@@ -51,7 +52,7 @@ public class Simulation {
 
 	private int shortBreakTrials = 7;
 	private int longBreakTrials = 20;
-	private double totalTrials = 10;
+	private double totalTrials = 40;
 
 	private int cursorDistance = 4 * Screen.STEPSIZE;
 	private int minTargetSize = Screen.STEPSIZE;
@@ -135,14 +136,14 @@ public class Simulation {
 		Date dt = Calendar.getInstance().getTime();
 		String filename = dt.getHours() + "-" + dt.getMinutes() + "-"
 				+ dt.getSeconds() + ".csv";
-		this.dataOut = new BufferedWriter(new FileWriter("D:/UAVBCI/CSV output/" + filename));
+		this.dataOut = new BufferedWriter(new FileWriter("/home/lars/Desktop/" + filename));
 		this.dataOut.write(headerLine);
 		this.dataOut.newLine();
 		
 		String filename2 = "XY" +dt.getHours() + "-" + dt.getMinutes() + "-"
 				+ dt.getSeconds() + ".csv";
 		
-		this.dataOut2 = new BufferedWriter(new FileWriter("D:/UAVBCI/CSV output/" + filename2));
+		this.dataOut2 = new BufferedWriter(new FileWriter("/home/lars/Desktop/" + filename2));
 		//this.dataOut.write(headerLine);
 		this.dataOut.newLine();
 		
@@ -250,9 +251,9 @@ public class Simulation {
 												// run
 		TrialParameters last = new TrialParameters();
 		double angle = random.nextDouble() * 360;
-		last.setStartX(dim.width / 2 );
+		last.setStartX(dim.width / 2 + cursorDistance * Math.cos(angle));
 		//+ cursorDistance * Math.cos(angle)
-		last.setStartY(dim.height / 2 + cursorDistance * Math.sin(angle));
+		last.setStartY(dim.height / 2  + cursorDistance * Math.sin(angle));
 		last.setTargetWidth(initialTargetWidth);
 		last.setTargetHeight(initialTargetHeight);
 		return last;
@@ -310,7 +311,8 @@ public class Simulation {
 		double angle = random.nextDouble() * 360;
 		run.setStartX(dim.width / 2 + cursorDistance * Math.cos(angle));
 		//+ 
-		run.setStartY(dim.height / 2 + cursorDistance * Math.sin(angle));
+		run.setStartY(dim.height / 2 );
+		//+ cursorDistance * Math.sin(angle)
 		run.setTargetWidth(newWidth);
 		run.setTargetHeight(newHeight);
 		return run;

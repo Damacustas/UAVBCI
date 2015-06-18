@@ -38,7 +38,7 @@ namespace UAV.SharedControll
             }
 
             ConnectBufferBCI(args[0]);
-
+            running = true;
             while (running)
             {
                 var sec = bci_client.WaitForEvents(lastEvent, 5000);
@@ -71,8 +71,8 @@ namespace UAV.SharedControll
 
         static void ApplyABA(string predVal)
         {
-            var needGoUp = currentHeight > targetHeight; // Should the drone go upwards?
-            var goingUp = predVal > 0; // Is the drone going upwards?
+            var needGoUp = currentHeight < targetHeight; // Should the drone go upwards?
+            var goingUp = double.Parse(predVal) > 0; // Is the drone going upwards?
 
             if (needGoUp && goingUp)
             {
@@ -96,7 +96,7 @@ namespace UAV.SharedControll
 
         static void UpdateABA(string altitude)
         {
-            currentHeight = altitude;
+            currentHeight = double.Parse(altitude);
         }
 
         static void ApplyLSF(string predVal)
