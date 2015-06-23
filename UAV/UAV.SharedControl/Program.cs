@@ -35,6 +35,7 @@ namespace UAV.SharedControll
             else
             {
                 Console.WriteLine("Unknown assistance method: {0}.", args[1]);
+				return;
             }
 
             ConnectBufferBCI(args[0]);
@@ -117,7 +118,27 @@ namespace UAV.SharedControll
 
                 var pred = func(dataN++);
 
-                bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", pred, -1));
+				var needGoUp = pred < -0; // Should the drone go upwards?
+				var goingUp = double.Parse(predVal) > 0; // Is the drone going upwards?
+
+				if (needGoUp && goingUp)
+				{
+					bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 2, -1));
+				}
+				else if (!needGoUp && !goingUp)
+				{
+					bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", -2, -1));
+				}
+				else if (needGoUp && !goingUp)
+				{
+					// What to do when need to go up, but going down?
+					bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
+				}
+				else if (!needGoUp && goingUp)
+				{
+					// What if need to go down, but going up?
+					bci_client.PutEvent(new BufferEvent("shrdcontrol.prediction", 0, -1));
+				}
             }
         }
 

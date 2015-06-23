@@ -17,8 +17,8 @@ import nl.fcdonders.fieldtrip.bufferclient.*;
 
 public class Simulation {
 	public static final int BUFFER_PORT = 1972;
-	public static final String BUFFER_HOSTNAME = "131.174.106.82"; //3
-	//public static final String BUFFER_HOSTNAME = "131.174.106.81"; //2
+	//public static final String BUFFER_HOSTNAME = "131.174.106.82"; //3
+	public static final String BUFFER_HOSTNAME = "131.174.106.81"; //2
 //	public static final String BUFFER_HOSTNAME = "localhost";
 	private static final int SHORT_BREAK_TIME = 5;
 	private static final int LONG_BREAK_TIME = 30;
@@ -81,8 +81,8 @@ public class Simulation {
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		connectBuffer();
-		//t = new Thread(new BufferReader(screen, "classifier.prediction"));
-		t = new Thread(new BufferReader(screen, "shrdcontrol.prediction"));
+		t = new Thread(new BufferReader(screen, "classifier.prediction"));
+		//t = new Thread(new BufferReader(screen, "shrdcontrol.prediction"));
 		t.start();
 		
 		t2 = new Thread(new JoystickHandler());
@@ -136,14 +136,14 @@ public class Simulation {
 		Date dt = Calendar.getInstance().getTime();
 		String filename = dt.getHours() + "-" + dt.getMinutes() + "-"
 				+ dt.getSeconds() + ".csv";
-		this.dataOut = new BufferedWriter(new FileWriter("/home/lars/Desktop/" + filename));
+		this.dataOut = new BufferedWriter(new FileWriter("/home/uavbci/Desktop/" + filename));
 		this.dataOut.write(headerLine);
 		this.dataOut.newLine();
 		
 		String filename2 = "XY" +dt.getHours() + "-" + dt.getMinutes() + "-"
 				+ dt.getSeconds() + ".csv";
 		
-		this.dataOut2 = new BufferedWriter(new FileWriter("/home/lars/Desktop/" + filename2));
+		this.dataOut2 = new BufferedWriter(new FileWriter("/home/uavbci/Desktop/" + filename2));
 		//this.dataOut.write(headerLine);
 		this.dataOut.newLine();
 		

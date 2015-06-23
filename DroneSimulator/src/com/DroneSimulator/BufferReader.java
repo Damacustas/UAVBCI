@@ -131,10 +131,12 @@ private String clsfr_event_name;
 							int val = Integer.parseInt(evt.getValue().toString());
 							if(val == 132)
 							{
-								screen.leftKey();
+								//screen.leftKey();
+								screen.upKey();
 							}
 							else if(val == 128){
-								screen.rightKey();
+								//screen.rightKey();
+								screen.downKey();
 							}
 						
 						} else if ((evttype.equalsIgnoreCase(clsfr_event_name))
@@ -142,9 +144,11 @@ private String clsfr_event_name;
 							float val = Float.parseFloat(evt.getValue().toString());
 							if (Math.abs(val) > THRESHOLD) {
 								if (val > 0) {
-									screen.upKey();
+									//screen.upKey();
+									screen.leftKey();
 								} else if (val < 0) {
-									screen.downKey();
+									screen.rightKey();
+									//screen.downKey();
 								}
 								else{
 									// Do nothing.
@@ -164,10 +168,12 @@ private String clsfr_event_name;
 									.toString())) > 0.2) {
 								if ((Float
 										.parseFloat(evt.getValue().toString()) > 0)) {
-									screen.rightKey();
+									//screen.rightKey();
+									screen.upKey();
 								} else if ((Float.parseFloat(evt.getValue()
 										.toString()) < 0)) {
-									screen.leftKey();
+									//screen.leftKey();
+									screen.downKey();
 								}
 							}
 

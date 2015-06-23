@@ -13,7 +13,7 @@ import nl.fcdonders.fieldtrip.bufferclient.Header;
 public class JoystickHandler implements Runnable {
 
 	Controller joystick;
-	Component x_axis;
+	Component y_axis;
 	Header hdr;
 	BufferClientClock c;
 	
@@ -31,7 +31,7 @@ public class JoystickHandler implements Runnable {
 			if (ca[i].getType() ==Controller.Type.STICK )
 			{
 				joystick = ca[i];
-				x_axis = joystick.getComponent(Component.Identifier.Axis.X);
+				y_axis = joystick.getComponent(Component.Identifier.Axis.Y);
 			}
 		}		
 	}
@@ -76,9 +76,9 @@ public class JoystickHandler implements Runnable {
 		{
 			joystick.poll();		
 			
-			x_axis.getPollData();
+			y_axis.getPollData();
 			try {
-				c.putEvent(new BufferEvent("Joystick", x_axis.getPollData(), -1 ));
+				c.putEvent(new BufferEvent("Joystick", y_axis.getPollData(), -1 ));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
