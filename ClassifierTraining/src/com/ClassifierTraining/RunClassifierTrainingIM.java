@@ -9,8 +9,8 @@ public class RunClassifierTrainingIM {
 		Screen s = new Screen();
 		String[] classes = {"IMLeft", "IMRight"};
 		Trainer tr = new Trainer(s, classes);
-		tr.setTotalTrials(20);
-		tr.setLongBreakTrials(20);
+		tr.setTotalTrials(60);
+		tr.setLongBreakTrials(30);
 		tr.setShortBreakTrials(5);
 		try {
 			tr.startClassifierTraining();

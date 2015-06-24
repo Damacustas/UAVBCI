@@ -143,6 +143,7 @@ private String clsfr_event_name;
 								&& screen.getState() == Screen.States.TRIAL_CLASSIFYING) {
 							float val = Float.parseFloat(evt.getValue().toString());
 							if (Math.abs(val) > THRESHOLD) {
+								
 								if (val > 0) {
 									//screen.upKey();
 									screen.leftKey();

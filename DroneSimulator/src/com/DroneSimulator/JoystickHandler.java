@@ -1,5 +1,5 @@
 package com.DroneSimulator;
-
+/*
 import java.io.IOException;
 
 import net.java.games.input.Component;
@@ -96,3 +96,4 @@ public class JoystickHandler implements Runnable {
 	}
 
 }
+*/

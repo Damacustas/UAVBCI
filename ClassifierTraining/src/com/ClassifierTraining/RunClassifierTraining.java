@@ -9,8 +9,8 @@ public class RunClassifierTraining {
 		Screen s = new Screen();
 		String[] classes = {"music", "house"};
 		Trainer tr = new Trainer(s, classes);
-		tr.setTotalTrials(80);
-		tr.setLongBreakTrials(40);
+		tr.setTotalTrials(60);
+		tr.setLongBreakTrials(30);
 		tr.setShortBreakTrials(5);
 		try {
 			tr.startClassifierTraining();

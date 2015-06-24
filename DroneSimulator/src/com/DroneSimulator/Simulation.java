@@ -50,9 +50,9 @@ public class Simulation {
 
 	// private TrialParameters last = null;
 
-	private int shortBreakTrials = 7;
-	private int longBreakTrials = 20;
-	private double totalTrials = 40;
+	private int shortBreakTrials = 5;
+	private int longBreakTrials = 25;
+	private double totalTrials = 50;
 
 	private int cursorDistance = 4 * Screen.STEPSIZE;
 	private int minTargetSize = Screen.STEPSIZE;
@@ -85,8 +85,8 @@ public class Simulation {
 		//t = new Thread(new BufferReader(screen, "shrdcontrol.prediction"));
 		t.start();
 		
-		t2 = new Thread(new JoystickHandler());
-		t2.start();
+		//t2 = new Thread(new JoystickHandler());
+		//t2.start();
 		
 		
 
@@ -133,7 +133,7 @@ public class Simulation {
 	}
 
 	public void startExperiment() throws IOException {
-		Date dt = Calendar.getInstance().getTime();
+		/*Date dt = Calendar.getInstance().getTime();
 		String filename = dt.getHours() + "-" + dt.getMinutes() + "-"
 				+ dt.getSeconds() + ".csv";
 		this.dataOut = new BufferedWriter(new FileWriter("/home/uavbci/Desktop/" + filename));
@@ -146,7 +146,7 @@ public class Simulation {
 		this.dataOut2 = new BufferedWriter(new FileWriter("/home/uavbci/Desktop/" + filename2));
 		//this.dataOut.write(headerLine);
 		this.dataOut.newLine();
-		
+		*/
 		System.out.println("startEXP");
 		
 		int trialcounter = 0;
@@ -226,8 +226,8 @@ public class Simulation {
 		screen.setState(Screen.States.TRIAL_END);
 		// TODO change (because deprecated and unsafe)
 		t.stop();
-		this.dataOut.close();
-		this.dataOut2.close();
+		//this.dataOut.close();
+		//this.dataOut2.close();
 
 		printResults();
 	}
